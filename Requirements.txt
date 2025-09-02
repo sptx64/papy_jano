@@ -1,0 +1,7 @@
+streamlit
+pyecharts
+st_echarts
+pandas
+numpy
+geopandas
+scipy
