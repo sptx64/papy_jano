@@ -1,3 +1,3 @@
-# project01
+# papy_jano
 Small shared project in development for mine planning and mine ops
 To be continued...
