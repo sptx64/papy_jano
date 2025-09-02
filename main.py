@@ -9,3 +9,5 @@ pages_dict = {
 }
 
 pg = st.navigation( pages_dict, position="top" )
+
+pg.run()
