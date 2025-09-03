@@ -4,7 +4,7 @@ import numpy as np
 
 st.set_page_config(layout="wide")
 pages_dict = {
-  "HOME"   : [st.Page("pages/Home.py", title="Home", icon=":material/elderly_woman:")],
+  "HOME"   : [st.Page("pages/Home.py", title="Home", icon=":material/elderly:")],
   "IMPORT" : [st.Page("pages/Import.py", title="Import files", icon=":material/upload:")],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
