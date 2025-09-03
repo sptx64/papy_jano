@@ -68,9 +68,9 @@ list_machines = st.multiselect(":material/conveyor_belt: Machines that will be a
 #one unique save button that will save all lists in a dictionary and deleting any duplicate option
 if st.button("Save options", type="primary", help="This button save all options (Task + Supervisors + Machines)  in one click.") :
   dict_opt = {
-    "Task" : sorted(list(np.unique(list_task))),
-    "Supervisors" : sorted(list(np.unique(list_supervisors))),
-    "Machines" : sorted(list(np.unique(list_machines))),
+    "Task" : sorted(list(np.unique(list_task)), key=str.lower),
+    "Supervisors" : sorted(list(np.unique(list_supervisors)), key=str.lower),
+    "Machines" : sorted(list(np.unique(list_machines)), key=str.lower),
   }
   #saving in the cache of streamlit (st.session_state)
   st.session_state.dict_opt = dict_opt
