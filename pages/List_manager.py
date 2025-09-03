@@ -38,7 +38,7 @@ def load_opt_pkl(start_with, location) :
         st.session_state.dict_opt = pickle.load(f)
       
       if len(list_files) == 1 :
-        st.toast(f":green-badge[Great!] the file {list_files[0]} have been imported successfully", icon=":material/check_small:")
+        st.toast(f"The file {list_files[0]} have been imported successfully and cached", icon=":green-badge[:material/check_small:]")
       else :
         st.toast(f":orange-badge[Warning!] there was more than one file in the folder {location} with a name starting with {start_with}. The first file encoutered {list_file[0]} has been loaded by default.", icon=":material/warning:")
         
