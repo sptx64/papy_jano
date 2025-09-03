@@ -6,8 +6,6 @@ import pickle
 "# List manager"
 "On this page you can manage all options that you want to be added or removed to lists."
 
-list_opt_id = "list_opt"
-
 def load_opt_pkl(start_with, location) :
   if "dict_opt" not in st.session_state :
     #checking if the folder in input exists
@@ -30,12 +28,23 @@ def load_opt_pkl(start_with, location) :
     else :
       st.session_state.dict_opt = {}    
     
-    
-    
-    
 
+list_opt_id, folder = "dict_opt", "files"
+load_opt_pkl(start_with=list_opt_id, location=folder)
 
 t = st.tabs(["Task", "Task supervisor", "Machines"])
 with t[0] :
-  
+  if "Task" not in st.session_state.dict_opt :
+    st.session_state.dict_opt["Task"] = []
+
+with t[1] :
+  if "Task supervisor" not in st.session_state.dict_opt :
+    st.session_state.dict_opt["Task supervisor"] = []
+
+with t[2] :
+  if "Machines" not in st.session_state.dict_opt :
+    st.session_state.dict_opt["Machines"] = []
+
+
+
   
