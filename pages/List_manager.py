@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import time
 
 "# List manager"
 "On this page you can manage all options that you want to be added or removed to lists."
@@ -78,7 +79,10 @@ if st.button("Save options", type="primary", help="This button save all options 
   with open(full_name, wb) as f :
     pickle.dump(dict_opt, f)
     st.toast("The options have been saved!", icon=":material/check_small:")
-    st.success("Saved! The app will rerun in 3 seconds
+    st.success("Saved! The app will rerun in 3 seconds.")
+    time.sleep(3)
+    st.rerun()
+    
     
     
 
