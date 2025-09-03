@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 "# List manager"
 "On this page you can manage all options that you want to be added or removed to lists."
