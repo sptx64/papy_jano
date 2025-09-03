@@ -43,8 +43,8 @@ def load_opt_pkl(start_with, location) :
     
 
 #loading the existing pkl if there are any
-list_opt_id, folder = "dict_opt", "files"
-load_opt_pkl(start_with=list_opt_id, location=folder)
+fname_begin, folder = "dict_opt", "files"
+load_opt_pkl(start_with=fname_begin, location=folder)
 
 # streamlit tabs to organise the code
 t = st.tabs(["Task", "Supervisors", "Machines"])
@@ -63,16 +63,24 @@ with t[2] :
     st.session_state.dict_opt["Machines"] = []
   list_machines = st.multiselect("Machines that will be available in other modules", st.session_state.dict_opt["Machines"], st.session_state.dict_opt["Supervisors"], accept_new_options=True)
 
-#one unique save button that will save all lists in a dictionary and deleting any duplicate
-if st.button("Save options", type="primary") :
+#one unique save button that will save all lists in a dictionary and deleting any duplicate option
+if st.button("Save options", type="primary", help="This button save all options (Task + Supervisors + Machines)  in one click.") :
   dict_opt = {
-    "Task" : list_task,
-    "Supervisors" : list_supervisors,
-    "Machines" : list_machines,
+    "Task" : list(np.unique(list_task)),
+    "Supervisors" : list(np.unique(list_supervisors)),
+    "Machines" : list(np.unique(list_machines)),
   }
-  #checking if there are duplicates and deleting them
-  for k in dict_opt :
-    dict_opt[k] = list(np.unique([ dict_opt[k] ]))
+  #saving in the cache of streamlit (st.session_state)
+  st.session_state.dict_opt = dict_opt
+
+  #storing it locally for next sessions
+  full_name = os.path.join(folder, f"{fname_begin}.pkl")
+  with open(full_name, wb) as f :
+    pickle.dump(dict_opt, f)
+    st.toast("The options have been saved!", icon=":material/check_small:")
+    st.success("Saved! The app will rerun in 3 seconds
+    
+    
 
   
 
