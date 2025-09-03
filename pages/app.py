@@ -7,11 +7,13 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 
+
+# Memory file 
 SAVE_PATH = Path("data")
 SAVE_FILE = SAVE_PATH / "mine_plan.json"
 
 # ---------------------------- Model ----------------------------
-
+# Tableau 
 @dataclass
 class Task:
     id: int
@@ -35,6 +37,70 @@ class Task:
     buffer: Optional[float] = None
     projected_end_date: Optional[date] = None
     is_critical: Optional[bool] = None
+
+    class TaskManager:
+    def __init__(self):
+        SAVE_PATH.mkdir(exist_ok=True)
+        self.tasks: Dict[int, Task] = {}
+        self.coefficient_non_critical = 0.5
+        self.coefficient_critical = 1.3
+        self.multiplier_multi_dependencies = 1.2
+        self.load() or self.create_sample()
+
+    def next_id(self) -> int:
+        return max(self.tasks.keys(), default=0) + 1
+
+    def save(self):
+        raw = {"tasks": {tid: t.to_dict() for tid, t in self.tasks.items()}}
+        SAVE_FILE.write_text(json.dumps(raw, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def load(self) -> bool:
+        if not SAVE_FILE.exists():
+            return False
+        try:
+            raw = json.loads(SAVE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return False
+
+        self.tasks = {}
+        for k, d in raw.get("tasks", {}).items():
+            dependencies = d.get("dependencies", "")
+            if isinstance(dependencies, list):
+                dependencies = ",".join(map(str, dependencies))
+
+            self.tasks[int(k)] = Task(
+                id=int(k),
+                name=d["name"],
+                start_date=date.fromisoformat(d.get("start_date")) if d.get("start_date") else None,
+                end_date=date.fromisoformat(d.get("end_date")) if d.get("end_date") else None,
+                duration_optimistic=d.get("duration_optimistic"),
+                duration_pessimistic=d.get("duration_pessimistic"),
+                duration_probable=d.get("duration_probable"),
+                duration_stochastic=d.get("duration_stochastic"),
+                responsible=d.get("responsible"),
+                equipment=d.get("equipment"),
+                category=d.get("category", "Task"),
+                dependencies=dependencies,
+                dependency_type=d.get("dependency_type", "FS"),
+                lag=d.get("lag", 0),
+                comments=d.get("comments"),
+                progress=d.get("progress", 0),
+                duration_days=d.get("duration_days"),
+                standard_deviation=d.get("standard_deviation"),
+                buffer=d.get("buffer"),
+                projected_end_date=date.fromisoformat(d.get("projected_end_date")) if d.get("projected_end_date") else None,
+                is_critical=d.get("is_critical")
+            )
+        return True
+
+    def create_sample(self):
+        td = date.today()
+        self.tasks = {
+            1: Task(1, "Préparation du site", td, None, 5, 10, 7, None, "Équipe A", "Bulldozer", progress=30),
+            2: Task(2, "Construction route d'accès", None, None, 7, 12, 9, None, "Équipe B", "Excavatrice", dependencies="1", progress=15),
+            3: Task(3, "Forage initial", None, None, 10, 18, 14, None, "Équipe C", "Foreuse", dependencies="1", progress=50),
+            4: Task(4, "Installation équipements", None, None, 3, 8, 5, None, "Équipe D", "Grue", dependencies="2,3", progress=0),
+        }
 
     def scheduled_end(self) -> Optional[date]:
         """Calcule la date de fin basée sur start_date et duration_days, ou retourne end_date"""
@@ -101,69 +167,7 @@ class Task:
         return has_dates or has_start_duration or has_end_duration
 
 
-class TaskManager:
-    def __init__(self):
-        SAVE_PATH.mkdir(exist_ok=True)
-        self.tasks: Dict[int, Task] = {}
-        self.coefficient_non_critical = 0.5
-        self.coefficient_critical = 1.3
-        self.multiplier_multi_dependencies = 1.2
-        self.load() or self.create_sample()
 
-    def next_id(self) -> int:
-        return max(self.tasks.keys(), default=0) + 1
-
-    def save(self):
-        raw = {"tasks": {tid: t.to_dict() for tid, t in self.tasks.items()}}
-        SAVE_FILE.write_text(json.dumps(raw, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    def load(self) -> bool:
-        if not SAVE_FILE.exists():
-            return False
-        try:
-            raw = json.loads(SAVE_FILE.read_text(encoding="utf-8"))
-        except Exception:
-            return False
-
-        self.tasks = {}
-        for k, d in raw.get("tasks", {}).items():
-            dependencies = d.get("dependencies", "")
-            if isinstance(dependencies, list):
-                dependencies = ",".join(map(str, dependencies))
-
-            self.tasks[int(k)] = Task(
-                id=int(k),
-                name=d["name"],
-                start_date=date.fromisoformat(d.get("start_date")) if d.get("start_date") else None,
-                end_date=date.fromisoformat(d.get("end_date")) if d.get("end_date") else None,
-                duration_optimistic=d.get("duration_optimistic"),
-                duration_pessimistic=d.get("duration_pessimistic"),
-                duration_probable=d.get("duration_probable"),
-                duration_stochastic=d.get("duration_stochastic"),
-                responsible=d.get("responsible"),
-                equipment=d.get("equipment"),
-                category=d.get("category", "Task"),
-                dependencies=dependencies,
-                dependency_type=d.get("dependency_type", "FS"),
-                lag=d.get("lag", 0),
-                comments=d.get("comments"),
-                progress=d.get("progress", 0),
-                duration_days=d.get("duration_days"),
-                standard_deviation=d.get("standard_deviation"),
-                buffer=d.get("buffer"),
-                projected_end_date=date.fromisoformat(d.get("projected_end_date")) if d.get("projected_end_date") else None,
-                is_critical=d.get("is_critical")
-            )
-        return True
-
-    def create_sample(self):
-        td = date.today()
-        self.tasks = {
-            1: Task(1, "Préparation du site", td, None, 5, 10, 7, None, "Équipe A", "Bulldozer", progress=30),
-            2: Task(2, "Construction route d'accès", None, None, 7, 12, 9, None, "Équipe B", "Excavatrice", dependencies="1", progress=15),
-            3: Task(3, "Forage initial", None, None, 10, 18, 14, None, "Équipe C", "Foreuse", dependencies="1", progress=50),
-            4: Task(4, "Installation équipements", None, None, 3, 8, 5, None, "Équipe D", "Grue", dependencies="2,3", progress=0),
-        }
 
     def calculate_stochastic_duration(self, task: Task) -> Optional[float]:
         """Calcule la durée stochastique selon la méthode PERT"""
@@ -189,6 +193,7 @@ class TaskManager:
         for task in self.tasks.values():
             task.is_critical = task.id in critical_path
 
+    
     def calculate_buffer(self, task: Task, predecessor_std: Optional[float] = None) -> Optional[float]:
         """Calcule le buffer selon les règles définies"""
         if task.duration_optimistic is None or task.duration_pessimistic is None:
@@ -291,9 +296,10 @@ class TaskManager:
                 latest_end = parent_date
 
         return latest_end
-
+        
+##### Chemin Critique 
     def find_critical_path(self) -> List[int]:
-        """Trouve le chemin critique - version améliorée"""
+        """Trouve le chemin critique"""
         if not self.tasks:
             return []
 
@@ -378,7 +384,7 @@ class TaskManager:
         return critical_tasks
 
     def auto_calculate_all_tasks(self, max_iterations: int = 10):
-        """Calcule automatiquement toutes les tâches manquantes - VERSION CORRIGÉE"""
+        """Calcule automatiquement toutes les tâches manquantes"""
         changes_made = True
         iteration = 0
 
