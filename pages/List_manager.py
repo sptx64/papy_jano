@@ -6,8 +6,10 @@ import os
 import time
 
 "# List manager"
-"On this page you can manage all options that you want to be added or removed to lists."
-
+"""
+On this page you can manage the lists of tasks, supervisors, and machines options which can be used across other modules.
+The application allows users to add, remove, or modify options for these categories through an intuitive interface.
+"""
 
 def load_opt_pkl(start_with, location) :
   """
