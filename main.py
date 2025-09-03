@@ -8,7 +8,7 @@ pages_dict = {
   "IMPORT" : [st.Page("pages/Import.py", title="Import files", icon=":material/upload:")],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
-    st.Page("pages/visualization.py", title="visualisations pas ouf", icon=":material/earthquake:"),
+    st.Page("pages/visualizations.py", title="visualisations pas ouf", icon=":material/earthquake:"),
   ]
 }
 
