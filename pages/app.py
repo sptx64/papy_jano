@@ -17,7 +17,7 @@ Key Features:
 Author: Mine Planning Team
 Version: 1.0
 """
-
+from scipy.stats import beta
 import json
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
@@ -26,6 +26,8 @@ from typing import Dict, Optional, List
 import pandas as pd
 import streamlit as st
 import numpy as np
+from dataclasses import dataclass
+
 
 # ============================================================================================
 # CONFIGURATION CONSTANTS
@@ -39,51 +41,66 @@ SAVE_FILE = SAVE_PATH / "mine_plan.json"  # Main project file
 # DATA MODEL - TASK DEFINITION
 # ============================================================================================
 
+
+    ### 1-1 - DATA TABLEAU
+# ============================================================================================
 @dataclass
 class Task:
     """
-    Core Task data class representing a single task in the mine planning project.
-    
-    This class uses the dataclass decorator for automatic generation of __init__, __repr__, etc.
-    It contains all necessary fields for PERT analysis, critical path calculation, and progress tracking.
+    👋 **Core Task Data Class**
+    - Uses `@dataclass` for auto `__init__`, `__repr__`, etc.
+    - Supports **PERT analysis**, **critical path**, and **progress tracking**.
+    - Added: **Projection Speed** and **P10-P90 Percentiles** for extra risk insights.
+    - Fields grouped into **4 categories** (see below).
     """
     
-    # === BASIC TASK INFORMATION ===
-    id: int  # Unique task identifier
-    name: str  # Task name/description
-    category: str = "Task"  # Task category for organization
-    responsible: Optional[str] = None  # Person/team responsible for the task
-    equipment: Optional[str] = None  # Equipment required for the task
-    comments: Optional[str] = None  # Additional notes/comments
+    # 🎯 **GENERAL INFORMATION** (Basics & Identity)
+    id: int  # 🆔 Unique identifier (calculated or entry)
+    name: str  # 📝 Task description (entry)
+    category: str = "Task"  # 🏷️ Category for grouping (entry)
+    responsible: Optional[str] = None  # 👤 Person/team responsible (entry)
+    equipment: Optional[str] = None  # 🛠️ Required equipment (entry)
+    comments: Optional[str] = None  # 💬 Additional notes (entry)
+    dependencies: str = ""  # 🔗 Predecessor task IDs (e.g., "1,2"; entry)
+    dependency_type: str = "FS"  # 🔄 Dependency type (FS, SS, FF, SF; entry)  # ADDED
+    lag: int = 0  # ⏳ Delay/lag (days; entry)
     
-    # === SCHEDULING INFORMATION ===
-    start_date: Optional[date] = None  # Planned start date
-    end_date: Optional[date] = None  # Planned end date
-    projected_end_date: Optional[date] = None  # Projected end date based on current progress
+    # 📅 **SCHEDULING** (Dates & Progress)
+    start_date: Optional[date] = None  # 🗓️ Planned start (entry or calculated)
+    end_date: Optional[date] = None  # 🎯 Planned end (entry or calculated)
+    progress: int = 0  # 📊 Completion % (0-100; entry)
+    projected_end_date: Optional[date] = None  # 🔮 Forecasted end from progress (calculated)
+    projection_speed: Optional[float] = None  # 🚀 Speed (% per day; calculated)
+    is_critical: Optional[bool] = None  # ⚡ On critical path? (calculated)
     
-    # === PERT DURATION ESTIMATES ===
-    # PERT methodology uses three time estimates for each task
-    duration_optimistic: Optional[int] = None  # Best-case scenario duration (days)
-    duration_pessimistic: Optional[int] = None  # Worst-case scenario duration (days)
-    duration_probable: Optional[int] = None  # Most likely duration (days)
-    duration_stochastic: Optional[float] = None  # Calculated PERT duration
-    duration_days: Optional[int] = None  # Final duration in days (rounded stochastic)
+    # ⏱️ **DURATIONS** (PERT Time Estimates)
+    duration_optimistic: Optional[int] = None  # 😊 Best-case days (entry or calculated)
+    duration_pessimistic: Optional[int] = None  # 😰 Worst-case days (entry or calculated)
+    duration_probable: Optional[int] = None  # 🤔 Most likely days (entry or calculated)
+    duration_stochastic: Optional[float] = None  # 📈 PERT mean duration (calculated)
+    duration_days: Optional[int] = None  # 📅 Rounded final days (calculated or entry)
     
-    # === STATISTICAL ANALYSIS ===
-    standard_deviation: Optional[float] = None  # Statistical variance measure
-    buffer: Optional[float] = None  # Risk buffer calculated based on task criticality
-    
-    # === DEPENDENCY MANAGEMENT ===
-    dependencies: str = ""  # Comma-separated list of predecessor task IDs
-    dependency_type: str = "FS"  # Dependency type: FS, SS, FF, SF
-    lag: int = 0  # Lag time between dependent tasks (days)
-    
-    # === PROGRESS TRACKING ===
-    progress: int = 0  # Task completion percentage (0-100)
-    
-    # === CRITICAL PATH ANALYSIS ===
-    is_critical: Optional[bool] = None  # Whether task is on the critical path
+    # ⚠️ **RISK & UNCERTAINTY** (Buffers & Percentiles)
+    standard_deviation: Optional[float] = None  # 📊 Variance measure (calculated)
+    buffer: Optional[float] = None  # 🛡️ Risk buffer (days; calculated)
+    # 🧮 Percentiles (calculated via normal dist from mean & std dev)
+    p10: Optional[float] = None  # 10th percentile (days)
+    p20: Optional[float] = None  # 20th percentile (days)
+    p30: Optional[float] = None  # 30th percentile (days)
+    p40: Optional[float] = None  # 40th percentile (days)
+    p50: Optional[float] = None  # 50th percentile (median; days)
+    p60: Optional[float] = None  # 60th percentile (days)
+    p70: Optional[float] = None  # 70th percentile (days)
+    p80: Optional[float] = None  # 80th percentile (days)
+    p90: Optional[float] = None  # 90th percentile (days)
 
+
+ ###1-3 Calcul du Tableau
+# ============================================================================================
+
+ 
+   #Starting date : Calculate the scheduled end date based on start date and duration.
+ 
     def scheduled_end(self) -> Optional[date]:
         """
         Calculate the scheduled end date based on start date and duration.
@@ -98,29 +115,51 @@ class Task:
         if self.start_date and self.duration_days:
             return self.start_date + timedelta(days=self.duration_days - 1)
         return self.end_date
-
+     
+     
+    #Durée stochastique calculation
+ 
     def get_expected_duration(self) -> Optional[float]:
         """
-        Get the expected duration for the task.
+        Get the expected duration for the task, fusing calculation logic to cover all cases.
         
-        Priority order:
-        1. Stochastic duration (PERT calculated)
-        2. Duration in days (manually set)
-        3. Simple PERT calculation if optimistic/pessimistic exist
+        Priority order (covers all scenarios from both original methods):
+        1. If stochastic (PERT calculated) is set: Return it directly.
+        2. If not set but optimistic/pessimistic are available: Calculate stochastic on the fly (using calculate_stochastic_duration logic), set the field, and return it.
+        3. If calculation not possible but duration_days is set: Return duration_days as float.
+        4. Otherwise: Return None.
+        
+        This fused version ensures the output is identical to running both methods separately, but in one step.
+        Formulas identical to originals: PERT = (O + 4M + P)/6 where M = probable or (O+P)/2.
         
         Returns:
-            Optional[float]: Expected duration in days
+            Optional[float]: Expected duration in days.
         """
         if self.duration_stochastic is not None:
+            # Priority 1: Use existing stochastic
             return self.duration_stochastic
+        
+        # Priority 2: Calculate stochastic if possible (fusing calculate_stochastic_duration logic)
+        if self.duration_optimistic is not None and self.duration_pessimistic is not None:
+            # Use provided probable or calculate average (same as calculate_stochastic_duration)
+            probable = self.duration_probable or ((self.duration_optimistic + self.duration_pessimistic) / 2)
+            # Cache probable if not set
+            if self.duration_probable is None:
+                self.duration_probable = probable
+            # Calculate and set stochastic
+            self.duration_stochastic = (self.duration_optimistic + 4 * probable + self.duration_pessimistic) / 6
+            return self.duration_stochastic
+        
+        # Priority 3: Fallback to duration_days if set
         elif self.duration_days is not None:
             return float(self.duration_days)
-        elif self.duration_optimistic is not None and self.duration_pessimistic is not None:
-            # Simple PERT calculation: (O + 4M + P) / 6
-            probable = self.duration_probable or (self.duration_optimistic + self.duration_pessimistic) / 2
-            return (self.duration_optimistic + 4 * probable + self.duration_pessimistic) / 6
+        
+        # No valid data: None
         return None
 
+ 
+    #Calcul Task Duration with start date and end date
+ 
     def get_actual_duration(self) -> Optional[int]:
         """
         Calculate actual duration if task is completed.
@@ -132,18 +171,73 @@ class Task:
             return (self.end_date - self.start_date).days + 1
         return None
 
+
+
+     #- Calcul End date projection and Projection speed
+     
     def get_remaining_duration(self) -> Optional[float]:
         """
-        Calculate remaining duration based on current progress.
+        Calculate remaining duration based on current progress, using formulas for Projection Speed and Projected End Date.
+        
+        Formulas (based on your model, translated to English):
+        - Work Done Days = duration_stochastic * (progress / 100)
+        - Elapsed Days = (date.today() - start_date).days if start_date else 0
+        - Projection Speed = Work Done Days / Elapsed Days (if applicable)
+        - Projected Total Duration = duration_stochastic / Projection Speed
+        - Projected End Date = start_date + Projected Total Duration (updates projected_end_date)
+        - Remaining Duration = max(0, Projected Total Duration - Elapsed Days)
+        
+        This uses Projection Speed for dynamic estimates.
+        Falls back to expected * (100 - progress)/100 if calculations not applicable.
         
         Returns:
-            Optional[float]: Remaining duration in days
+            Optional[float]: Remaining duration in days.
         """
         expected = self.get_expected_duration()
-        if expected and self.progress < 100:
-            return expected * (100 - self.progress) / 100
-        return 0 if self.progress == 100 else expected
+        if not expected or not self.start_date:
+            # Not applicable, fallback to simple remaining estimate
+            return expected * (100 - self.progress) / 100 if expected and self.progress < 100 else 0.0
+        
+        # Calculate Work Done Days
+        work_done_days = expected * (self.progress / 100.0)
+        
+        # Calculate Elapsed Days (using int for simplicity)
+        days_elapsed = (date.today() - self.start_date).days
+        
+        if days_elapsed <= 0:
+            # Not started, full expected remaining
+            return expected * (100 - self.progress) / 100 if self.progress < 100 else 0.0
+        
+        # Calculate Projection Speed
+        if work_done_days > 0:
+            projection_speed = work_done_days / days_elapsed
+        else:
+            # No progress, assume neutral speed
+            projection_speed = 1.0
+        
+        # Calculate Projected Total Duration
+        if projection_speed > 0:
+            projected_total_duration = expected / projection_speed
+        else:
+            projected_total_duration = expected
+        
+        # Update projected_end_date and projection_speed
+        self.projected_end_date = self.start_date + timedelta(days=int(round(projected_total_duration)))
+        self.projection_speed = round(projection_speed, 2)
+        
+        # Calculate Remaining Duration
+        remaining_duration = max(0.0, projected_total_duration - days_elapsed)
+        
+        # If completed, remaining is 0
+        if self.progress >= 100:
+            return 0.0
+        
+        return round(remaining_duration, 2)
 
+
+     
+    #Calculate End-date.
+ 
     def get_stochastic_end_date(self) -> Optional[date]:
         """
         Calculate end date based on stochastic duration.
@@ -157,6 +251,9 @@ class Task:
             return self.start_date + timedelta(days=self.duration_days - 1)
         return self.end_date
 
+ 
+ #? 
+ 
     def get_standard_deviation(self) -> Optional[float]:
         """
         Get the standard deviation for the task.
@@ -166,6 +263,9 @@ class Task:
         """
         return self.standard_deviation
 
+ 
+
+ 
     def to_dict(self):
         """
         Convert Task object to dictionary for JSON serialization.
@@ -180,6 +280,10 @@ class Task:
         d["projected_end_date"] = self.projected_end_date.isoformat() if self.projected_end_date else None
         return d
 
+
+ 
+    #DEPENDENCY
+ 
     def get_dependency_ids(self) -> List[int]:
         """
         Parse dependency string and return list of task IDs.
@@ -195,6 +299,10 @@ class Task:
         deps_str = self.dependencies.replace(";", ",")
         return [int(x.strip()) for x in deps_str.split(",") if x.strip().isdigit()]
 
+
+     
+    #Check data
+ 
     def is_complete_for_calculation(self) -> bool:
         """
         Check if task has sufficient information for scheduling calculations.
@@ -257,6 +365,8 @@ class TaskManager:
         """
         return max(self.tasks.keys(), default=0) + 1
 
+
+ # SAVE TABLE
     def save(self):
         """
         Save all tasks to JSON file.
@@ -272,7 +382,7 @@ class TaskManager:
             encoding="utf-8"
         )
 
-    def load(self) -> bool:
+    def load(self) -> bool:  # CORRECTED
         """
         Load tasks from JSON file.
         
@@ -298,33 +408,40 @@ class TaskManager:
             if isinstance(dependencies, list):
                 dependencies = ",".join(map(str, dependencies))
 
-            # Create Task object with all stored data
+            # Create Task object with all stored data (including new field dependency_type)
             self.tasks[int(k)] = Task(
                 id=int(k),
                 name=d["name"],
+                category=d.get("category", "Task"),
+                responsible=d.get("responsible"),
+                equipment=d.get("equipment"),
+                comments=d.get("comments"),
+                dependencies=dependencies,
+                dependency_type=d.get("dependency_type", "FS"),  # Added
+                lag=d.get("lag", 0),  # Added
+                # Scheduling
                 start_date=date.fromisoformat(d.get("start_date")) if d.get("start_date") else None,
                 end_date=date.fromisoformat(d.get("end_date")) if d.get("end_date") else None,
+                progress=d.get("progress", 0),
+                projected_end_date=date.fromisoformat(d.get("projected_end_date")) if d.get("projected_end_date") else None,
+                projection_speed=d.get("projection_speed"),
+                is_critical=d.get("is_critical"),
+                # Durations
                 duration_optimistic=d.get("duration_optimistic"),
                 duration_pessimistic=d.get("duration_pessimistic"),
                 duration_probable=d.get("duration_probable"),
                 duration_stochastic=d.get("duration_stochastic"),
-                responsible=d.get("responsible"),
-                equipment=d.get("equipment"),
-                category=d.get("category", "Task"),
-                dependencies=dependencies,
-                dependency_type=d.get("dependency_type", "FS"),
-                lag=d.get("lag", 0),
-                comments=d.get("comments"),
-                progress=d.get("progress", 0),
                 duration_days=d.get("duration_days"),
+                # Risk & Uncertainty
                 standard_deviation=d.get("standard_deviation"),
                 buffer=d.get("buffer"),
-                projected_end_date=date.fromisoformat(d.get("projected_end_date")) if d.get("projected_end_date") else None,
-                is_critical=d.get("is_critical")
+                p10=d.get("p10"), p20=d.get("p20"), p30=d.get("p30"), p40=d.get("p40"),  # Added percentiles
+                p50=d.get("p50"), p60=d.get("p60"), p70=d.get("p70"), p80=d.get("p80"), p90=d.get("p90"),
             )
         return True
 
-    def create_sample(self):
+     # DATA EXEMPLE 
+    def create_sample(self):  # CORRECTED - Now uses named arguments like the dataclass expects
         """
         Create sample mine planning tasks for demonstration.
         
@@ -336,108 +453,85 @@ class TaskManager:
         """
         td = date.today()
         self.tasks = {
-            1: Task(1, "Préparation du site", td, None, 5, 10, 7, None, "Équipe A", "Bulldozer", progress=30),
-            2: Task(2, "Construction route d'accès", None, None, 7, 12, 9, None, "Équipe B", "Excavatrice", dependencies="1", progress=15),
-            3: Task(3, "Forage initial", None, None, 10, 18, 14, None, "Équipe C", "Foreuse", dependencies="1", progress=50),
-            4: Task(4, "Installation équipements", None, None, 3, 8, 5, None, "Équipe D", "Grue", dependencies="2,3", progress=0),
+            1: Task(  # Now uses named args to match dataclass
+                id=1, name="Préparation du site", start_date=td, duration_optimistic=5, duration_pessimistic=10, duration_probable=7, progress=30, responsible="Équipe A", equipment="Bulldozer"
+            ),
+            2: Task(
+                id=2, name="Construction route d'accès", duration_optimistic=7, duration_pessimistic=12, duration_probable=9, progress=15, dependencies="1", responsible="Équipe B", equipment="Excavatrice"
+            ),
+            3: Task(
+                id=3, name="Forage initial", duration_optimistic=10, duration_pessimistic=18, duration_probable=14, progress=50, dependencies="1", responsible="Équipe C", equipment="Foreuse"
+            ),
+            4: Task(
+                id=4, name="Installation équipements", duration_optimistic=3, duration_pessimistic=8, duration_probable=5, progress=0, dependencies="2,3", responsible="Équipe D", equipment="Grue"
+            ),
         }
 
     # ========================================================================================
-    # PERT CALCULATION METHODS
+    # BUFFER CALCULATION METHODS
     # ========================================================================================
 
-    def calculate_stochastic_duration(self, task: Task) -> Optional[float]:
-        """
-        Calculate PERT stochastic duration using the beta distribution formula.
-        
-        PERT Formula: (Optimistic + 4 × Most Likely + Pessimistic) / 6
-        
-        Args:
-            task (Task): Task to calculate duration for
-            
-        Returns:
-            Optional[float]: Calculated stochastic duration
-        """
-        if task.duration_optimistic is None or task.duration_pessimistic is None:
-            return task.duration_stochastic  # Keep existing value if no input data
-            
-        # Use provided probable duration or calculate average
-        if task.duration_probable is None:
-            task.duration_probable = (task.duration_optimistic + task.duration_pessimistic) / 2
-        
-        # Apply PERT formula
-        task.duration_stochastic = (
-            task.duration_optimistic + 4 * task.duration_probable + task.duration_pessimistic
-        ) / 6
-        
-        return task.duration_stochastic
-
-    def calculate_standard_deviation(self, task: Task) -> Optional[float]:
-        """
-        Calculate standard deviation for task duration.
-        
-        Formula: (Pessimistic - Optimistic) / 6
-        This represents the uncertainty in task duration estimates.
-        
-        Args:
-            task (Task): Task to calculate standard deviation for
-            
-        Returns:
-            Optional[float]: Calculated standard deviation
-        """
-        if task.duration_optimistic is None or task.duration_pessimistic is None:
-            return task.standard_deviation  # Keep existing value
-            
-        task.standard_deviation = (task.duration_pessimistic - task.duration_optimistic) / 6
-        return task.standard_deviation
 
     def calculate_buffer(self, task: Task, predecessor_std: Optional[float] = None) -> Optional[float]:
         """
-        Calculate risk buffer for task based on criticality and dependencies.
+        Calculate risk buffer for task based on criticality and dependencies, matching your exact description.
+        
+        Description (translated and matched):
+        ## **1-4 Calculating Buffer:**
+        
+        - **For non-critical task:**
+          Buffer = Non-critical Coefficient × Task's Standard Deviation
+        
+        - **For critical task:**
+          Combined Standard Deviation = √(Predecessor Standard Deviation² + Current Task Standard Deviation²)
+          Buffer = Critical Coefficient × Combined Standard Deviation
+        
+        - **For multi-dependency task:**
+          Buffer = Buffer calculated above × Multi-dependencies Multiplier
         
         Buffer calculation rules:
-        - Critical tasks: Use higher coefficient and combine with predecessor variance
-        - Non-critical tasks: Use lower coefficient
-        - Multi-dependency tasks: Apply additional multiplier
+        - Critical tasks: Use higher coefficient (self.coefficient_critical) and combine with predecessor variance
+        - Non-critical tasks: Use lower coefficient (self.coefficient_non_critical)
+        - Multi-dependency tasks: Apply additional multiplier (self.multiplier_multi_dependencies) to the calculated buffer
         
         Args:
             task (Task): Task to calculate buffer for
-            predecessor_std (Optional[float]): Standard deviation from predecessor tasks
+            predecessor_std (Optional[float]): Standard deviation from predecessor tasks (for critical tasks)
             
         Returns:
-            Optional[float]: Calculated buffer in days
+            Optional[float]: Calculated buffer in days (matches description output)
         """
         if task.duration_optimistic is None or task.duration_pessimistic is None:
-            return task.buffer  # Keep existing value
+            return task.buffer  # Keep existing value if no input data (as before)
             
-        # Ensure standard deviation is calculated
+        # Ensure standard deviation is calculated (required for buffer formulas)
         if task.standard_deviation is None:
-            self.calculate_standard_deviation(task)
+            self.calculate_standard_deviation(task)  # Assumes this sets task.standard_deviation
             
         if task.standard_deviation is None:
             return task.buffer
         
-        # Analyze task characteristics
+        # Analyze task characteristics for multi-dependencies
         num_predecessors = len(task.get_dependency_ids())
         is_multi_dependency = num_predecessors > 1
         
         if task.is_critical:
-            # Critical task buffer calculation
+            # For critical task: Combined Std = √(Pred Std² + Task Std²), Buffer = Critical Coeff × Combined Std
             if predecessor_std is not None:
-                # Combine variances using root sum of squares
                 combined_std = np.sqrt(predecessor_std**2 + task.standard_deviation**2)
             else:
                 combined_std = task.standard_deviation
             task.buffer = self.coefficient_critical * combined_std
         else:
-            # Non-critical task buffer calculation
+            # For non-critical task: Buffer = Non-Critical Coeff × Task Std
             task.buffer = self.coefficient_non_critical * task.standard_deviation
         
-        # Apply multiplier for tasks with multiple dependencies
+        # For multi-dependency task: Buffer = Buffer calculated above × Multi-Dependencies Multiplier
         if is_multi_dependency and task.buffer is not None:
             task.buffer *= self.multiplier_multi_dependencies
             
         return task.buffer
+
 
     def calculate_projected_end_date(self, task: Task) -> Optional[date]:
         """
@@ -479,7 +573,79 @@ class TaskManager:
         task.projected_end_date = task.start_date + timedelta(days=int(round(real_duration)))
         
         return task.projected_end_date
+     
 
+                                              #### Ecart type 
+
+     
+
+    def calculate_beta_standard_deviation(self, task: Task, lambda_value: float = 4.0) -> Optional[float]:
+        """
+        Calculate standard deviation using Beta distribution (PERT methodology).
+        """
+        if (task.duration_optimistic is None or task.duration_pessimistic is None or
+            task.duration_probable is None or task.duration_optimistic >= task.duration_pessimistic):
+            return None
+        
+        O, P, M = task.duration_optimistic, task.duration_pessimistic, task.duration_probable
+        
+        # Step 1: Calculate α and β (Beta distribution parameters)
+        alpha = 1 + lambda_value * (M - O) / (P - O)
+        beta_param = 1 + lambda_value * (P - M) / (P - O)
+        
+        # Step 2: Calculate variance of scaled Beta RV
+        var_Y = (alpha * beta_param) / ((alpha + beta_param) ** 2 * (alpha + beta_param + 1))
+        
+        # Step 3: Scale to actual duration variance
+        var_X = (P - O) ** 2 * var_Y
+        
+        # Step 4: Standard deviation
+        standard_deviation = np.sqrt(var_X)
+        task.standard_deviation = standard_deviation  # Fix: Assigner à task
+        return standard_deviation
+     
+                                  ##### Calculs Percentiles 
+    def calculate_beta_percentiles(self, task: Task, lambda_value: float = 4.0):
+        """
+        Calculate P10 to P90 percentiles using Beta distribution.
+        """
+        if (task.duration_optimistic is None or task.duration_pessimistic is None or
+            task.duration_probable is None or task.duration_optimistic >= task.duration_pessimistic):
+            return
+        
+        O, P, M = task.duration_optimistic, task.duration_pessimistic, task.duration_probable
+        
+        # Step 1: Calculate α and β (same as above)
+        alpha = 1 + lambda_value * (M - O) / (P - O)
+        beta_param = 1 + lambda_value * (P - M) / (P - O)
+        
+        # Step 2: Define quantiles
+        quantiles = {
+            0.10: 'p10', 0.20: 'p20', 0.30: 'p30', 0.40: 'p40',
+            0.50: 'p50', 0.60: 'p60', 0.70: 'p70', 0.80: 'p80', 0.90: 'p90'
+        }
+        
+        # Step 3: Calculate and assign to task
+        for q, attr in quantiles.items():
+            y_q = beta.ppf(q, alpha, beta_param)
+            setattr(task, attr, round(O + (P - O) * y_q, 2))  # Fix: Assigner à task
+
+
+         
+
+    def calculate_standard_deviation(self, task: Task) -> Optional[float]:
+        """
+        Simple fallback for standard deviation (if Beta not used).
+        Formula: (Pessimistic - Optimistic) / 6
+        """
+        if task.duration_optimistic is None or task.duration_pessimistic is None:
+            return task.standard_deviation
+        
+        # Simple PERT std dev
+        std_dev = (task.duration_pessimistic - task.duration_optimistic) / 6
+        task.standard_deviation = std_dev
+        return std_dev
+         
     # ========================================================================================
     # DEPENDENCY AND SCHEDULING METHODS
     # ========================================================================================
@@ -677,17 +843,17 @@ class TaskManager:
             max_iterations (int): Maximum iterations to prevent infinite loops
         """
         
-        # === PHASE 1: PERT CALCULATIONS ===
-        # Calculate stochastic durations and standard deviations first
-        # These are fundamental metrics needed for all other calculations
+        # ... PHASE 1: PERT CALCULATIONS (mise à jour)
         for task in self.tasks.values():
             if task.duration_optimistic is not None and task.duration_pessimistic is not None:
-                # Only calculate if not already computed (preserves manual overrides)
-                if task.duration_stochastic is None:
-                    self.calculate_stochastic_duration(task)
+                # Use fused method for stochastic duration
+                task.get_expected_duration()  # Lump calculate_stochastic_duration here
+                # Calculate standard deviation using Beta (more accurate)
                 if task.standard_deviation is None:
-                    self.calculate_standard_deviation(task)
-                # Set integer duration for scheduling calculations
+                    self.calculate_beta_standard_deviation(task, lambda_value=4.0)  # Add this call
+                # Calculate percentiles using Beta
+                self.calculate_beta_percentiles(task, lambda_value=4.0)  # Add this call
+                # Rounded duration
                 if task.duration_days is None and task.duration_stochastic is not None:
                     task.duration_days = int(round(task.duration_stochastic))
 
@@ -775,24 +941,21 @@ class TaskManager:
                 self.calculate_buffer(task, predecessor_std)
 
         # === PHASE 5: PROGRESS PROJECTIONS ===
-        # Calculate projected completion dates based on current progress
         for task in self.tasks.values():
-            # Always recalculate projections if there's progress
+            # Always recalculate projections and remaining
             if task.progress > 0 and task.start_date and task.duration_stochastic:
                 self.calculate_projected_end_date(task)
+                task.get_remaining_duration()  # Add this call for Projection Speed integration
 
-        # === PHASE 6: BUFFER INTEGRATION ===
-        # Integrate calculated buffers into schedule durations
+        # === PHASE 6: SCHEDULING UPDATES ONLY (NO BUFFER INTEGRATION) ===
+        # Simply update end_date for consistency, without adding buffer
         for task in self.tasks.values():
-            if (task.start_date and task.duration_stochastic is not None and 
-                task.buffer is not None and task.duration_days):
-                # Calculate total duration including buffer
-                total_duration = int(round(task.duration_stochastic + task.buffer))
-                if total_duration != task.duration_days:
-                    task.duration_days = total_duration
-                    # Update end date to reflect buffered duration
-                    if task.start_date:
-                        task.end_date = task.start_date + timedelta(days=task.duration_days - 1)
+            # Only update end_date for scheduling consistency - do NOT add buffer to duration
+            if task.start_date and task.duration_days:
+                # Update end_date based on duration_days (without buffer integration)
+                task.end_date = task.start_date + timedelta(days=task.duration_days - 1)
+            
+            # Buffer remains a separate risk indicator, not integrated into actual schedule
 
     # ========================================================================================
     # UTILITY AND HELPER METHODS
@@ -911,25 +1074,23 @@ class TaskManager:
 # DATA INTERCHANGE UTILITIES
 # ============================================================================================
 
-def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):
+def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):  # CORRECTED VERSION
     """
-    Update TaskManager from Streamlit data editor DataFrame.
+    Update TaskManager from Streamlit data editor DataFrame, matching the new English keys and full dataclass.
     
-    This function bridges the gap between the Streamlit UI and the TaskManager
-    business logic. It handles data type conversions, validation, and preservation
-    of calculated values.
+    Handles data type conversions, PRESERVES calculated fields AND user input if not modified, and adds new fields like category and percentiles.
     
     Args:
         tm (TaskManager): TaskManager instance to update
-        edited_df (pd.DataFrame): DataFrame from Streamlit data editor
+        edited_df (pd.DataFrame): DataFrame from Streamlit data editor with English keys
     """
     
     # === IDENTIFY TASK CHANGES ===
-    # Determine which tasks to keep, update, or delete
+    # Determine which tasks to keep, update, or delete based on 'id'
     new_ids = set()
     for _, row in edited_df.iterrows():
-        if pd.notna(row.get("ID")):
-            new_ids.add(int(row["ID"]))
+        if pd.notna(row.get("id")):
+            new_ids.add(int(row["id"]))
 
     # Remove deleted tasks
     for tid in list(tm.tasks.keys()):
@@ -938,90 +1099,110 @@ def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):
 
     # === PROCESS EACH ROW FROM EDITOR ===
     for _, row in edited_df.iterrows():
-        # Skip rows without task names
-        if pd.isna(row.get("Nom de la tâche*")) or not str(row.get("Nom de la tâche*", "")).strip():
-            continue
+        # Skip rows without a name (but only if id exists and is not just empty)
+        name_value = str(row.get("name", "")).strip()
+        if not name_value and pd.isna(row.get("id", "")):
+            continue  # Skip completely empty rows
 
-        # Extract basic task information
-        name = str(row.get("Nom de la tâche*", "")).strip()
-        tid = int(row["ID"]) if pd.notna(row.get("ID")) else tm.next_id()
+        tid = int(row["id"]) if pd.notna(row.get("id")) else tm.next_id()
+        existing_task = tm.tasks.get(tid)  # Get existing if available
 
         # === DATE PARSING UTILITIES ===
-        def parse_date(date_str):
-            """
-            Robust date parsing for various input formats.
-            
-            Args:
-                date_str: Date string from UI
-                
-            Returns:
-                Optional[date]: Parsed date or None
-            """
+        def parse_date(date_str, fallback_date=None):
+            """Robust date parsing; returns fallback if invalid."""
             if pd.isna(date_str) or not str(date_str).strip():
-                return None
+                return fallback_date  # Use existing or None
             try:
                 date_str = str(date_str).strip()
                 if len(date_str) == 10 and '-' in date_str:
                     return date.fromisoformat(date_str)
             except (ValueError, TypeError):
-                pass
+                return fallback_date  # Invalid -> fallback
             return None
 
-        # Parse all date fields
-        start_date = parse_date(row.get("Date début"))
-        end_date = parse_date(row.get("Date fin"))
-        projected_end_date = parse_date(row.get("Date de fin projection"))
-
         # === NUMERIC PARSING UTILITIES ===
-        def safe_int(value):
-            """Safe integer conversion with None handling."""
+        def safe_int(value, fallback_int=None):
+            """Safe int; returns fallback if invalid."""
             if pd.isna(value) or value == "":
-                return None
+                return fallback_int
             try:
-                return int(float(value))  # Handle float strings
+                return int(float(value))
             except (ValueError, TypeError):
-                return None
-            
-        def safe_float(value):
-            """Safe float conversion with None handling."""
+                return fallback_int
+
+        def safe_float(value, fallback_float=None):
+            """Safe float; returns fallback if invalid."""
             if pd.isna(value) or value == "":
-                return None
+                return fallback_float
             try:
                 return float(value)
             except (ValueError, TypeError):
-                return None
+                return fallback_float
 
-        # === PRESERVE CALCULATED VALUES ===
-        # Get existing task to preserve calculated fields
-        existing_task = tm.tasks.get(tid)
+        # === DETERMINE NEW VALUES WITH PRESERVATION ===
+        # For each field: If row has valid value, use it; else preserve existing (if any)
+        new_name = name_value or (existing_task.name if existing_task else "")
+        new_category = str(row.get("category", "")).strip() or (existing_task.category if existing_task else "Task")
+        new_responsible = str(row.get("responsible", "")).strip() or (existing_task.responsible if existing_task else None)
+        new_equipment = str(row.get("equipment", "")).strip() or (existing_task.equipment if existing_task else None)
+        new_comments = str(row.get("comments", "")).strip() or (existing_task.comments if existing_task else None)
+        new_dependencies = str(row.get("dependencies", "")).strip() or (existing_task.dependencies if existing_task else "")
+        new_dependency_type = str(row.get("dependency_type", "")).strip() or (existing_task.dependency_type if existing_task else "FS")
+        new_lag = safe_int(row.get("lag"), existing_task.lag if existing_task else 0) or 0
+        new_progress = safe_int(row.get("progress"), existing_task.progress if existing_task else 0) or 0
+        new_start_date = parse_date(row.get("start_date"), existing_task.start_date if existing_task else None)
+        new_end_date = parse_date(row.get("end_date"), existing_task.end_date if existing_task else None)
+        new_duration_optimistic = safe_int(row.get("duration_optimistic"), existing_task.duration_optimistic if existing_task else None)
+        new_duration_pessimistic = safe_int(row.get("duration_pessimistic"), existing_task.duration_pessimistic if existing_task else None)
+        new_duration_probable = safe_int(row.get("duration_probable"), existing_task.duration_probable if existing_task else None)
+        new_duration_days = safe_int(row.get("duration_days"), existing_task.duration_days if existing_task else None)
         
+        # Always preserve calculated fields (they will be recalculated by auto_calculate_all_tasks)
+        preserved_stochastic = existing_task.duration_stochastic if existing_task else None
+        preserved_std = existing_task.standard_deviation if existing_task else None
+        preserved_buffer = existing_task.buffer if existing_task else None
+        preserved_projected = existing_task.projected_end_date if existing_task else None
+        preserved_projection_speed = existing_task.projection_speed if existing_task else None
+        preserved_is_critical = existing_task.is_critical if existing_task else None
+        preserved_p10 = existing_task.p10 if existing_task else None
+        preserved_p20 = existing_task.p20 if existing_task else None
+        preserved_p30 = existing_task.p30 if existing_task else None
+        preserved_p40 = existing_task.p40 if existing_task else None
+        preserved_p50 = existing_task.p50 if existing_task else None
+        preserved_p60 = existing_task.p60 if existing_task else None
+        preserved_p70 = existing_task.p70 if existing_task else None
+        preserved_p80 = existing_task.p80 if existing_task else None
+        preserved_p90 = existing_task.p90 if existing_task else None
+
         # === CREATE/UPDATE TASK ===
         task = Task(
             id=tid,
-            name=name,
-            responsible=str(row.get("Responsable", "")).strip() or None,
-            equipment=str(row.get("Équipements", "")).strip() or None,
-            start_date=start_date,
-            end_date=end_date,
-            duration_optimistic=safe_int(row.get("Durée optimiste")),
-            duration_pessimistic=safe_int(row.get("Durée pessimiste")),
-            duration_probable=safe_int(row.get("Durée probable")),
-            # Preserve calculated stochastic duration unless manually overridden
-            duration_stochastic=safe_float(row.get("Durée stochastique")) if existing_task is None else (safe_float(row.get("Durée stochastique")) or existing_task.duration_stochastic),
-            duration_days=safe_int(row.get("Durée (jours)")),
-            dependencies=str(row.get("Dépendance", "")).strip(),
-            dependency_type=str(row.get("Type Dép.", "FS")).strip(),
-            lag=safe_int(row.get("Décalage (j)")) or 0,
-            progress=safe_int(row.get("Progression")) or 0,
-            comments=str(row.get("Commentaires", "")).strip() or None,
-            # Preserve calculated fields
-            standard_deviation=safe_float(row.get("Écart type")) if existing_task is None else (safe_float(row.get("Écart type")) or existing_task.standard_deviation),
-            buffer=safe_float(row.get("Buffer")) if existing_task is None else (safe_float(row.get("Buffer")) or existing_task.buffer),
-            projected_end_date=projected_end_date if existing_task is None else (projected_end_date or existing_task.projected_end_date),
-            is_critical=bool(row.get("État critique")) if pd.notna(row.get("État critique")) else (existing_task.is_critical if existing_task else None),
+            name=new_name,
+            category=new_category,
+            responsible=new_responsible,
+            equipment=new_equipment,
+            comments=new_comments,
+            dependencies=new_dependencies,
+            dependency_type=new_dependency_type,
+            lag=new_lag,
+            start_date=new_start_date,
+            end_date=new_end_date,
+            progress=new_progress,
+            projected_end_date=preserved_projected,
+            projection_speed=preserved_projection_speed,
+            is_critical=preserved_is_critical,
+            duration_optimistic=new_duration_optimistic,
+            duration_pessimistic=new_duration_pessimistic,
+            duration_probable=new_duration_probable,
+            duration_stochastic=preserved_stochastic,
+            duration_days=new_duration_days,
+            standard_deviation=preserved_std,
+            buffer=preserved_buffer,
+            p10=preserved_p10, p20=preserved_p20, p30=preserved_p30, p40=preserved_p40,
+            p50=preserved_p50, p60=preserved_p60, p70=preserved_p70, p80=preserved_p80, p90=preserved_p90,
         )
 
-        tm.tasks[tid] = task
+        tm.tasks[int(tid)] = task
 
 # ============================================================================================
 # STREAMLIT USER INTERFACE
@@ -1144,71 +1325,109 @@ def show_task_management_page(tm: TaskManager):
     # Convert tasks to DataFrame format for editing
     records = []
     for task in sorted(tm.tasks.values(), key=lambda x: x.id):
+        # General Information
         records.append({
-            "ID": task.id,
-            "Nom de la tâche*": task.name,
-            "Responsable": task.responsible or "",
-            "Équipements": task.equipment or "",
-            "Date début": task.start_date.strftime("%Y-%m-%d") if task.start_date else "",
-            "Date fin": task.end_date.strftime("%Y-%m-%d") if task.end_date else "",
-            "Durée optimiste": task.duration_optimistic,
-            "Durée pessimiste": task.duration_pessimistic,
-            "Durée probable": task.duration_probable,
-            "Durée stochastique": round(task.duration_stochastic, 2) if task.duration_stochastic is not None else None,
-            "Dépendance": task.dependencies,
-            "Durée (jours)": task.duration_days,
-            "Progression": task.progress,
-            "Date de fin projection": task.projected_end_date.strftime("%Y-%m-%d") if task.projected_end_date else "",
-            "État critique": task.is_critical,
-            "Écart type": round(task.standard_deviation, 2) if task.standard_deviation is not None else None,
-            "Buffer": round(task.buffer, 2) if task.buffer is not None else None,
-            "Commentaires": task.comments or "",
+            "id": task.id,
+            "name": task.name,
+            "category": task.category,
+            "responsible": task.responsible,
+            "equipment": task.equipment,
+            "comments": task.comments,
+            "dependencies": task.dependencies,
+            # Scheduling
+            "start_date": task.start_date.isoformat() if task.start_date else "",
+            "end_date": task.end_date.isoformat() if task.end_date else "",
+            "lag": task.lag,
+            "progress": task.progress,
+            "projected_end_date": task.projected_end_date.isoformat() if task.projected_end_date else "",
+            "projection_speed": round(task.projection_speed, 2) if task.projection_speed is not None else "",
+            "is_critical": task.is_critical,
+            # Durations
+            "duration_optimistic": task.duration_optimistic,
+            "duration_pessimistic": task.duration_pessimistic,
+            "duration_probable": task.duration_probable,
+            "duration_stochastic": round(task.duration_stochastic, 2) if task.duration_stochastic is not None else "",
+            "duration_days": task.duration_days,
+            # Risk & Uncertainty
+            "standard_deviation": round(task.standard_deviation, 2) if task.standard_deviation is not None else "",
+            "buffer": round(task.buffer, 2) if task.buffer is not None else "",
+            "p10": round(task.p10, 2) if task.p10 is not None else "",
+            "p20": round(task.p20, 2) if task.p20 is not None else "",
+            "p30": round(task.p30, 2) if task.p30 is not None else "",
+            "p40": round(task.p40, 2) if task.p40 is not None else "",
+            "p50": round(task.p50, 2) if task.p50 is not None else "",
+            "p60": round(task.p60, 2) if task.p60 is not None else "",
+            "p70": round(task.p70, 2) if task.p70 is not None else "",
+            "p80": round(task.p80, 2) if task.p80 is not None else "",
+            "p90": round(task.p90, 2) if task.p90 is not None else "",
         })
 
     # Add empty row if no tasks exist
     if not records:
         records.append({
-            "ID": None,
-            "Nom de la tâche*": "",
-            "Responsable": "",
-            "Équipements": "",
-            "Date début": "",
-            "Date fin": "",
-            "Durée optimiste": None,
-            "Durée pessimiste": None,
-            "Durée probable": None,
-            "Durée stochastique": None,
-            "Dépendance": "",
-            "Durée (jours)": None,
-            "Progression": 0,
-            "Date de fin projection": "",
-            "État critique": None,
-            "Écart type": None,
-            "Buffer": None,
-            "Commentaires": "",
+            "id": "",
+            "name": "",
+            "category": "Task",
+            "responsible": "",
+            "equipment": "",
+            "comments": "",
+            "dependencies": "",
+            "start_date": "",
+            "end_date": "",
+            "lag": 0,
+            "progress": 0,
+            "projected_end_date": "",
+            "projection_speed": "",
+            "is_critical": None,
+            "duration_optimistic": None,
+            "duration_pessimistic": None,
+            "duration_probable": None,
+            "duration_stochastic": "",
+            "duration_days": None,
+            "standard_deviation": "",
+            "buffer": "",
+            "p10": "", "p20": "", "p30": "", "p40": "", "p50": "",
+            "p60": "", "p70": "", "p80": "", "p90": "",
         })
 
     # === COLUMN CONFIGURATION ===
-    # Define how each column should behave in the data editor
+    # Match the Task dataclass exactly: Use field names as keys, emojis as headers for clarity.
+    # Disabled=True for calculated fields.
     column_config = {
-        "ID": st.column_config.NumberColumn("ID", disabled=True, width=50),
-        "Nom de la tâche*": st.column_config.TextColumn("Nom de la tâche*", required=True, width=150),
-        "Responsable": st.column_config.TextColumn("Responsable", width=120),
-        "Équipements": st.column_config.TextColumn("Équipements", width=120),
-        "Date début": st.column_config.TextColumn("Date début", help="Format: YYYY-MM-DD", width=100),
-        "Date fin": st.column_config.TextColumn("Date fin", help="Format: YYYY-MM-DD", width=100),
-        "Durée optimiste": st.column_config.NumberColumn("Durée optimiste", min_value=0, width=80),
-        "Durée pessimiste": st.column_config.NumberColumn("Durée pessimiste", min_value=0, width=80),
-        "Durée probable": st.column_config.NumberColumn("Durée probable", min_value=0, width=80),
-        "Durée stochastique": st.column_config.NumberColumn("Durée stochastique", disabled=True, width=80),
-        "Dépendance": st.column_config.TextColumn("Dépendance", help="Ex: 1,2,3", width=100),
-        "Durée (jours)": st.column_config.NumberColumn("Durée (j)", min_value=0, width=80),
-        "Progression": st.column_config.NumberColumn("Progression", min_value=0, max_value=100, step=5, width=100),
-        "Date de fin projection": st.column_config.TextColumn("Date de fin projection", disabled=True, width=100),
-        "État critique": st.column_config.CheckboxColumn("État critique", disabled=True, width=80),
-        "Écart type": st.column_config.NumberColumn("Écart type", disabled=True, width=80),
-        "Buffer": st.column_config.NumberColumn("Buffer", disabled=True, width=80),
-        "Commentaires": st.column_config.TextColumn("Commentaires", width=200),
+        # General Information
+        "id": st.column_config.NumberColumn("🆔 ID", disabled=True, width=50),
+        "name": st.column_config.TextColumn("📝 Name", required=True, width=150),
+        "category": st.column_config.TextColumn("🏷️ Category", width=100),
+        "responsible": st.column_config.TextColumn("👤 Responsible", width=120),
+        "equipment": st.column_config.TextColumn("🛠️ Equipment", width=120),
+        "comments": st.column_config.TextColumn("💬 Comments", width=200),
+        "dependencies": st.column_config.TextColumn("🔗 Dependencies", help="Ex: 1,2,3", width=100),
+        # Scheduling
+        "start_date": st.column_config.TextColumn("🗓️ Start Date", help="Format: YYYY-MM-DD", width=100),
+        "end_date": st.column_config.TextColumn("🎯 End Date", help="Format: YYYY-MM-DD", width=100),
+        "lag": st.column_config.NumberColumn("⏳ Lag (days)", min_value=0, width=80),
+        "progress": st.column_config.NumberColumn("📊 Progress (%)", min_value=0, max_value=100, step=5, width=100),
+        "projected_end_date": st.column_config.TextColumn("🔮 Projected End Date", disabled=True, width=120),
+        "projection_speed": st.column_config.NumberColumn("🚀 Projection Speed", disabled=True, width=100),
+        "is_critical": st.column_config.CheckboxColumn("⚡ Is Critical", disabled=True, width=80),
+        # Durations
+        "duration_optimistic": st.column_config.NumberColumn("😊 Optimistic (days)", min_value=0, width=80),
+        "duration_pessimistic": st.column_config.NumberColumn("😰 Pessimistic (days)", min_value=0, width=80),
+        "duration_probable": st.column_config.NumberColumn("🤔 Probable (days)", min_value=0, width=80),
+        "duration_stochastic": st.column_config.NumberColumn("📈 Stochastic (days)", disabled=True, width=80),
+        "duration_days": st.column_config.NumberColumn("📅 Duration Days", min_value=0, width=80),
+        # Risk & Uncertainty
+        "standard_deviation": st.column_config.NumberColumn("📊 Standard Deviation", disabled=True, width=100),
+        "buffer": st.column_config.NumberColumn("🛡️ Buffer (days)", disabled=True, width=80),
+        "p10": st.column_config.NumberColumn("P10", disabled=True, width=60),
+        "p20": st.column_config.NumberColumn("P20", disabled=True, width=60),
+        "p30": st.column_config.NumberColumn("P30", disabled=True, width=60),
+        "p40": st.column_config.NumberColumn("P40", disabled=True, width=60),
+        "p50": st.column_config.NumberColumn("P50 (median)", disabled=True, width=60),
+        "p60": st.column_config.NumberColumn("P60", disabled=True, width=60),
+        "p70": st.column_config.NumberColumn("P70", disabled=True, width=60),
+        "p80": st.column_config.NumberColumn("P80", disabled=True, width=60),
+        "p90": st.column_config.NumberColumn("P90", disabled=True, width=60),
     }
 
     # === INTERACTIVE DATA EDITOR ===
@@ -1224,26 +1443,23 @@ def show_task_management_page(tm: TaskManager):
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        if st.button("🧮 **Calculer les champs manquants**", type="primary", 
+        if st.button("🧮 **Calculer les champs manquants**", type="primary",
                      help="Calcule automatiquement les dates et durées manquantes"):
             with st.spinner("Calcul en cours..."):
                 try:
-                    # Update tasks from editor data
                     update_tasks_from_editor(tm, edited_df)
-                    
-                    # Run comprehensive calculations
                     tm.auto_calculate_all_tasks()
-                    
-                    # Save results
                     tm.save()
-                    
-                    # Update session state
+
+                    # 🔥 DEBUG 2 : Vérifie save
+                    st.write("### ✅ DEBUG 2 - Save OK ?", f"Tâches: {len(tm.tasks)}")
+
+                    # 🔥 DEBUG 3 : Écoute logs F12 pour erreurs
                     st.session_state.task_manager = tm
-                    
-                    st.success("✅ Calculs effectués avec succès!")
+                    st.success("✅ Calculs effectués!")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"❌ Erreur lors du calcul: {e}")
+                    st.error(f"❌ Debug 3 - Erreur: {e}")
 
     with col2:
         if st.button("💾 Appliquer les modifications", help="Applique les modifications du tableau"):
