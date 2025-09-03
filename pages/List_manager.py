@@ -31,13 +31,13 @@ def load_opt_pkl(start_with, location) :
     list_files = [ os.path.join(location,x) for x in os.listdir(location) if x.startswith(start_with) and x.endswith(".pkl")]
     if len(list_files) >= 1 :
       # if there are files that starts with start_with and ends with pkl
-      with open(list_files[0], rb) as f :
+      with open(list_files[0], "rb") as f :
         st.session_state.dict_opt = pickle.load(f)
       
       if len(list_files) == 1 :
         st.toast(f":green-badge[Great!] the file {list_files[0]} have been imported successfully", icon=":material/check_small:")
       else :
-        st.toast(f":orange-badge[Warning!] there was more than one file in the folder {location} with a name starting with {start_with}. The first file encoutered : {list_file[0]} has been loaded by default.", icon=":material/warning:")
+        st.toast(f":orange-badge[Warning!] there was more than one file in the folder {location} with a name starting with {start_with}. The first file encoutered {list_file[0]} has been loaded by default.", icon=":material/warning:")
         
     else :
       st.session_state.dict_opt = {}    
@@ -74,7 +74,7 @@ if st.button("Save options", type="primary", help="This button save all options 
 
   #storing it locally for next sessions
   full_name = os.path.join(folder, f"{fname_begin}.pkl")
-  with open(full_name, wb) as f :
+  with open(full_name, "wb") as f :
     pickle.dump(dict_opt, f)
     st.toast("The options have been saved!", icon=":material/check_small:")
     st.success("Saved! The app will rerun in 3 seconds.")
