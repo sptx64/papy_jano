@@ -47,7 +47,6 @@ def load_opt_pkl(start_with, location) :
 fname_begin, folder = "dict_opt", "files"
 load_opt_pkl(start_with=fname_begin, location=folder)
 
-st.session_state
 #Tasks
 if "Task" not in st.session_state.dict_opt :
   st.session_state.dict_opt["Task"] = []
