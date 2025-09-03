@@ -8,7 +8,8 @@ import time
 "# List manager"
 """
 On this page you can manage the lists of tasks, supervisors, and machines options which can be used across other modules.
-The application allows users to add, remove, or modify options for these categories through an intuitive interface.
+The application enable to add, remove, or modify options for these categories through a simple interface.
+List of options are cached in streamlit on this session and saved locally to persist across sessions.
 """
 
 def load_opt_pkl(start_with, location) :
