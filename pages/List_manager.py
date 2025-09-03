@@ -7,7 +7,19 @@ import os
 "# List manager"
 "On this page you can manage all options that you want to be added or removed to lists."
 
+
 def load_opt_pkl(start_with, location) :
+  """
+  Function to load a pkl file that contain all list options
+  The function return the dictionary if it's found locally on the "location" folder by looking for a file starting with "start_with"
+  If a file is found then it's stored in the st.session_state
+  If multiple files are found it will flag a warning for the user and the first file will be loaded
+  if no file are found it will store an empty dictionary in st.session_state
+  ---
+  warning on the streamlit public cloud, the files stay only 24h, then are deleted.
+  it will have a better behavior when run locally
+  """
+  
   if "dict_opt" not in st.session_state :
     #checking if the folder in input exists
     if not os.path.exists(location) :
@@ -30,22 +42,41 @@ def load_opt_pkl(start_with, location) :
       st.session_state.dict_opt = {}    
     
 
+#loading the existing pkl if there are any
 list_opt_id, folder = "dict_opt", "files"
 load_opt_pkl(start_with=list_opt_id, location=folder)
 
-t = st.tabs(["Task", "Task supervisor", "Machines"])
+# streamlit tabs to organise the code
+t = st.tabs(["Task", "Supervisors", "Machines"])
 with t[0] :
   if "Task" not in st.session_state.dict_opt :
     st.session_state.dict_opt["Task"] = []
+  list_task = st.multiselect("Task options that will be available in other modules", st.session_state.dict_opt["Task"], st.session_state.dict_opt["Task"], accept_new_options=True)
 
 with t[1] :
-  if "Task supervisor" not in st.session_state.dict_opt :
-    st.session_state.dict_opt["Task supervisor"] = []
+  if "Supervisors" not in st.session_state.dict_opt :
+    st.session_state.dict_opt["Supervisors"] = []
+  list_supervisors = st.multiselect("Supervisors options that will be available in other modules", st.session_state.dict_opt["Supervisors"], st.session_state.dict_opt["Supervisors"], accept_new_options=True)
 
 with t[2] :
   if "Machines" not in st.session_state.dict_opt :
     st.session_state.dict_opt["Machines"] = []
+  list_machines = st.multiselect("Machines that will be available in other modules", st.session_state.dict_opt["Machines"], st.session_state.dict_opt["Supervisors"], accept_new_options=True)
 
+#one unique save button that will save all lists in a dictionary and deleting any duplicate
+if st.button("Save options", type="primary") :
+  dict_opt = {
+    "Task" : list_task,
+    "Supervisors" : list_supervisors,
+    "Machines" : list_machines,
+  }
+  #checking if there are duplicates and deleting them
+  for k in dict_opt :
+    dict_opt[k] = list(np.unique([ dict_opt[k] ]))
+
+  
+
+  
 
 
   
