@@ -1,6 +1,5 @@
 streamlit
-pyecharts
-st_echarts
+streamlit-echarts
 pandas
 numpy
 geopandas
