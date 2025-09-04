@@ -35,12 +35,24 @@ class MineOps :
       with t[i] :
         f"### {mt}"
         f"Setup the number of {mt}, availability, "
-        nb_mt = st.number_input(f"Number of {mt}", 0, 1000, 2)
-        list_subm = []
+        c = st.columns(3)
+        nb_mt = c[0].number_input(f"Number of {mt}", 0, 1000, 2)
+        capacity_range = (0,999999,None)
+        default_capacity = c[1].number_input(f"Default capacity for {mt} machines", capacity[0], capacity[1], capacity[2], help="Just to simplify inputting")
+        list_subm = {}
         for mt_id in nb_mt :
-          list_subm.append(
-            st.text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
-          )
+          c = st.columns(3)
+          machine_name = c[0].text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
+          machine_capacity = c[1].number_input(f"{mt} - id:{mt_id} capacity (tons)", capacity[0], capacity[1], default_capacity, help="Can be left empty")
+          machine_comment = c[2].text_input(f"{mt} - id:{mt_id} comment", None, placeholder="Any comment you want to link to this machine", help="Can be left empty if no comment")
+          list_subm[mt_id] = {
+            "name":machine_name,
+            "capacity":machine_capacity,
+            "comment":machine_comment,
+          }
+          
+          
+          
           
       
     
