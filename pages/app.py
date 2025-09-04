@@ -26,7 +26,14 @@ from typing import Dict, Optional, List
 import pandas as pd
 import streamlit as st
 import numpy as np
-from dataclasses import dataclass
+from visualizations import show_visualizations_page
+from itertools import product
+import random
+from scipy.stats import beta  # Si pas déjà là
+import numpy as np  # Si pas déjà là
+import pandas as pd  # Si pas déjà là
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 
 # ============================================================================================
@@ -1221,7 +1228,7 @@ def main():
     st.sidebar.title("🧭 Navigation")
     page = st.sidebar.selectbox(
         "Choisir une page",
-        ["📊 Gestion des Tâches", "📈 Visualisations & Statistiques"]
+        ["📊 Gestion des Tâches", "📈 Visualisations & Statistiques", "🧩 Simulation de Projet"]  # <-- Ajouté ici si pas déjà fait
     )
 
     # === SESSION STATE MANAGEMENT ===
@@ -1237,13 +1244,17 @@ def main():
     elif page == "📈 Visualisations & Statistiques":
         try:
             # Import visualization module (external dependency)
-            from visualizations import show_visualizations_page
+            from visualizations import show_visualizations_page  # Garde ton import original
             show_visualizations_page(tm)
         except Exception as e:
             st.error("❌ Erreur lors du chargement des visualisations :")
             st.code(str(e))
-    else:
-        st.warning("Page inconnue")
+    elif page == "🧩 Simulation de Projet":
+        try:
+            from simulation import show_simulation_page  # <-- CORRIGÉ : nom de ton fichier sans espaces
+            show_simulation_page(tm)  # <-- CORRIGÉ : nom de la fonction sans espaces
+        except Exception as e:
+            st.error(f"❌ Erreur lors du chargement de la simulation : {e}")
 
 def show_task_management_page(tm: TaskManager):
     """
@@ -1259,7 +1270,77 @@ def show_task_management_page(tm: TaskManager):
     Args:
         tm (TaskManager): TaskManager instance
     """
+
+# === CONFIGURATION INITIALE (Sidebar, Headers, etc.) ===
+    # ... votre code existant ici ...
+
+    # === CALCULS DES COEFFS ===
+    coeff_non   = round(tm.coefficient_non_critical, 2)
+    coeff_crit  = round(tm.coefficient_critical, 2)
+    coeff_multi = round(tm.multiplier_multi_dependencies, 2)
+
+    # === ACCORDÉON DES FORMULES (au-dessus du tableau) ===
+    with st.expander("📐 **Formules & Calculs des Colonnes**", expanded=False):
+
+        st.markdown(f"""
+        Cet accordéon décrit **chaque colonne du tableau**, avec son type (manuel ou calculé),  
+        sa formule et son rôle dans la planification.  
+
+        *(Valeurs actuelles : Non-Crit = **{coeff_non}**, Crit = **{coeff_crit}**, Multi = **{coeff_multi}**)*  
+
+        ---
+
+        ## 🔎 1. Informations Générales
+        | Colonne       | Type       | Formule / Règle | Explication |
+        |---------------|-----------|-----------------|-------------|
+        | 🆔 ID         | Calculé   | `next_id()`     | Identifiant unique auto si non fourni |
+        | 📝 Name       | Manuel    | —               | Nom de la tâche |
+        | 🏷️ Category  | Manuel    | Défaut `"Task"` | Catégorie de tâche |
+        | 👤 Responsible| Manuel    | —               | Responsable de la tâche |
+        | 🛠️ Equipment | Manuel    | —               | Ressources nécessaires |
+        | 💬 Comments  | Manuel    | —               | Notes libres |
+        | 🔗 Dependencies | Manuel | `"1,2"` → `[1,2]` | Parse automatique des prédécesseurs |
+
+        ---
+
+        ## 📅 2. Planification
+        | Colonne       | Type       | Formule / Règle | Explication |
+        |---------------|-----------|-----------------|-------------|
+        | 🗓️ Start Date| Manuel/Calc | `latest_pred_end + 1j + lag` | Date de début (dépendances ou today) |
+        | 🎯 End Date   | Calculé   | `start_date + duration_days - 1` | Date de fin prévue |
+        | ⏳ Lag        | Manuel    | Défaut = 0 | Décalage manuel en jours |
+        | 📊 Progress   | Manuel    | 0–100% | Avancement de la tâche |
+        | 🔮 Projected End | Calculé | `start + (stochastic / speed)` | Fin projetée selon vitesse |
+        | 🚀 Projection Speed | Calculé | `(stochastic × progress/100) / elapsed_days` | Vitesse réelle d’exécution |
+        | ⚡ Critical   | Calculé   | `find_critical_path()` | Bool : tâche sur chemin critique |
+
+        ---
+
+        ## ⏱️ 3. Durées
+        | Colonne         | Type     | Formule | Explication |
+        |-----------------|----------|---------|-------------|
+        | 😊 Optimistic   | Manuel   | — | Durée minimale attendue |
+        | 😰 Pessimistic  | Manuel   | — | Durée maximale attendue |
+        | 🤔 Probable     | Manuel/DB| `(opt + pess)/2` ou DB | Durée la plus probable |
+        | 📈 Stochastic   | Calculé  | `(opt + 4*prob + pess)/6` | Durée PERT |
+        | 📅 Duration(days)| Calculé | `round(stochastic)` | Durée finale arrondie |
+
+        ---
+
+        ## ⚠️ 4. Risques & Incertitudes
+        | Colonne       | Type     | Formule | Explication |
+        |---------------|----------|---------|-------------|
+        | 📊 Std Dev    | Calculé  | `σ = (pess - opt) * sqrt(var_Y)` | Incertitude (Bêta-PERT ou approx `(pess-opt)/6`) |
+        | 🛡️ Buffer     | Calculé  | Non-crit: `σ×{coeff_non}`<br>Critique: `√(σ_pred²+σ²)×{coeff_crit}`<br>Multi: `×{coeff_multi}` | Réserve de sécurité |
+        | 🎲 P10–P90    | Calculé  | `beta.ppf(q, α, β)` → `opt + (pess-opt)×y_q` | Quantiles de durée |
+
+        ---
+
+        ✅ Les colonnes marquées *Manuel* doivent être saisies.  
+        ⚙️ Les calculs sont appliqués automatiquement via `auto_calculate_all_tasks`.
+        """)
     
+     
     # === PAGE HEADER ===
     st.title("⚒️ Gestionnaire de Tâches Avancé")
     st.markdown("---")
