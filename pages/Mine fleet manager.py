@@ -7,6 +7,16 @@ import streamlit as st
 Here you can specify machine number, availability and capacity.
 """
 
+class MachineEntity :
+  def __init__(self, mtype, id, name, capacity, comment, availability) :
+    self.mtype = machine_type
+    self.id = machine_id
+    self.name = machine_name
+    self.capacity = machine_capacity
+    self.comment = machine_comment
+    self.availability = machine_availability
+
+
 class MineOps :
   def __init__(self, dict_opt, mine_supervisors, mine_fleet, mine_task) :
     self.dict_opt = dict_opt
@@ -27,9 +37,10 @@ class MineOps :
         else :
           st.error(f"The key {k} does not exist, please create it in the List manager page.")
       
-  def config_fleet(self) :
+  def fleet_setup(self) :
     check_dict_opt("mine_fleet")
     machine_type = self.dict_opt["Machines"]
+    fleet={}
     t = st.tabs(machine_types)
     for i,mt in enumerate(machine_type) :
       with t[i] :
@@ -39,17 +50,23 @@ class MineOps :
         nb_mt = c[0].number_input(f"Number of {mt}", 0, 1000, 2)
         capacity_range = (0,999999,None)
         default_capacity = c[1].number_input(f"Default capacity for {mt} machines", capacity[0], capacity[1], capacity[2], help="Just to simplify inputting")
-        list_subm = {}
+        dict_machine_entities = {}
         for mt_id in nb_mt :
-          c = st.columns(3)
+          c = st.columns(4)
           machine_name = c[0].text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
           machine_capacity = c[1].number_input(f"{mt} - id:{mt_id} capacity (tons)", capacity[0], capacity[1], default_capacity, help="Can be left empty")
           machine_comment = c[2].text_input(f"{mt} - id:{mt_id} comment", None, placeholder="Any comment you want to link to this machine", help="Can be left empty if no comment")
-          list_subm[mt_id] = {
-            "name":machine_name,
-            "capacity":machine_capacity,
-            "comment":machine_comment,
-          }
+          machine_availability = c[3].checkbox(f"{mt} - id:{mt_id} is available", value=True)
+          machine_entity = MachineEntity(mtype=mt, id=mt_id, name=machine_name,
+                                         capacity=machine_capacity, comment=machine_comment,
+                                         available=machine_availability)
+          dict_machine_entities[mt_id] = machine_entity
+        fleet[mt] = dict_machine_entities
+    if st.button("Save Mine Fleet", type="primary") :
+      self.mine_fleet=fleet
+        
+        
+        
           
           
           
