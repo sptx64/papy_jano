@@ -18,7 +18,7 @@ class MachineEntity :
 
 
 class MineOps :
-  def __init__(self, dict_opt, mine_supervisors, mine_fleet, mine_task) :
+  def __init__(self, dict_opt, mine_supervisors={}, mine_fleet={}, mine_task={}) :
     self.dict_opt = dict_opt
     self.mine_supervisors = mine_supervisors
     self.mine_fleet = mine_fleet
@@ -62,8 +62,29 @@ class MineOps :
                                          available=machine_availability)
           dict_machine_entities[mt_id] = machine_entity
         fleet[mt] = dict_machine_entities
-    if st.button("Save Mine Fleet", type="primary") :
-      self.mine_fleet=fleet
+    
+    if st.button("Name your Mine Fleet", type="primary") :
+      @st.dialog("Mine Fleet naming", width="medium")
+      def mine_fleet_save(fleet) :
+        "### Saving your mine fleet"
+        c = st.columns(2)
+        if c[1].toggle("Overwrite an existing fleet?") :
+          input_opt = (list(self.mine_fleet), False, "Select the MineFleet you want to overwrite") if self.mine_fleet is not None and len(self.mine_fleet)>0 else ([], True, "There are no MineFleet existing in your project")
+          mfleet_name = c[0].selectbox("MineFleet to overwrite", input_opt[0], disabled=input_opt[1], help=input_opt[2])
+        else :
+          mfleet_name = c[0].text_input("Create a new MineFleet", placeholder="Your new mine fleet name")
+        
+        if mfleet_name is not None and mfleet_name != "" :
+          if st.button("Save mine fleet") :
+            self.mine_fleet[mfleet_name] = fleet
+            # save mine fleet
+        else :
+          st.info("Please select/enter a valid name")
+            
+            
+            
+            
+          
         
         
         
