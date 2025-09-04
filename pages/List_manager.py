@@ -5,12 +5,8 @@ import pickle
 import os
 import time
 
-"# List manager"
-"""
-On this page you can manage the lists of tasks, supervisors, and machines options which can be used across other modules.
-The application enable to add, remove, or modify options for these categories through a simple interface.
-List of options are cached in streamlit on this session and saved locally to persist across sessions.
-"""
+from func.data import load_opt_pkl
+
 
 def load_opt_pkl(start_with, location) :
   """
