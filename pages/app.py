@@ -26,7 +26,6 @@ from typing import Dict, Optional, List
 import pandas as pd
 import streamlit as st
 import numpy as np
-from visualizations import show_visualizations_page
 from itertools import product
 import random
 from scipy.stats import beta  # Si pas déjà là
