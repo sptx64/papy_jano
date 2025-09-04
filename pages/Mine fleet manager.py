@@ -21,7 +21,7 @@ class MineOps :
     for tc,k in zip(["mine_supervisor", "mine_fleet", "mine_task"],["Supervisors", "Machines", "Task"]) :
       if to_check==tc :
         if k in self.dict_opt :
-          if len(dict_opt[k]) == 0 :
+          if len(self.dict_opt[k]) == 0 :
             st.error(f"No '{k}' type have been created in the List manager page.")
             st.stop()
         else :
@@ -29,4 +29,19 @@ class MineOps :
       
   def config_fleet(self) :
     check_dict_opt("mine_fleet")
+    machine_type = self.dict_opt["Machines"]
+    t = st.tabs(machine_types)
+    for i,mt in enumerate(machine_type) :
+      with t[i] :
+        f"### {mt}"
+        f"Setup the number of {mt}, availability, "
+        nb_mt = st.number_input(f"Number of {mt}", 0, 1000, 2)
+        list_subm = []
+        for mt_id in nb_mt :
+          list_subm.append(
+            st.text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
+          )
+          
+      
+    
 
