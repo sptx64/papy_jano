@@ -26,8 +26,8 @@ selected_module = st.radio("Select what you want to do :", list_module)
 fname_begin, folder = "MineOps - ", "files"
 
 if selected_module == list_module[0] :
-  MineOps()
-  "test"
+  mops = MineOps()
+  mops.create_dict_opt()
 
 
 # #loading the existing pkl if there are any
