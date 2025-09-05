@@ -7,14 +7,14 @@ this file store all classes available
 """
 
 class MachineEntity :
-  def __init__(self, name, mtype, id, name, capacity, comment, availability) :
+  def __init__(self, name, mtype, id, capacity, comment, availability) :
     """
     This function initiate the MachineEntity class called in MineOps
     """
-    self.name         = name
+    # self.name         = name
     self.mtype        = machine_type
     self.id           = machine_id
-    self.name         = machine_name
+    self.name         = name
     self.capacity     = machine_capacity
     self.comment      = machine_comment
     self.availability = machine_availability
