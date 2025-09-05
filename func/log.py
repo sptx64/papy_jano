@@ -1,7 +1,7 @@
 import os
 import numpy
 import streamlit as st
-from func.data import get_save_folder
+from .data import get_save_folder
 
 
 def log() :
