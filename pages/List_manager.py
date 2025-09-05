@@ -7,6 +7,7 @@ import time
 
 from func.data import load_opt_pkl
 from func.log import log
+from func.all_class import MineOps
 
 log()
 
