@@ -4,6 +4,7 @@ import streamlit as st
 import os
 from .data import get_save_folder
 import time
+import pickle
 
 """
 this file store all classes available
