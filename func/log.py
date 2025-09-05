@@ -27,8 +27,10 @@ def log() :
       new_project = c[1].toggle("Create a New project", value=True)
       if new_project :
         project=c[0].text_input("New project name", None, placeholder="YOUR NEW PROJECT NAME")
-        if project in projects or project is None :
-          st.warning("This project name is empty or already exists")
+        if project in projects :
+          st.warning("This project name already exists")
+        elif project is None :
+          st.info("Enter a new project name")
         else :
           disabled=False
 
