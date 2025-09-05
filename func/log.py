@@ -33,7 +33,7 @@ def log() :
           disabled=False
 
       else :
-        project=st.selectbox("Select your existing project", projects, None)
+        project=c[0].selectbox("Select your existing project", projects, None)
         if project is not None :
           disabled=False
        
