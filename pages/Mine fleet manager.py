@@ -77,6 +77,8 @@ class MineOps :
         if mfleet_name is not None and mfleet_name != "" :
           if st.button("Save mine fleet") :
             self.mine_fleet[mfleet_name] = fleet
+            st.session_state.mine_ops = self
+            
             # save mine fleet
         else :
           st.info("Please select/enter a valid name")
