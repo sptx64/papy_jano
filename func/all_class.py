@@ -131,7 +131,7 @@ class MineOps :
     
     list_task        = st.multiselect(":material/assignment_add: Task options that will be available in other modules", [], [], accept_new_options=True)
     list_supervisors = st.multiselect(":material/man: Supervisors options that will be available in other modules", [], [], accept_new_options=True)
-    list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", [], [], accept_new_options=True)
+    list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", ["Excavator","Truck","Bull","Drilling machine",], [], accept_new_options=True)
     
     #one unique save button that will save all lists in a dictionary and deleting any duplicate option
     if st.button("Save", type="primary", help="Save your new MineOps") :
