@@ -13,7 +13,7 @@ from func.data import get_save_folder
 log()
 
 
-"# List manager"
+"# MineOps manager"
 """
 Here you can manage your options for the app modules such as task, supervisors and mine fleet available machines type. This is done to simplify the next modules éditions with more sélection than typing. Also it's désigned to design your full mining fleet once only.
 """
