@@ -22,7 +22,7 @@ def log() :
     
       projects = [ n for n in os.listdir(ffolder) if os.path.isdir(os.path.join(ffolder,n)) ]
       
-      c = st.colums(2)
+      c = st.columns(2)
       disabled=True
       new_project = c[1].toggle("Create a New project", value=True)
       if new_project :
