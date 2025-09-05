@@ -1,8 +1,10 @@
 import os
 import numpy
 import streamlit as st
-from .data import get_save_folder
+#from .data import get_save_folder
 
+def get_save_folder() :
+  return "files"
 
 def log() :
   if st.sidebar.button("Log out", use_container_width=True, type="primary") :
