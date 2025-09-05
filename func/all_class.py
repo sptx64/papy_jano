@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import os
+from .data import get_save_folder
 
 """
 this file store all classes available
@@ -22,10 +23,11 @@ class MachineEntity :
 
 
 class MineOps :
-  def __init__(self, dict_opt={}, mine_supervisors={}, mine_fleet={}, mine_task={}) :
+  def __init__(self, name=None, dict_opt={}, mine_supervisors={}, mine_fleet={}, mine_task={}) :
     """
     This function initiate the MineOps class
     """
+    self.name             = name
     self.dict_opt         = dict_opt
     self.mine_supervisors = mine_supervisors
     self.mine_fleet       = mine_fleet
@@ -46,7 +48,19 @@ class MineOps :
             st.stop()
         else :
           st.error(f"The key {k} does not exist, please create it in the List manager page.")
-      
+
+  def save_pkl(self) :
+    #saving in the cache of streamlit (st.session_state)
+    st.session_state.MineOps = self
+    
+    fpath_name = os.path.join(st.session_state.project, f"MineOps - {self.name}.pkl")
+    with open(fpath_name, "wb") as f :
+      pickle.dump(self, f)
+      st.toast("The MineOps have been saved!", icon=":material/check_small:")
+      st.success("Saved! The app will rerun in 3 seconds.")
+      time.sleep(3)
+      st.rerun()
+  
   def create_fleet(self) :
     """
     This function create mine fleet in the MineOps class
@@ -109,18 +123,21 @@ class MineOps :
     if mops_name in list_existing_mops :
       st.warning("This MineOps name already exists.")
       st.stop()
-    list_task = st.multiselect(":material/assignment_add: Task options that will be available in other modules", [], [], accept_new_options=True)
+    
+    list_task        = st.multiselect(":material/assignment_add: Task options that will be available in other modules", [], [], accept_new_options=True)
     list_supervisors = st.multiselect(":material/man: Supervisors options that will be available in other modules", [], [], accept_new_options=True)
-    list_machines = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", [], [], accept_new_options=True)
+    list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", [], [], accept_new_options=True)
     
     #one unique save button that will save all lists in a dictionary and deleting any duplicate option
     if st.button("Save", type="primary", help="Save your new MineOps") :
       dict_opt={
-        "Task" : sorted(list(np.unique(list_task)), key=str.lower),
+        "Task"        : sorted(list(np.unique(list_task)), key=str.lower),
         "Supervisors" : sorted(list(np.unique(list_supervisors)), key=str.lower),
-        "Machines" : sorted(list(np.unique(list_machines)), key=str.lower),
+        "Machines"    : sorted(list(np.unique(list_machines)), key=str.lower),
       }
-      self.dict_opt=dict_opt
+      self.dict_opt = dict_opt
+      self.name     = mops_name
+      self.save_pkl()
 
       
       # #storing it locally for next sessions
@@ -131,8 +148,9 @@ class MineOps :
       #   st.success("Saved! The app will rerun in 3 seconds.")
       #   time.sleep(3)
       #   st.rerun()
-            
-            
+
+
+      
             
             
           
