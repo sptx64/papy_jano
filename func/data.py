@@ -7,6 +7,9 @@ import os
 def test():
   ""
 
+def get_save_folder() :
+  return "files"
+
 def load_opt_pkl(start_with, location) :
   """
   Function to load a pkl file that contain all list options
