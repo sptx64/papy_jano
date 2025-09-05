@@ -44,6 +44,8 @@ def log() :
         st.rerun()
       else :
         st.stop()
+
+    log_modal()
         
 
     
