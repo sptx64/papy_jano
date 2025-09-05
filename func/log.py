@@ -43,6 +43,7 @@ def log() :
           os.mkdir(filepath)
       
         st.session_state.project=filepath
+        st.session_state.project_name=project
         st.rerun()
       else :
         st.stop()
