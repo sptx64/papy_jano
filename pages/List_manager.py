@@ -27,6 +27,7 @@ fname_begin, folder = "MineOps - ", "files"
 
 if selected_module == list_module[0] :
   MineOps()
+  "test"
 
 
 # #loading the existing pkl if there are any
