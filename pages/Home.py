@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from func.log import log
+
+log()
+
 
 st.write("# :material/elderly: Papy Jano app")
 
