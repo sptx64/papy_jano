@@ -99,7 +99,7 @@ class MineOps :
           st.info("Please select/enter a valid name")
 
   def create_dict_opt(self) :
-    mops_name = st.text_input("New MineOps name", None, placeholder="YOUR NEW MineOps name")
+    mops_name = st.text_input("New MineOps name", None, placeholder="YOUR NEW MINEOPS NAME")
     if mops_name is None or mops_name == "" :
       st.info("Enter a name for your new MineOps")
       st.stop()
