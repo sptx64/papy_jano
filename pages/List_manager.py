@@ -20,7 +20,7 @@ Here you can manage your options for the app modules such as task, supervisors a
 
 #create or modify lists
 
-list_module = ["Create a new MineOps", "Modify an axisting MineOps"]
+list_module = ["Create a new MineOps", "Modify an existing MineOps"]
 selected_module = st.radio("Select what you want to do :", list_module)
 
 fname_begin, folder = "MineOps - ", "files"
