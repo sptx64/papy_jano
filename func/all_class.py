@@ -149,7 +149,15 @@ class MineOps :
     list_supervisors = st.multiselect(":material/man: Supervisors options that will be available in other modules", self.dict_opt["Supervisors"], self.dict_opt["Supervisors"], accept_new_options=True)
     list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", self.dict_opt["Machines"], self.dict_opt["Machines"], accept_new_options=True)
 
-    if st.button("Save", type="primary") :
+    c = st.columns(6)
+    if c[1].button("Delete", use_container_width=True) :
+      file_path=os.path.join(st.session_state.project, f"MineOps - {self.name}.pkl")
+      os.remove(file_path)
+      st.success("MineOps have been deleted. The app will rerun in 3 seconds.")
+      time.sleep(3)
+      st.rerun()
+    
+    if c[0].button("Save", type="primary", use_container_width=True) :
       dict_opt={
         "Task"        : sorted(list(np.unique(list_task)), key=str.lower),
         "Supervisors" : sorted(list(np.unique(list_supervisors)), key=str.lower),
