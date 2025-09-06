@@ -30,8 +30,14 @@ if selected_module == list_module[0] :
   mops.create_dict_opt()
 
 elif selected_module == list_module[1] :
-  list_mops = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
+  list_mops = [ x.replace("pkl","") for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
   mops_name = st.selectbox("Select the MineOps you want to modify", list_mops)
+  
+  with open(os.path.join(st.session_state.project, f"{mops_name}.pkl"), "rb") as f :
+    mops = pickle.load(f)
+  mops
+    
+  
   
 # #loading the existing pkl if there are any
 # load_opt_pkl(start_with=fname_begin, location=folder)
