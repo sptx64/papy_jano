@@ -143,8 +143,12 @@ class MineOps :
       self.dict_opt = dict_opt
       self.name     = mops_name
       self.save_pkl()
-      "test"
 
+  def modify_dict_opt(self) :
+    list_mops = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
+    mops_name = st.selectbox("Select the MineOps you want to modify", list_mops)
+    
+    
       
       # #storing it locally for next sessions
       # full_name = os.path.join(folder, f"{fname_begin}.pkl")
