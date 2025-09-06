@@ -35,8 +35,8 @@ elif selected_module == list_module[1] :
   
   with open(os.path.join(st.session_state.project, f"{mops_name}.pkl"), "rb") as f :
     mops = pickle.load(f)
-  mops
-    
+
+  
   
   
 # #loading the existing pkl if there are any
