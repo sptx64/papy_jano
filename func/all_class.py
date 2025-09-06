@@ -145,8 +145,19 @@ class MineOps :
       self.save_pkl()
 
   def modify_dict_opt(self) :
-    list_mops = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
-    mops_name = st.selectbox("Select the MineOps you want to modify", list_mops)
+    list_task        = st.multiselect(":material/assignment_add: Task options that will be available in other modules", self.dict_opt["Task"], self.dict_opt["Task"], accept_new_options=True)
+    list_supervisors = st.multiselect(":material/man: Supervisors options that will be available in other modules", self.dict_opt["Supervisors"], self.dict_opt["Supervisors"], accept_new_options=True)
+    list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", self.dict_opt["Machines"], self.dict_opt["Machines"], accept_new_options=True)
+
+    if st.button("Save", type="primary") :
+      dict_opt={
+        "Task"        : sorted(list(np.unique(list_task)), key=str.lower),
+        "Supervisors" : sorted(list(np.unique(list_supervisors)), key=str.lower),
+        "Machines"    : sorted(list(np.unique(list_machines)), key=str.lower),
+      }
+      
+      self.dict_opt = dict_opt
+      self.save_pkl()
     
     
       
