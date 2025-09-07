@@ -129,7 +129,7 @@ class MineOps :
         res.append(arr)
 
     df = pd.DataFrame(res, columns=col_name)
-    df
+    st.date_editor(df)
       
 
   
