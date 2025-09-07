@@ -115,9 +115,9 @@ class MineOps :
       st.warning("This MineOps name already exists.")
       st.stop()
     c = st.columns(3)
-    list_task        = c[0].multiselect(":material/assignment_add: Task that will be associated to your MineOps", [], [], placeholder="e.g. Basin dragging", accept_new_options=True)
-    list_supervisors = c[1].multiselect(":material/man: Supervisors options that will be available in other modules", [], [], placeholder="e.g. Simon or Team A", accept_new_options=True)
-    list_machines    = c[2].multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", ["Excavator","Truck","Bull","Drilling machine",], [], placeholder="e.g. Excavator", accept_new_options=True)
+    list_task        = c[0].multiselect(":material/assignment_add: Tasks that will be associated to your MineOps", [], [], placeholder="e.g. Basin dragging", accept_new_options=True)
+    list_supervisors = c[1].multiselect(":material/man: Supervisors that will be associated to your MineOps", [], [], placeholder="e.g. Simon or Team A", accept_new_options=True)
+    list_machines    = c[2].multiselect(":material/conveyor_belt: Machines that will be associated to your MineOps", ["Excavator","Truck","Bull","Drilling machine",], [], placeholder="e.g. Excavator", accept_new_options=True)
     
     #one unique save button that will save all lists in a dictionary and deleting any duplicate option
     if st.button("Save", type="primary", help="Save your new MineOps") :
@@ -131,9 +131,10 @@ class MineOps :
       self.save_pkl()
 
   def modify_dict_opt(self) :
-    list_task        = st.multiselect(":material/assignment_add: Task options that will be available in other modules", self.dict_opt["Task"], self.dict_opt["Task"], accept_new_options=True)
-    list_supervisors = st.multiselect(":material/man: Supervisors options that will be available in other modules", self.dict_opt["Supervisors"], self.dict_opt["Supervisors"], accept_new_options=True)
-    list_machines    = st.multiselect(":material/conveyor_belt: Type of machines that will be available in other modules", self.dict_opt["Machines"], self.dict_opt["Machines"], accept_new_options=True)
+    c = st.columns(3)
+    list_task        = c[0].multiselect(":material/assignment_add: Tasks that will be associated to your MineOps", self.dict_opt["Task"], self.dict_opt["Task"], accept_new_options=True)
+    list_supervisors = c[1].multiselect(":material/man: Supervisors that will be associated to your MineOps", self.dict_opt["Supervisors"], self.dict_opt["Supervisors"], accept_new_options=True)
+    list_machines    = c[2].multiselect(":material/conveyor_belt: Machines that will be associated to your MineOps", self.dict_opt["Machines"], self.dict_opt["Machines"], accept_new_options=True)
 
     c = st.columns(6)
     if c[1].button("Delete", use_container_width=True) :
