@@ -34,7 +34,7 @@ elif selected_module == list_module[1] :
   if minops_name is None :
     st.stop()
 
-  fpath = os.path.join(st.session_state.project, f"{mops_name}.pkl")
+  fpath = os.path.join(st.session_state.project, f"{minops_name}.pkl")
   minops = read_minops(fpath)
   
   minops.modify_dict_opt()
