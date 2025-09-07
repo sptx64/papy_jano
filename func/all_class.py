@@ -23,7 +23,7 @@ class MachineEntity :
     self.availability = availability
 
   def machine_to_array(self) :
-    return [ mtype, id, name, capacity, comment, availability ], ["Machine type", "Machine ID", "Machine name", "Capacity", "Comment", "Availability"]
+    return [ self.mtype, self.id, self.name, self.capacity, self.comment, self.availability ], ["Machine type", "Machine ID", "Machine name", "Capacity", "Comment", "Availability"]
 
   def array_to_machine(self, arr) :
     self.mtype        = arr[0]
