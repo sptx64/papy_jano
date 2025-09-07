@@ -40,5 +40,5 @@ if len(list(minops.mine_fleet))>0 and selected_module == list_module[0] :
 if selected_module == list_module[0] :
   minops.create_fleet()
 else :
-  ""
+  minops.modify_fleet()
 
