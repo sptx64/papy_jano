@@ -8,7 +8,7 @@ import time
 from func.data import load_opt_pkl
 from func.log import log
 from func.all_class import MineOps
-from func.data import get_save_folder
+from func.data import get_save_folder, read_minops
 
 log()
 
@@ -21,24 +21,23 @@ Here you can manage your options for the app modules such as task, supervisors a
 #create or modify lists
 
 list_module = ["Create a new MineOps", "Modify an existing MineOps"]
-selected_module = st.radio("Select what you want to do :", list_module, horizontal=True)
+selected_module = st.radio("Select what you want to do :", list_module, horizontal=True, label_visibility="hidden")
 
-fname_begin, folder = "MineOps - ", "files"
 
 if selected_module == list_module[0] :
-  mops = MineOps()
-  mops.create_dict_opt()
+  minops = MineOps()
+  minops.create_dict_opt()
 
 elif selected_module == list_module[1] :
-  list_mops = [ x.replace(".pkl","") for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
-  mops_name = st.selectbox("Select the MineOps you want to modify", list_mops)
-  if mops_name is None :
+  list_minops = [ x.replace(".pkl","") for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
+  minops_name = st.selectbox("Select the MineOps you want to modify", list_minops)
+  if minops_name is None :
     st.stop()
-  
-  with open(os.path.join(st.session_state.project, f"{mops_name}.pkl"), "rb") as f :
-    mops = pickle.load(f)
 
-  mops.modify_dict_opt()
+  fpath = os.path.join(st.session_state.project, f"{mops_name}.pkl")
+  minops = read_minops(fpath)
+  
+  minops.modify_dict_opt()
 
   
   
