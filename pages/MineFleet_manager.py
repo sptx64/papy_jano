@@ -35,11 +35,10 @@ def read_minops(fpath) :
 minops = read_minops(fpath)
 
 if len(list(minops.mine_fleet))>0 and selected_module == list_module[0] :
-  st.warning("You are about to overwrite existing MineFleet for your MineOps. A MineOps class can only have one MineFleet.")
+  st.info("You are about to overwrite existing MineFleet for your MineOps. A MineOps class can only have one MineFleet.")
 
 if selected_module == list_module[0] :
   minops.create_fleet()
-
 else :
   ""
 
