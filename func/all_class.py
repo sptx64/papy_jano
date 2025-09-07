@@ -58,10 +58,11 @@ class MineOps :
     fpath_name = os.path.join(st.session_state.project, f"MineOps - {self.name}.pkl")
     with open(fpath_name, "wb") as f :
       pickle.dump(self, f)
-      st.toast("The MineOps have been saved!", icon=":material/check_small:")
-      st.success("Saved! The app will rerun in 3 seconds.")
-      time.sleep(3)
-      st.rerun()
+    st.toast("The MineOps have been saved!", icon=":material/check_small:")
+    st.success("Saved! The app will rerun in 3 seconds.")
+    st.cache_data.clear()
+    time.sleep(3)
+    st.rerun()
   
   def create_fleet(self) :
     """
@@ -95,28 +96,13 @@ class MineOps :
           dict_machine_entities[mt_id] = machine_entity
         fleet[mt] = dict_machine_entities
     
-    if st.button("Name your Mine Fleet", type="primary") :
-      @st.dialog("Mine Fleet naming", width="medium")
-      def mine_fleet_save(fleet) :
-        "### Saving your mine fleet"
-        c = st.columns(2)
-        if c[1].toggle("Overwrite an existing fleet?") :
-          input_opt = (list(self.mine_fleet), False, "Select the MineFleet you want to overwrite") if self.mine_fleet is not None and len(self.mine_fleet)>0 else ([], True, "There are no MineFleet existing in your project")
-          mfleet_name = c[0].selectbox("MineFleet to overwrite", input_opt[0], disabled=input_opt[1], help=input_opt[2])
-        else :
-          mfleet_name = c[0].text_input("Create a new MineFleet", placeholder="Your new mine fleet name")
-        
-        if mfleet_name is not None and mfleet_name != "" :
-          if st.button("Save mine fleet") :
-            self.mine_fleet[mfleet_name] = fleet
-            st.session_state.mine_ops = self
-            #get folder save name
-            #save pkl to folder
-            #with open('person.pkl', 'wb') as file:  # 'wb' for binary write mode
-              #pickle.dump(person, file)
+    if st.button("Save your MineFleet in your MineOps", type="primary") :
+      self.mine_fleet = fleet
+      self.save_pkl()
 
-        else :
-          st.info("Please select/enter a valid name")
+      
+      
+
 
   def create_dict_opt(self) :
     mops_name = st.text_input("New MineOps name", None, placeholder="YOUR NEW MINEOPS NAME")
