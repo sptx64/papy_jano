@@ -1251,7 +1251,7 @@ def main():
             st.code(str(e))
     elif page == "🧩 Simulation de Projet":
         try:
-            from simulation import show_simulation_page  # <-- CORRIGÉ : nom de ton fichier sans espaces
+            from pages.simulation import show_simulation_page  # <-- CORRIGÉ : nom de ton fichier sans espaces
             show_simulation_page(tm)  # <-- CORRIGÉ : nom de la fonction sans espaces
         except Exception as e:
             st.error(f"❌ Erreur lors du chargement de la simulation : {e}")
