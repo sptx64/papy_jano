@@ -129,6 +129,10 @@ class MineOps :
         res.append(arr)
 
     df = pd.DataFrame(res, columns=col_name)
+    # add a st.fragment
+    # add a row deleting availability
+    # get the new values in the mine fleet class
+    # add a save function
     st.data_editor(df, height=750, hide_index=True, disabled=["Machine type", "Machine ID"])
       
 
