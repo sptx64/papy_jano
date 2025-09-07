@@ -12,6 +12,9 @@ pages_dict = {
     st.Page("pages/MineOps_manager.py", title="MineOps manager", icon=":material/event_list:"),
     st.Page("pages/MineFleet_manager.py", title="Mine Fleet manager", icon=":material/front_loader:"),
              ],
+  "MINE PLAN" : [
+    st.Page("pages/Project_manager.py", title="Project manager", icon="assignment_add"),
+                ],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
     st.Page("pages/visualizations.py", title="visualisations pas ouf", icon=":material/earthquake:"),
