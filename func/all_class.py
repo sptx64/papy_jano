@@ -72,8 +72,7 @@ class MineOps :
     machine_type = self.dict_opt["Machines"]
     fleet = {}
     for i,mt in enumerate(machine_type) :
-      f"### {mt}"
-      f"Setup the number of {mt}, availability, "
+      st.write(f"### {mt}")
         
       c                     = st.columns(2)
       nb_mt                 = c[0].number_input(f"Number of {mt}", 0, 1000, 2)
@@ -92,6 +91,9 @@ class MineOps :
                                          availability=machine_availability)
           
         dict_machine_entities[mt_id] = machine_entity
+      ""
+      "---"
+      ""
       fleet[mt] = dict_machine_entities
     
     if st.button("Save your MineFleet in your MineOps", type="primary") :
