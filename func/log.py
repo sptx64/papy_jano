@@ -9,7 +9,7 @@ def get_save_folder() :
 def log() :
   if "project" in st.session_state :
     st.sidebar.caption(f"_Project : {st.session_state.project_name.upper()}_")
-    if st.sidebar.button("Log out", use_container_width=True, type="primary") :
+    if st.sidebar.button("Log out", width="stretch", type="primary") :
       for k in st.session_state :
         del st.session_state[k]
       st.cache_data.clear()
