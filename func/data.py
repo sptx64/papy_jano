@@ -3,12 +3,19 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 import os
+import pickle
 
 def test():
   ""
 
 def get_save_folder() :
   return "files"
+
+@st.cache_data
+def read_minops(fpath) :
+  with open(fpath, "rb") as f :
+    mo = pickle.load(f)
+  return mo
 
 def load_opt_pkl(start_with, location) :
   """
