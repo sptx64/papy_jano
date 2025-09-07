@@ -9,7 +9,7 @@ pages_dict = {
   "HOME"   : [st.Page("pages/Home.py", title="Home", icon=":material/elderly:")],
   "IMPORT" : [
     st.Page("pages/Import.py", title="Import files", icon=":material/upload:"),
-    st.Page("pages/List_manager.py", title="MineOps manager", icon=":material/event_list:"),
+    st.Page("pages/MineOps_manager.py", title="MineOps manager", icon=":material/event_list:"),
              ],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
