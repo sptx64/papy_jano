@@ -83,7 +83,7 @@ class MineOps :
         default_capacity      = c[1].number_input(f"Default capacity for {mt} machines", capacity_range[0], capacity_range[1], capacity_range[2], help="Just to simplify inputting")
         dict_machine_entities = {}
         
-        for mt_id in nb_mt :
+        for mt_id in range(nb_mt) :
           c = st.columns(4)
           machine_name         = c[0].text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
           machine_capacity     = c[1].number_input(f"{mt} - id:{mt_id} capacity (tons)", capacity_range[0], capacity_range[1], default_capacity, help="Can be left empty")
