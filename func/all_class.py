@@ -188,14 +188,14 @@ class MineOps :
     list_machines    = c[2].multiselect(":material/conveyor_belt: Machines that will be associated to your MineOps", self.dict_opt["Machines"], self.dict_opt["Machines"], accept_new_options=True)
 
     c = st.columns(6)
-    if c[1].button("Delete", width="stretch") :
+    if c[1].button("Delete", width="content") :
       file_path=os.path.join(st.session_state.project, f"MineOps - {self.name}.pkl")
       os.remove(file_path)
       st.success("MineOps have been deleted. The app will rerun in 3 seconds.")
       time.sleep(3)
       st.rerun()
     
-    if c[0].button("Save", type="primary", width="stretch") :
+    if c[0].button("Save", type="primary", width="content") :
       
       dict_opt={
         "Task"        : sorted(list(np.unique(list_task)), key=str.lower),
