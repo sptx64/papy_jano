@@ -101,7 +101,26 @@ class MineOps :
       self.save_pkl()
 
       
-      
+  def clean_class_dict_opt(self) :
+    #cleaning tasks
+    present_in_minops_to_keep = [ k for k in self.mine_task if k in self.dict_opt["Task"] ]
+    for k in self.mine_task :
+      if k not in present_in_minops_to_keep :
+        del self.mine_task[k]
+
+    #cleaning supervisors
+    present_in_minops_to_keep = [ k for k in self.mine_supervisors if k in self.dict_opt["Supervisors"] ]
+    for k in self.mine_supervisors :
+      if k not in present_in_minops_to_keep :
+        del self.mine_supervisors[k]
+
+    #clean mine fleet
+    present_in_minops_to_keep = [ k for k in self.mine_fleet if k in self.dict_opt["Machines"] ]
+    for k in self.mine_fleet :
+      if k not in present_in_minops_to_keep :
+        del self.mine_fleet[k]
+
+  
 
 
   def create_dict_opt(self) :
@@ -145,6 +164,7 @@ class MineOps :
       st.rerun()
     
     if c[0].button("Save", type="primary", use_container_width=True) :
+      
       dict_opt={
         "Task"        : sorted(list(np.unique(list_task)), key=str.lower),
         "Supervisors" : sorted(list(np.unique(list_supervisors)), key=str.lower),
@@ -152,18 +172,14 @@ class MineOps :
       }
       
       self.dict_opt = dict_opt
+      #cleaning from mine_fleet, mine_task, mine_supervisors classes all the keys that are ne more in dict_opt
+      clean_class_dict_opt()
+      #saving the pkl
       self.save_pkl()
+
+
     
-    
-      
-      # #storing it locally for next sessions
-      # full_name = os.path.join(folder, f"{fname_begin}.pkl")
-      # with open(full_name, "wb") as f :
-      #   pickle.dump(dict_opt, f)
-      #   st.toast("The options have been saved!", icon=":material/check_small:")
-      #   st.success("Saved! The app will rerun in 3 seconds.")
-      #   time.sleep(3)
-      #   st.rerun()
+
 
 
       
