@@ -10,6 +10,7 @@ pages_dict = {
   "IMPORT" : [
     st.Page("pages/Import.py", title="Import files", icon=":material/upload:"),
     st.Page("pages/MineOps_manager.py", title="MineOps manager", icon=":material/event_list:"),
+    st.Page("pages/MineFleet_manager.py", title="Mine Fleet manager", icon=":material/front_loader:"),
              ],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
