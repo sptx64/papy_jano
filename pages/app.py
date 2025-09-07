@@ -1244,7 +1244,7 @@ def main():
     elif page == "📈 Visualisations & Statistiques":
         try:
             # Import visualization module (external dependency)
-            from visualizations import show_visualizations_page  # Garde ton import original
+            from pages.visualizations import show_visualizations_page  # Garde ton import original
             show_visualizations_page(tm)
         except Exception as e:
             st.error("❌ Erreur lors du chargement des visualisations :")
