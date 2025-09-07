@@ -4,6 +4,10 @@ import streamlit as st
 import pickle
 import os
 
+from func.log import log
+
+log()
+
 "# :material/conveyor_belt: Mine fleet manager"
 """
 Here you can specify machine number, availability and capacity.
