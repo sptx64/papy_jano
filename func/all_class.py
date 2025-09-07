@@ -167,8 +167,294 @@ class MineOps :
 
 
       
-            
-            
+
+
+class Task:
+  def __init__(self, id, name, category, responsible, fleet, comments, dependencies, dependency_type, start_date, end_date, progress, projected_end_date, projection_speed, is_critical,) :
+    self.id = id
+    self.name = name
+    self.category = category
+    self.responsible = responsible
+    self.fleet = fleet
+    self.comments = comments
+    self.dependencies = dependencies
+    self.dependency_type = dependency_type
+    self.start_date = start_date
+    self.end_date = end_date
+    self.progress = progress
+    self.projected_end_date = projected_end_date
+    self.projection_speed = projection_speed
+    self.is_critical = is_critical
+    
+
+  
+    
+    
+    
+    # """
+    # 👋 **Core Task Data Class**
+    # - Uses `@dataclass` for auto `__init__`, `__repr__`, etc.
+    # - Supports **PERT analysis**, **critical path**, and **progress tracking**.
+    # - Added: **Projection Speed** and **P10-P90 Percentiles** for extra risk insights.
+    # - Fields grouped into **4 categories** (see below).
+    # """
+    
+    # # 🎯 **GENERAL INFORMATION** (Basics & Identity)
+    # id: int  # 🆔 Unique identifier (calculated or entry)
+    # name: str  # 📝 Task description (entry)
+    # category: str = "Task"  # 🏷️ Category for grouping (entry)
+    # responsible: Optional[str] = None  # 👤 Person/team responsible (entry)
+    # equipment: Optional[str] = None  # 🛠️ Required equipment (entry)
+    # comments: Optional[str] = None  # 💬 Additional notes (entry)
+    # dependencies: str = ""  # 🔗 Predecessor task IDs (e.g., "1,2"; entry)
+    # dependency_type: str = "FS"  # 🔄 Dependency type (FS, SS, FF, SF; entry)  # ADDED
+    # lag: int = 0  # ⏳ Delay/lag (days; entry)
+    
+    # # 📅 **SCHEDULING** (Dates & Progress)
+    # start_date: Optional[date] = None  # 🗓️ Planned start (entry or calculated)
+    # end_date: Optional[date] = None  # 🎯 Planned end (entry or calculated)
+    # progress: int = 0  # 📊 Completion % (0-100; entry)
+    # projected_end_date: Optional[date] = None  # 🔮 Forecasted end from progress (calculated)
+    # projection_speed: Optional[float] = None  # 🚀 Speed (% per day; calculated)
+    # is_critical: Optional[bool] = None  # ⚡ On critical path? (calculated)
+    
+    # # ⏱️ **DURATIONS** (PERT Time Estimates)
+    # duration_optimistic: Optional[int] = None  # 😊 Best-case days (entry or calculated)
+    # duration_pessimistic: Optional[int] = None  # 😰 Worst-case days (entry or calculated)
+    # duration_probable: Optional[int] = None  # 🤔 Most likely days (entry or calculated)
+    # duration_stochastic: Optional[float] = None  # 📈 PERT mean duration (calculated)
+    # duration_days: Optional[int] = None  # 📅 Rounded final days (calculated or entry)
+    
+    # # ⚠️ **RISK & UNCERTAINTY** (Buffers & Percentiles)
+    # standard_deviation: Optional[float] = None  # 📊 Variance measure (calculated)
+    # buffer: Optional[float] = None  # 🛡️ Risk buffer (days; calculated)
+    # # 🧮 Percentiles (calculated via normal dist from mean & std dev)
+    # p10: Optional[float] = None  # 10th percentile (days)
+    # p20: Optional[float] = None  # 20th percentile (days)
+    # p30: Optional[float] = None  # 30th percentile (days)
+    # p40: Optional[float] = None  # 40th percentile (days)
+    # p50: Optional[float] = None  # 50th percentile (median; days)
+    # p60: Optional[float] = None  # 60th percentile (days)
+    # p70: Optional[float] = None  # 70th percentile (days)
+    # p80: Optional[float] = None  # 80th percentile (days)
+    # p90: Optional[float] = None  # 90th percentile (days)
+
+ 
+   #Starting date : Calculate the scheduled end date based on start date and duration.
+ 
+ #    def scheduled_end(self) -> Optional[date]:
+ #        """
+ #        Calculate the scheduled end date based on start date and duration.
+        
+ #        Priority order:
+ #        1. If both start_date and duration_days exist, calculate end date
+ #        2. Otherwise, return the manually set end_date
+        
+ #        Returns:
+ #            Optional[date]: Calculated or stored end date
+ #        """
+ #        if self.start_date and self.duration_days:
+ #            return self.start_date + timedelta(days=self.duration_days - 1)
+ #        return self.end_date
+     
+     
+ #    #Durée stochastique calculation
+ 
+ #    def get_expected_duration(self) -> Optional[float]:
+ #        """
+ #        Get the expected duration for the task, fusing calculation logic to cover all cases.
+        
+ #        Priority order (covers all scenarios from both original methods):
+ #        1. If stochastic (PERT calculated) is set: Return it directly.
+ #        2. If not set but optimistic/pessimistic are available: Calculate stochastic on the fly (using calculate_stochastic_duration logic), set the field, and return it.
+ #        3. If calculation not possible but duration_days is set: Return duration_days as float.
+ #        4. Otherwise: Return None.
+        
+ #        This fused version ensures the output is identical to running both methods separately, but in one step.
+ #        Formulas identical to originals: PERT = (O + 4M + P)/6 where M = probable or (O+P)/2.
+        
+ #        Returns:
+ #            Optional[float]: Expected duration in days.
+ #        """
+ #        if self.duration_stochastic is not None:
+ #            # Priority 1: Use existing stochastic
+ #            return self.duration_stochastic
+        
+ #        # Priority 2: Calculate stochastic if possible (fusing calculate_stochastic_duration logic)
+ #        if self.duration_optimistic is not None and self.duration_pessimistic is not None:
+ #            # Use provided probable or calculate average (same as calculate_stochastic_duration)
+ #            probable = self.duration_probable or ((self.duration_optimistic + self.duration_pessimistic) / 2)
+ #            # Cache probable if not set
+ #            if self.duration_probable is None:
+ #                self.duration_probable = probable
+ #            # Calculate and set stochastic
+ #            self.duration_stochastic = (self.duration_optimistic + 4 * probable + self.duration_pessimistic) / 6
+ #            return self.duration_stochastic
+        
+ #        # Priority 3: Fallback to duration_days if set
+ #        elif self.duration_days is not None:
+ #            return float(self.duration_days)
+        
+ #        # No valid data: None
+ #        return None
+
+ 
+ #    #Calcul Task Duration with start date and end date
+ 
+ #    def get_actual_duration(self) -> Optional[int]:
+ #        """
+ #        Calculate actual duration if task is completed.
+        
+ #        Returns:
+ #            Optional[int]: Actual duration in days if both dates exist
+ #        """
+ #        if self.start_date and self.end_date:
+ #            return (self.end_date - self.start_date).days + 1
+ #        return None
+
+
+
+ #     #- Calcul End date projection and Projection speed
+     
+ #    def get_remaining_duration(self) -> Optional[float]:
+ #        """
+ #        Calculate remaining duration based on current progress, using formulas for Projection Speed and Projected End Date.
+        
+ #        Formulas (based on your model, translated to English):
+ #        - Work Done Days = duration_stochastic * (progress / 100)
+ #        - Elapsed Days = (date.today() - start_date).days if start_date else 0
+ #        - Projection Speed = Work Done Days / Elapsed Days (if applicable)
+ #        - Projected Total Duration = duration_stochastic / Projection Speed
+ #        - Projected End Date = start_date + Projected Total Duration (updates projected_end_date)
+ #        - Remaining Duration = max(0, Projected Total Duration - Elapsed Days)
+        
+ #        This uses Projection Speed for dynamic estimates.
+ #        Falls back to expected * (100 - progress)/100 if calculations not applicable.
+        
+ #        Returns:
+ #            Optional[float]: Remaining duration in days.
+ #        """
+ #        expected = self.get_expected_duration()
+ #        if not expected or not self.start_date:
+ #            # Not applicable, fallback to simple remaining estimate
+ #            return expected * (100 - self.progress) / 100 if expected and self.progress < 100 else 0.0
+        
+ #        # Calculate Work Done Days
+ #        work_done_days = expected * (self.progress / 100.0)
+        
+ #        # Calculate Elapsed Days (using int for simplicity)
+ #        days_elapsed = (date.today() - self.start_date).days
+        
+ #        if days_elapsed <= 0:
+ #            # Not started, full expected remaining
+ #            return expected * (100 - self.progress) / 100 if self.progress < 100 else 0.0
+        
+ #        # Calculate Projection Speed
+ #        if work_done_days > 0:
+ #            projection_speed = work_done_days / days_elapsed
+ #        else:
+ #            # No progress, assume neutral speed
+ #            projection_speed = 1.0
+        
+ #        # Calculate Projected Total Duration
+ #        if projection_speed > 0:
+ #            projected_total_duration = expected / projection_speed
+ #        else:
+ #            projected_total_duration = expected
+        
+ #        # Update projected_end_date and projection_speed
+ #        self.projected_end_date = self.start_date + timedelta(days=int(round(projected_total_duration)))
+ #        self.projection_speed = round(projection_speed, 2)
+        
+ #        # Calculate Remaining Duration
+ #        remaining_duration = max(0.0, projected_total_duration - days_elapsed)
+        
+ #        # If completed, remaining is 0
+ #        if self.progress >= 100:
+ #            return 0.0
+        
+ #        return round(remaining_duration, 2)
+
+
+     
+ #    #Calculate End-date.
+ 
+ #    def get_stochastic_end_date(self) -> Optional[date]:
+ #        """
+ #        Calculate end date based on stochastic duration.
+        
+ #        Returns:
+ #            Optional[date]: Calculated end date using stochastic duration
+ #        """
+ #        if self.start_date and self.duration_stochastic:
+ #            return self.start_date + timedelta(days=int(round(self.duration_stochastic)))
+ #        elif self.start_date and self.duration_days:
+ #            return self.start_date + timedelta(days=self.duration_days - 1)
+ #        return self.end_date
+
+ 
+ # #? 
+ 
+ #    def get_standard_deviation(self) -> Optional[float]:
+ #        """
+ #        Get the standard deviation for the task.
+        
+ #        Returns:
+ #            Optional[float]: Standard deviation value
+ #        """
+ #        return self.standard_deviation
+
+ 
+
+ 
+ #    def to_dict(self):
+ #        """
+ #        Convert Task object to dictionary for JSON serialization.
+        
+ #        Returns:
+ #            dict: Task data as dictionary with proper date formatting
+ #        """
+ #        d = asdict(self)
+ #        # Convert date objects to ISO format strings for JSON compatibility
+ #        d["start_date"] = self.start_date.isoformat() if self.start_date else None
+ #        d["end_date"] = self.end_date.isoformat() if self.end_date else None
+ #        d["projected_end_date"] = self.projected_end_date.isoformat() if self.projected_end_date else None
+ #        return d
+
+
+ 
+ #    #DEPENDENCY
+ 
+ #    def get_dependency_ids(self) -> List[int]:
+ #        """
+ #        Parse dependency string and return list of task IDs.
+        
+ #        Supports both comma and semicolon separators.
+        
+ #        Returns:
+ #            List[int]: List of predecessor task IDs
+ #        """
+ #        if not self.dependencies:
+ #            return []
+ #        # Normalize separators and parse
+ #        deps_str = self.dependencies.replace(";", ",")
+ #        return [int(x.strip()) for x in deps_str.split(",") if x.strip().isdigit()]
+
+
+     
+ #    #Check data
+ 
+ #    def is_complete_for_calculation(self) -> bool:
+ #        """
+ #        Check if task has sufficient information for scheduling calculations.
+        
+ #        Returns:
+ #            bool: True if task can be used in calculations
+ #        """
+ #        has_dates = self.start_date and self.end_date
+ #        has_start_duration = self.start_date and self.duration_days
+ #        has_end_duration = self.end_date and self.duration_days
+ #        return has_dates or has_start_duration or has_end_duration
           
         
         
