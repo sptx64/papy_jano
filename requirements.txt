@@ -5,3 +5,4 @@ numpy
 geopandas
 scipy
 plotly
+matplotlib
