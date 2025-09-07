@@ -28,7 +28,7 @@ def log() :
       disabled=True
       new_project = c[1].toggle("Create a New project", value=True)
       if new_project :
-        project=c[0].text_input("New project name", None, placeholder="YOUR NEW PROJECT NAME")
+        project=c[0].text_input(":green-badge[:material/add_circle:] New project name", None, placeholder="YOUR NEW PROJECT NAME")
         if project in projects :
           st.warning("This project name already exists")
         elif project is None :
@@ -37,7 +37,7 @@ def log() :
           disabled=False
 
       else :
-        project=c[0].selectbox("Select your existing project", projects, None)
+        project=c[0].selectbox(":orange-badge[:material/edit_square:] Select your existing project", projects, None)
         if project is not None :
           disabled=False
        
