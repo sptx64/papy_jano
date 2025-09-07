@@ -15,13 +15,24 @@ class MachineEntity :
     """
     This function initiate the MachineEntity class called in MineOps
     """
-    # self.name         = name
     self.mtype        = mtype
     self.id           = id
     self.name         = name
     self.capacity     = capacity
     self.comment      = comment
     self.availability = availability
+
+  def machine_to_array(self) :
+    return [ mtype, id, name, capacity, comment, availability ], ["Machine type", "Machine ID", "Machine name", "Capacity", "Comment", "Availability"]
+
+  def array_to_machine(self, arr) :
+    self.mtype        = arr[0]
+    self.id           = arr[1]
+    self.name         = arr[2]
+    self.capacity     = arr[3]
+    self.comment      = arr[4]
+    self.availability = arr[5]
+
 
 
 class MineOps :
@@ -100,7 +111,28 @@ class MineOps :
       self.mine_fleet = fleet
       self.save_pkl()
 
+  def modify_fleet(self) :
+    """
+    modify an existing mine_fleet
+    """
+    if len(list(self.mine_fleet)) == 0 :
+      st.warning("It looks like there are no mine fleet already created in that MineOps, start by creating one from scratch!")
+      st.stop()
+    
+    dict_fleet = self.mine_fleet
+    dict_fleet
+    res = 
+    for mtype in dict_fleet :
+      for i in range(len(dict_fleet[mtype])) :
+        machine = dict_fleet[mtype][i]
+        arr,col_name = machine.machine_to_array()
+        res.append(arr)
+
+    df = pd.DataFrame(res, columns=col_name)
+    df
       
+
+  
   def clean_class_dict_opt(self) :
     #cleaning tasks
     present_in_minops_to_keep = [ k for k in self.mine_task if k in self.dict_opt["Task"] ]
