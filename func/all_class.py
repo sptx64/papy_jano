@@ -68,7 +68,7 @@ class MineOps :
     """
     This function create mine fleet in the MineOps class
     """
-    check_dict_opt("mine_fleet")
+    self.check_dict_opt("mine_fleet")
     machine_type = self.dict_opt["Machines"]
     fleet = {}
     t = st.tabs(machine_types)
