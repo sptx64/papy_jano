@@ -173,7 +173,7 @@ class MineOps :
       
       self.dict_opt = dict_opt
       #cleaning from mine_fleet, mine_task, mine_supervisors classes all the keys that are ne more in dict_opt
-      clean_class_dict_opt()
+      self.clean_class_dict_opt()
       #saving the pkl
       self.save_pkl()
 
