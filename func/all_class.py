@@ -75,17 +75,17 @@ class MineOps :
       st.write(f"### {mt}")
         
       c                     = st.columns(2)
-      nb_mt                 = c[0].number_input(f"Number of {mt}", 0, 1000, 2)
+      nb_mt                 = c[0].number_input(f"Number of :blue-badge[{mt}]", 0, 1000, 2)
       capacity_range        = (0,999999,None)
-      default_capacity      = c[1].number_input(f"Default capacity for {mt} machines", capacity_range[0], capacity_range[1], capacity_range[2], help="Just to simplify inputting")
+      default_capacity      = c[1].number_input(f"Default capacity for :blue-badge[{mt}] machines", capacity_range[0], capacity_range[1], capacity_range[2], help="Just to simplify inputting")
       dict_machine_entities = {}
         
       for mt_id in range(nb_mt) :
         c = st.columns(4, vertical_alignment="bottom")
-        machine_name         = c[0].text_input(f"{mt} - id:{mt_id} name", f"{mt}-{mt_id}")
-        machine_capacity     = c[1].number_input(f"{mt} - id:{mt_id} capacity (tons)", capacity_range[0], capacity_range[1], default_capacity, help="Can be left empty")
-        machine_comment      = c[2].text_input(f"{mt} - id:{mt_id} comment", None, placeholder="Any comment you want to link to this machine", help="Can be left empty if no comment")
-        machine_availability = c[3].toggle(f"{mt} - id:{mt_id} is available", value=True)
+        machine_name         = c[0].text_input(f":blue-badge[{mt}]-{mt_id} name", f"{mt}-{mt_id}")
+        machine_capacity     = c[1].number_input(f":blue-badge[{mt}] - {mt_id} capacity (tons)", capacity_range[0], capacity_range[1], default_capacity, help="Can be left empty")
+        machine_comment      = c[2].text_input(f":blue-badge[{mt}] - {mt_id} comment", None, placeholder="Any comment you want to link to this machine", help="Can be left empty if no comment")
+        machine_availability = c[3].toggle(f":blue-badge[{mt}] - {mt_id} is available", value=True)
         machine_entity       = MachineEntity(mtype=mt, id=mt_id, name=machine_name,
                                          capacity=machine_capacity, comment=machine_comment,
                                          availability=machine_availability)
