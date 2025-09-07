@@ -80,7 +80,7 @@ class MineOps :
         c                     = st.columns(3)
         nb_mt                 = c[0].number_input(f"Number of {mt}", 0, 1000, 2)
         capacity_range        = (0,999999,None)
-        default_capacity      = c[1].number_input(f"Default capacity for {mt} machines", capacity[0], capacity[1], capacity[2], help="Just to simplify inputting")
+        default_capacity      = c[1].number_input(f"Default capacity for {mt} machines", capacity_range[0], capacity_range[1], capacity_range[2], help="Just to simplify inputting")
         dict_machine_entities = {}
         
         for mt_id in nb_mt :
