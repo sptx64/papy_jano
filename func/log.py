@@ -7,14 +7,16 @@ def get_save_folder() :
   return "files"
 
 def log() :
-  if st.sidebar.button("Log out", use_container_width=True, type="primary") :
-    for k in st.session_state :
-      del st.session_state[k]
-    st.cache_data.clear()
-    st.rerun()
+  if "project" in st.session_state :
+    st.sidebar.caption(f"Active project : {st.session_state.project_name}")
+    if st.sidebar.button("Log out", use_container_width=True, type="primary") :
+      for k in st.session_state :
+        del st.session_state[k]
+      st.cache_data.clear()
+      st.rerun()
 
-
-  if not "project" in st.session_state :
+  #if project not in st.session_state :
+  else :
     
     @st.dialog("Log in", dismissible=False)
     def log_modal() :
@@ -49,7 +51,6 @@ def log() :
         st.rerun()
       else :
         st.stop()
-
     log_modal()
         
 
