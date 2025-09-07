@@ -121,7 +121,7 @@ class MineOps :
     
     dict_fleet = self.mine_fleet
     dict_fleet
-    res = 
+    res = []
     for mtype in dict_fleet :
       for i in range(len(dict_fleet[mtype])) :
         machine = dict_fleet[mtype][i]
