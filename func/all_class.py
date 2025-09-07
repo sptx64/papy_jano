@@ -71,7 +71,7 @@ class MineOps :
     self.check_dict_opt("mine_fleet")
     machine_type = self.dict_opt["Machines"]
     fleet = {}
-    t = st.tabs(machine_types)
+    t = st.tabs(machine_type)
     for i,mt in enumerate(machine_type) :
       with t[i] :
         f"### {mt}"
