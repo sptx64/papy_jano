@@ -16,12 +16,12 @@ class MachineEntity :
     This function initiate the MachineEntity class called in MineOps
     """
     # self.name         = name
-    self.mtype        = machine_type
-    self.id           = machine_id
+    self.mtype        = mtype
+    self.id           = id
     self.name         = name
-    self.capacity     = machine_capacity
-    self.comment      = machine_comment
-    self.availability = machine_availability
+    self.capacity     = capacity
+    self.comment      = comment
+    self.availability = availability
 
 
 class MineOps :
