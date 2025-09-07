@@ -91,7 +91,7 @@ class MineOps :
           machine_availability = c[3].checkbox(f"{mt} - id:{mt_id} is available", value=True)
           machine_entity       = MachineEntity(mtype=mt, id=mt_id, name=machine_name,
                                          capacity=machine_capacity, comment=machine_comment,
-                                         available=machine_availability)
+                                         availability=machine_availability)
           
           dict_machine_entities[mt_id] = machine_entity
         fleet[mt] = dict_machine_entities
