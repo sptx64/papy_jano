@@ -10,9 +10,11 @@ Here you can specify machine number, availability and capacity.
 """
 
 # select a minops
-st.session_state.project
 list_of_minops  = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
 selected_minops = st.selectbox("Select a MineOps", list_of_minops, format_func = lambda x: x.replace(".pkl",""))
+if selected_minops is None or selected_minops == "" :
+  st.info("No MineOps selected, you have to create a MineOps Class first")
+  st.stop()
 fpath           = os.path.join( st.session_state.project, selected_minops )
 
 # read minops
