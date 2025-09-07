@@ -21,7 +21,8 @@ Here you can manage your options for the app modules such as task, supervisors a
 #create or modify lists
 
 list_module = ["Create a new MineOps", "Modify an existing MineOps"]
-selected_module = st.radio("Select what you want to do :", list_module, horizontal=True, label_visibility="hidden")
+selected_module = st.pills("Select what you want to do :", list_module, selection_mode="single",
+                           label_visibility="hidden", default=list_module[1])
 
 
 if selected_module == list_module[0] :
