@@ -129,7 +129,7 @@ class MineOps :
         res.append(arr)
 
     df = pd.DataFrame(res, columns=col_name)
-    st.data_editor(df)
+    st.data_editor(df, height=750, hide_index=True, disabled=["Machine type", "Machine ID"])
       
 
   
