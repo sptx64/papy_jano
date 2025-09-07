@@ -26,5 +26,6 @@ def read_minops(fpath) :
 
 minops = read_minops(fpath)
 
+minops.create_fleet()
 
-st.cache_data.clear()
+
