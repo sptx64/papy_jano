@@ -153,8 +153,10 @@ class MineOps :
             column_config=column_config
       )
       st.caption("""
-      _:red-badge[:material/trash:] To delete a machine check the marker in front of the row and click on the trash at the top._
+      _:red-badge[:material/delete:] To delete a machine check the marker in front of the row and click on the trash at the top._
+      
       _:orange-badge[:material/edit_square:] You can also keep your Machine and check it unavailable._
+      
       _:green-badge[:material/add_circle:] To add a machine click the + button on the bottom row and configurate the machine._
       """)
       
