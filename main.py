@@ -7,7 +7,7 @@ import numpy as np
 st.set_page_config(layout="wide")
 pages_dict = {
   "HOME"   : [st.Page("pages/Home.py", title="Home", icon=":material/elderly:")],
-  "IMPORT" : [
+  "SETUP" : [
     st.Page("pages/Import.py", title="Import files", icon=":material/upload:"),
     st.Page("pages/MineOps_manager.py", title="MineOps manager", icon=":material/event_list:"),
     st.Page("pages/MineFleet_manager.py", title="Mine Fleet manager", icon=":material/front_loader:"),
