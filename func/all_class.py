@@ -133,7 +133,11 @@ class MineOps :
     # add a row deleting availability
     # get the new values in the mine fleet class
     # add a save function
-    st.data_editor(df, height=750, hide_index=True, disabled=["Machine type", "Machine ID"])
+    @st.fragment
+    def mine_fleet_editor(df) :
+      st.data_editor(df, height=750, hide_index=True, disabled=["Machine type", "Machine ID"])
+    
+    mine_fleet_editor(df)
       
 
   
