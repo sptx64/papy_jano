@@ -24,11 +24,13 @@ def log() :
     
       projects = [ n for n in os.listdir(ffolder) if os.path.isdir(os.path.join(ffolder,n)) ]
       
-      c = st.columns(2, vertical_alignment="bottom")
+      # c = st.columns(2, vertical_alignment="bottom")
       disabled=True
-      new_project = c[1].toggle("Create a New project", value=True)
-      if new_project :
-        project=c[0].text_input(":green-badge[:material/add_circle:] New project name", None, placeholder="YOUR NEW PROJECT NAME")
+      log_modes = [ ":green-badge[:material/add_circle:] Create a new project",":orange-badge[edit_square] Log in an existing project"]
+      log_mode = st.pills("log label", log_modes, default=log_modes[0], label_visibility="hidden", selection_mode="single")
+      # new_project = c[1].toggle("Create a New project", value=True)
+      if log_mode == log_modes[0] :
+        project=st.text_input(":green-badge[:material/add_circle:] New project name", None, placeholder="YOUR NEW PROJECT NAME")
         if project in projects :
           st.warning("This project name already exists")
         elif project is None :
@@ -37,7 +39,7 @@ def log() :
           disabled=False
 
       else :
-        project=c[0].selectbox(":orange-badge[:material/edit_square:] Select your existing project", projects, None)
+        project=st.selectbox(":orange-badge[:material/edit_square:] Select your existing project", projects, None)
         if project is not None :
           disabled=False
        
