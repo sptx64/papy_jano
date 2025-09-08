@@ -27,7 +27,7 @@ class MachineEntity :
 
   def array_to_machine(self, arr) :
     self.mtype        = arr[0]
-    self.id           = arr[1]
+    self.id           = int(arr[1])
     self.name         = arr[2]
     self.capacity     = arr[3]
     self.comment      = arr[4]
@@ -187,7 +187,7 @@ class MineOps :
             
           mach = MachineEntity(name=None, mtype=None, id=None, capacity=None, comment=None, availability=None)
           mach.array_to_machine(arr)
-          save_dict[mt][arr[1]] = mach
+          save_dict[mt][int(arr[1])] = mach
           
           count_dict[mt] += 1
 
