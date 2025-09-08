@@ -161,7 +161,7 @@ class MineOps :
       """)
       
       st.caption("_The ID column will be computed afterward. The name column will be computed if left empty._")
-      df.values[0]
+      df.values[0],
       
     mine_fleet_editor(df)
       
