@@ -138,7 +138,7 @@ class MineOps :
         "Machine type": st.column_config.SelectboxColumn(
             "Machine type",
             help="Type of machine",
-            options=list(self.dict_opt["Machines"]),
+            options=[ x for x in self.dict_opt["Machines"] ],
             required=True,
         ),
         "Machine ID" : "Machine ID",
@@ -146,7 +146,7 @@ class MineOps :
         "Capacity":"Capacity",
         "Comment":"Comment",
         "Availability": "Availability"        
-      },
+      }
       st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic", column_config=column_config )
     mine_fleet_editor(df)
       
