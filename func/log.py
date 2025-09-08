@@ -30,6 +30,7 @@ def log() :
       log_mode = st.pills("log label", log_modes, default=log_modes[0], label_visibility="hidden", selection_mode="single", width="content")
       # new_project = c[1].toggle("Create a New project", value=True)
       if log_mode == log_modes[0] :
+        new_project = True
         project=st.text_input(":green-badge[:material/add_circle:] New project name", None, placeholder="YOUR NEW PROJECT NAME")
         if project in projects :
           st.warning("This project name already exists")
@@ -39,7 +40,7 @@ def log() :
           disabled=False
 
       else :
-        project=st.selectbox(":orange-badge[:material/edit_square:] Select your existing project", projects, None)
+        project=st.selectbox(":orange-badge[:material/edit_square:] Existing project", projects, None)
         if project is not None :
           disabled=False
        
