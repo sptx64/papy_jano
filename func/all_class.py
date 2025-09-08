@@ -144,14 +144,8 @@ class MineOps :
         "Comment": "Comment",
         "Availability": "Availability"
       }
-      edited_df = st.data_editor(
-            df, 
-            height=650, 
-            hide_index=True, 
-            disabled=["ID"], 
-            num_rows="dynamic", 
-            column_config=column_config
-      )
+      edited_df = st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic", column_config=column_config)
+      
       st.caption("""
       _:red-badge[:material/delete:] To delete a machine check the marker in front of the row and click on the trash at the top._
       
@@ -161,9 +155,9 @@ class MineOps :
       """)
       
       st.caption("_The ID column will be computed afterward. The name column will be computed if left empty._")
-      st.write(df.values[0])
+      st.write(edited_df.values[0])
       
-    mine_fleet_editor(edited_df)
+    mine_fleet_editor(df)
       
   
   def clean_class_dict_opt(self) :
