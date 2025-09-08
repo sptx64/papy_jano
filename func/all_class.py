@@ -160,7 +160,7 @@ class MineOps :
       st.write(edited_df.values[0])
 
       # saving the new minefleet
-      if st.button("Save") :
+      if st.button("Save", type="primary") :
         if len(edited_df) <= 1 :
           st.warning("There are not enough Machines in your MineFleet (minimum = 2)")
           st.stop()
