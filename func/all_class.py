@@ -173,6 +173,7 @@ class MineOps :
             num_rows="dynamic", 
             column_config=column_config
       )
+      st.caption("_The ID column will be computed afterward. The name column will be computed if left empty._")
     mine_fleet_editor(df)
       
   
