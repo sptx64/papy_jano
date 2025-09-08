@@ -120,7 +120,6 @@ class MineOps :
       st.stop()
     
     dict_fleet = self.mine_fleet
-    dict_fleet
     res = []
     for mtype in dict_fleet :
       for i in range(len(dict_fleet[mtype])) :
@@ -135,8 +134,17 @@ class MineOps :
     # add a save function
     @st.fragment
     def mine_fleet_editor(df) :
-      st.data_editor(df, height=750, hide_index=True, disabled=["Machine type", "Machine ID"])
-    
+      column_config={
+        "Machine type": st.column_config.SelectboxColumn(
+            "Machine type",
+            help="Type of machine",
+            width="medium",
+            options=self.dict_opt["Machines"],
+            required=True,
+        ),
+        
+      },
+      st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic" )
     mine_fleet_editor(df)
       
 
