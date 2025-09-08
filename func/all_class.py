@@ -165,8 +165,8 @@ class MineOps :
           st.warning("There are not enough Machines in your MineFleet (minimum = 2)")
           st.stop()
 
-        save_dict = { x : {} for x in edited_df["Machines"].unique() }
-        count_dict = { x : 0 for x in edited_df["Machines"].unique() }
+        save_dict = { x : {} for x in edited_df["Machine type"].unique() }
+        count_dict = { x : 0 for x in edited_df["Machine type"].unique() }
         edited_df_val = edited_df.values
         
         for i in range(len(edited_df)) :
