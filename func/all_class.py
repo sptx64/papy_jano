@@ -178,12 +178,16 @@ class MineOps :
             
           if arr[1] is None or arr[1] == "" :
             arr[1] = count_dict[mt]
+          elif arr[1] >= 0 : #preventing id error if a row is deleted
+            count_dict[mt] = arr[1]
+            
           if arr[2] is None or arr[2] == "" :
             arr[2] = f"{mt} - {arr[1]}"
             
           mach = MachineEntity(name=None, mtype=None, id=None, capacity=None, comment=None, availability=None)
           mach.array_to_machine(arr)
           save_dict[mt][arr[1]] = mach
+          
           count_dict[mt] += 1
 
         st.write(self.mine_fleet)
