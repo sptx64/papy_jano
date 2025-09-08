@@ -118,7 +118,8 @@ class MineOps :
     if len(list(self.mine_fleet)) == 0 :
       st.warning("It looks like there are no mine fleet already created in that MineOps, start by creating one from scratch!")
       st.stop()
-    
+
+    # Converting the machine fleet to a dataframe
     dict_fleet = self.mine_fleet
     res = []
     for mtype in dict_fleet :
@@ -126,11 +127,12 @@ class MineOps :
         machine = dict_fleet[mtype][i]
         arr,col_name = machine.machine_to_array()
         res.append(arr)
-
     df = pd.DataFrame(res, columns=col_name)
 
+    # fragment to let the user modify the dataframe with a correct UX
     @st.fragment
     def mine_fleet_editor(df):
+      #Column parameters
       column_config = {
         "Machine type": st.column_config.SelectboxColumn(
             "Machine type",
@@ -154,8 +156,44 @@ class MineOps :
       _:green-badge[:material/add_circle:] To add a machine click the + button on the bottom row and configurate the machine._
       """)
       
-      st.caption("_The ID column will be computed afterward. The name column will be computed if left empty._")
+      st.caption("_The ID column will be computed afterward. The name column will be computed if left empty. A machine type **must** be provided._")
       st.write(edited_df.values[0])
+
+      # saving the new minefleet
+      if st.button("Save") :
+        if len(edited_df) <= 1 :
+          st.warning("There are not enough Machines in your MineFleet (minimum = 2)")
+          st.stop()
+
+        save_dict = { x : {} for x in edited_df["Machines"].unique() }
+        count_dict = { x : 0 for x in edited_df["Machines"].unique() }
+        edited_df_val = edited_df.values
+        
+        for i in range(len(edited_df)) :
+          arr = edited_df_val[i]
+          mt = arr[0]
+          
+          if mt is None :
+            continue
+            
+          if arr[1] is None or arr[1] == "" :
+            arr[1] = count_dict[mt]
+          if arr[2] is None or arr[2] == "" :
+            arr[2] = f"{mt} - {arr[1]}"
+            
+          mach = MachineEntity(name=None, mtype=None, id=None, capacity=None, comment=None, availability=None)
+          mach.array_to_machine(arr)
+          save_dict[mt][arr[1]] = mach
+          count_dict[mt] += 1
+
+        st.write(self.mine_fleet)
+
+    
+          
+          
+          
+          
+          
       
     mine_fleet_editor(df)
       
