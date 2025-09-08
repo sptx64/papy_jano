@@ -144,7 +144,7 @@ class MineOps :
         ),
         
       },
-      st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic" )
+      st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic", column_config=column_config )
     mine_fleet_editor(df)
       
 
