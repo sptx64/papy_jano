@@ -30,7 +30,6 @@ def log() :
       log_mode = st.pills("log label", log_modes, default=log_modes[0], label_visibility="hidden", selection_mode="single", width="content")
       # new_project = c[1].toggle("Create a New project", value=True)
       if log_mode == log_modes[0] :
-        new_project = True
         project=st.text_input(":green-badge[:material/add_circle:] New project name", None, placeholder="YOUR NEW PROJECT NAME")
         if project in projects :
           st.warning("This project name already exists")
@@ -46,7 +45,7 @@ def log() :
        
       if st.button("Log in", type="primary", disabled=disabled) :
         filepath = os.path.join(ffolder,project)
-        if new_project :
+        if log_mode == log_modes[0] :
           os.mkdir(filepath)
       
         st.session_state.project=filepath
