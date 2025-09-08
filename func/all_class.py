@@ -27,7 +27,7 @@ class MachineEntity :
 
   def array_to_machine(self, arr) :
     self.mtype        = arr[0]
-    self.id           = int(arr[1])
+    self.id           = arr[1]
     self.name         = arr[2]
     self.capacity     = arr[3]
     self.comment      = arr[4]
@@ -171,7 +171,6 @@ class MineOps :
         
         for i in range(len(edited_df)) :
           arr = edited_df_val[i]
-          st.write(arr)
           mt = arr[0]
           
           if mt is None :
@@ -186,6 +185,7 @@ class MineOps :
             arr[2] = f"{mt} - {arr[1]}"
             
           mach = MachineEntity(name=None, mtype=None, id=None, capacity=None, comment=None, availability=None)
+          arr[1] = int(arr[1])
           mach.array_to_machine(arr)
           save_dict[mt][int(arr[1])] = mach
           
