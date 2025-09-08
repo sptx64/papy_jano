@@ -173,6 +173,7 @@ class MineOps :
             num_rows="dynamic", 
             column_config=column_config
       )
+    mine_fleet_editor(df)
       
   
   def clean_class_dict_opt(self) :
