@@ -157,7 +157,7 @@ class MineOps :
       """)
       
       st.caption("_The ID column will be computed afterward. The name column will be computed if left empty. A machine type **must** be provided._")
-      st.write(edited_df.values[0])
+      st.write(edited_df.values)
 
       # saving the new minefleet
       if st.button("Save", type="primary") :
@@ -171,6 +171,7 @@ class MineOps :
         
         for i in range(len(edited_df)) :
           arr = edited_df_val[i]
+          st.write(arr)
           mt = arr[0]
           
           if mt is None :
