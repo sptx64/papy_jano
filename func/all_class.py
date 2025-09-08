@@ -132,25 +132,48 @@ class MineOps :
     # add a row deleting availability
     # get the new values in the mine fleet class
     # add a save function
+    # @st.fragment
+    # def mine_fleet_editor(df) :
+    #   column_config={
+    #     "Machine type": st.column_config.SelectboxColumn(
+    #         "Machine type",
+    #         help="Type of machine",
+    #         options=[ x for x in self.dict_opt["Machines"] ],
+    #         required=True,
+    #     ),
+    #     "Machine ID" : "Machine ID",
+    #     "Machine name" : "Machine name",
+    #     "Capacity":"Capacity",
+    #     "Comment":"Comment",
+    #     "Availability": "Availability"        
+    #   }
+    #   st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic", column_config=column_config )
+    # mine_fleet_editor(df)
+
     @st.fragment
-    def mine_fleet_editor(df) :
-      column_config={
+    def mine_fleet_editor(df):
+      column_config = {
         "Machine type": st.column_config.SelectboxColumn(
             "Machine type",
             help="Type of machine",
-            options=[ x for x in self.dict_opt["Machines"] ],
+            options=[x for x in self.dict_opt["Machines"]],
             required=True,
         ),
-        "Machine ID" : "Machine ID",
-        "Machine name" : "Machine name",
-        "Capacity":"Capacity",
-        "Comment":"Comment",
-        "Availability": "Availability"        
+        "Machine ID": "Machine ID",
+        "Machine name": "Machine name",
+        "Capacity": "Capacity",
+        "Comment": "Comment",
+        "Availability": "Availability"
       }
-      st.data_editor(df, height=650, hide_index=True, disabled=["ID"], num_rows="dynamic", column_config=column_config )
-    mine_fleet_editor(df)
+      edited_df = st.data_editor(
+            df, 
+            height=650, 
+            hide_index=True, 
+            disabled=["ID"], 
+            num_rows="dynamic", 
+            column_config=column_config
+      )
       
-
   
   def clean_class_dict_opt(self) :
     #cleaning tasks
