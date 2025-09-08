@@ -192,13 +192,7 @@ class MineOps :
           count_dict[mt] += 1
 
         st.write(self.mine_fleet)
-
-    
-          
-          
-          
-          
-          
+        st.write(save_dict)
       
     mine_fleet_editor(df)
       
