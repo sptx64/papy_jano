@@ -71,7 +71,7 @@ if selected_module == list_module[0] :
     machine_text = " ".join(machine_text)
     
     
-    text_param = f":blue-badge[{task_dict['Supervisor']}]  {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict["Start date"]}]"
+    text_param = f":blue-badge[{task_dict['Supervisor']}]  {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict['Start date']}] :orange[{task_dict['End date']}]"
     c[i%ncol].write(text_param)
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
