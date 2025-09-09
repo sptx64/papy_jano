@@ -44,7 +44,7 @@ if selected_module == list_module[0] :
     id, task_dict          = f"Task {i}", {}
     task_dict["Task name"] = c[i%ncol].text_input(f"Task {i} name:", None, placeholder="YOUR TASK")
     
-    with c[i%ncol].popover(f"{id}-{task_dict['Task name']}", width="stretch") :
+    with c[i%ncol].popover(f"{id}{" - " + str(task_dict['Task name']) if task_dict['Task name'] is not None else ''}", width="stretch") :
       
       with st.form(id) :
         t = st.tabs(["General", "Machines", "Other"])
