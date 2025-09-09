@@ -40,6 +40,7 @@ if selected_module == list_module[0] :
   save_dict = {}
   c = st.columns(ncol)
   for i in range(task_num) :
+    i,
     with c[i%ncol].popover(f"Task {ncol}", width="stretch") :
       id = f"Task {i}"
       with st.form(id) :
