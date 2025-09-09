@@ -4,6 +4,8 @@ import os
 import streamlit as st
 from func.log import log
 
+log()
+
 "# :material/assignment_add: Project manager"
 
 "Here you can setup your tasks and schedule your activities"
