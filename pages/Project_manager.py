@@ -54,7 +54,7 @@ if selected_module == list_module[0] :
 
         task_dict["Dependencies"]  = t[2].multiselect(f"Task {ncol} Enter the Task ID dependencies", [], [])
         task_dict["Start date"] = t[2].date_input(f"Task {ncol} Start date", "today")
-        task_dict["Comments"] = t[3].text_input(f"Task {ncol} Comments", None)
+        task_dict["Comments"] = t[2].text_input(f"Task {ncol} Comments", None)
         st.form_submit_button("Submit")
 
 
