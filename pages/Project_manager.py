@@ -43,17 +43,18 @@ if selected_module == list_module[0] :
     with c[i%ncol].popover(f"Task {ncol}", width="stretch") :
       id = f"Task {i}"
       with st.form(id) :
+        t = st.tabs(["General", "Machines", "Other"])
         task_dict={}
-        task_dict["Task category"] = st.selectbox(f"Task {ncol} category:", list_tasks, )
-        task_dict["Task name"]     = st.text_input(f"Task {ncol} name", None, placeholder="YOUR TASK")
-        task_dict["Supervisor"]    = st.selectbox(f"Task {ncol} supervisor", list_supervisors)
+        task_dict["Task category"] = t[0].selectbox(f"Task {ncol} category:", list_tasks, )
+        task_dict["Task name"]     = t[0].text_input(f"Task {ncol} name", None, placeholder="YOUR TASK")
+        task_dict["Supervisor"]    = t[0].selectbox(f"Task {ncol} supervisor", list_supervisors)
         task_dict["Machines"]      = {}
         for mt in list_machines :
-          task_dict["Machines"][mt] = st.number_input(f"Task {ncol} required {mt}", 0, 1000, 0)
+          task_dict["Machines"][mt] = t[1].number_input(f"Task {ncol} required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = st.multiselect(f"Task {ncol} Enter the Task ID dependencies", [], [])
-        task_dict["Start date"] = st.date_input(f"Task {ncol} Start date", "today")
-        task_dict["Comments"] = st.text_input(f"Task {ncol} Comments", None)
+        task_dict["Dependencies"]  = t[2].multiselect(f"Task {ncol} Enter the Task ID dependencies", [], [])
+        task_dict["Start date"] = t[2].date_input(f"Task {ncol} Start date", "today")
+        task_dict["Comments"] = t[3].text_input(f"Task {ncol} Comments", None)
         st.form_submit_button("Submit")
 
 
