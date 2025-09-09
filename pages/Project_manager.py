@@ -59,6 +59,15 @@ if selected_module == list_module[0] :
         task_dict["Comments"] = t[2].text_input(f"Task {i} Comments", None)
         st.form_submit_button("Submit")
 
+    machine_text, nb_machine_text = [ k for k in task_dict["Machines"] ], [ str(task_dict["Machines"][k]) for k in task_dict["Machines"] ]
+    machine_text = [ f":red[{x[:1]}]:red-badge[{y}]" for x,y in zip(machine_text, nb_machine_text) ]
+    machine_text = machine_text.join(" ")
+    
+    text_param = f":blue-badge[{task_dict['Supervisor']}] {machine_text} :orange-badge[{task_dict['Dependencies'].join(' ')}] :green-badge[{task_dict["Start date"]}]"
+    
+    
+    
+
 
 
 
