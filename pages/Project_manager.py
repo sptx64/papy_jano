@@ -38,7 +38,7 @@ if selected_module == list_module[0] :
   task_num = st.number_input("How many tasks are you scheduling?", 1, 50, 4)
   ncol=4
   save_dict = {}
-  c = st.columns(ncol)
+  c = st.columns(ncol, border=True)
   for i in range(task_num) :
     
     id, task_dict          = f"Task {i}", {}
@@ -48,15 +48,19 @@ if selected_module == list_module[0] :
       
       with st.form(id) :
         t = st.tabs(["General", "Machines", "Other"])
-        task_dict["Task category"] = t[0].selectbox(f"Task {i} category:", list_tasks, )
-        task_dict["Supervisor"]    = t[0].selectbox(f"Task {i} supervisor", list_supervisors)
+        task_dict["Task category"] = t[0].selectbox(f"category:", list_tasks, )
+        task_dict["Supervisor"]    = t[0].selectbox(f"supervisor", list_supervisors)
         task_dict["Machines"]      = {}
         for mt in list_machines :
-          task_dict["Machines"][mt] = t[1].number_input(f"Task {i} required {mt}", 0, 1000, 0)
+          task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = t[2].multiselect(f"Task {i} Enter the Task ID dependencies", [], [])
-        task_dict["Start date"] = t[2].date_input(f"Task {i} Start date", "today")
-        task_dict["Comments"] = t[2].text_input(f"Task {i} Comments", None)
+        task_dict["Dependencies"]  = t[2].multiselect(f"Enter the Task ID dependencies", [], [])
+        task_dict["Start date"] = t[2].date_input(f"Start date", "today")
+        task_dict["End date"] = t[2].date_input(f"End date", "today")
+        task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
+        if task_dict["End date known"] :
+          task_dict["End date"] = None
+        task_dict["Comments"] = t[2].text_input(f"Comments", None)
         st.form_submit_button("Submit")
 
     machine_text, nb_machine_text = [ k for k in task_dict["Machines"] ], [ str(task_dict["Machines"][k]) for k in task_dict["Machines"] ]
@@ -66,27 +70,7 @@ if selected_module == list_module[0] :
     text_param = f":blue-badge[{task_dict['Supervisor']}]  {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict["Start date"]}]"
     c[i%ncol].write(text_param)
     if i%ncol == ncol-1 :
-      c[i%ncol].write("La")
-    
-    
-    
-
-
-
-
+      c = st.columns(ncol, border=True)
 
   
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
