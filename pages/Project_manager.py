@@ -41,7 +41,7 @@ if selected_module == list_module[0] :
   c = st.columns(ncol)
   for i in range(task_num) :
     with c[i%ncol].popover(f"Task {ncol}", width="stretch") :
-      id = f"Task {ncol}"
+      id = f"Task {i}"
       with st.form(id) :
         task_dict={}
         task_dict["Task category"] = st.selectbox(f"Task {ncol} category:", list_tasks, )
