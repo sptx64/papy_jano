@@ -51,6 +51,7 @@ if selected_module == list_module[0] :
         t = st.tabs(["General", "Machines", "Other"])
         task_dict["Task category"] = t[0].selectbox(f"category:", list_tasks, )
         task_dict["Supervisor"]    = t[0].selectbox(f"supervisor", list_supervisors)
+        task_dict["Progress"]      = t[0].number_input("Progress", 0, 100, 0)
         task_dict["Machines"]      = {}
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
@@ -61,7 +62,7 @@ if selected_module == list_module[0] :
         task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
         if task_dict["End date known"] :
           task_dict["End date"] = None
-        task_dict["Comments"] = t[2].text_input(f"Comments", None)
+        task_dict["Comments"] = t[2].text_area(f"Comments", None)
         st.form_submit_button("Submit")
     
     save_dict[i] = task_dict
@@ -75,6 +76,19 @@ if selected_module == list_module[0] :
     c[i%ncol].write(text_param)
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
+
+
+with st.expander(":material/warning: Warnings") :
+  for k in save_dict :
+    msum=0
+    for j in save_dict[k]["Machines"] :
+      msum+=j
+    if msum == 0 :
+      st.warning(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0")
+
+
+    
+    
 
   
 
