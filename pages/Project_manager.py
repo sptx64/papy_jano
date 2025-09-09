@@ -63,8 +63,10 @@ if selected_module == list_module[0] :
     machine_text = [ f":red[{x[:1]}]:red-badge[{y}]" for x,y in zip(machine_text, nb_machine_text) ]
     machine_text = " ".join(machine_text)
     
-    text_param = f":blue-badge[{task_dict['Supervisor']}] {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict["Start date"]}]"
+    text_param = f":blue-badge[{task_dict['Supervisor']}]  {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict["Start date"]}]"
     c[i%ncol].write(text_param)
+    if i%ncol == 1 :
+      c[i%ncol].write("La")
     
     
     
