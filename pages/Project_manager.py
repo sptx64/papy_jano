@@ -40,22 +40,23 @@ if selected_module == list_module[0] :
   save_dict = {}
   c = st.columns(ncol)
   for i in range(task_num) :
-    i,
-    with c[i%ncol].popover(f"Task {ncol}", width="stretch") :
-      id = f"Task {i}"
+    
+    id, task_dict          = f"Task {i}", {}
+    task_dict["Task name"] = c[i%ncol].text_input(f"Task {i} name:", None, placeholder="YOUR TASK")
+    
+    with c[i%ncol].popover(f"{id}-{task_dict['Task name']}", width="stretch") :
+      
       with st.form(id) :
         t = st.tabs(["General", "Machines", "Other"])
-        task_dict={}
-        task_dict["Task category"] = t[0].selectbox(f"Task {ncol} category:", list_tasks, )
-        task_dict["Task name"]     = t[0].text_input(f"Task {ncol} name", None, placeholder="YOUR TASK")
-        task_dict["Supervisor"]    = t[0].selectbox(f"Task {ncol} supervisor", list_supervisors)
+        task_dict["Task category"] = t[0].selectbox(f"Task {i} category:", list_tasks, )
+        task_dict["Supervisor"]    = t[0].selectbox(f"Task {i} supervisor", list_supervisors)
         task_dict["Machines"]      = {}
         for mt in list_machines :
-          task_dict["Machines"][mt] = t[1].number_input(f"Task {ncol} required {mt}", 0, 1000, 0)
+          task_dict["Machines"][mt] = t[1].number_input(f"Task {i} required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = t[2].multiselect(f"Task {ncol} Enter the Task ID dependencies", [], [])
-        task_dict["Start date"] = t[2].date_input(f"Task {ncol} Start date", "today")
-        task_dict["Comments"] = t[2].text_input(f"Task {ncol} Comments", None)
+        task_dict["Dependencies"]  = t[2].multiselect(f"Task {i} Enter the Task ID dependencies", [], [])
+        task_dict["Start date"] = t[2].date_input(f"Task {i} Start date", "today")
+        task_dict["Comments"] = t[2].text_input(f"Task {i} Comments", None)
         st.form_submit_button("Submit")
 
 
