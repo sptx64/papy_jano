@@ -34,6 +34,35 @@ class MachineEntity :
     self.availability = arr[5]
 
 
+class Task :
+  def __init__(self, id, name, category, supervisor, required_machines, progress, start_date, end_date, duration_optimistic, duration_pessimistic, duration_probable, lag, dependencies, dependency_type, comments,) :
+    #task ids
+    self.id = id #int
+    self.name = name #str
+    self.category = category #str
+    self.supervisor = supervisor #str
+
+    #task machine required
+    self.required_machines = required_machines # dict ; from task UI, number of machine required by category
+    
+    #task progress, dates and delays
+    self.progress = progress #int
+    self.start_date = start_date #date or None
+    self.end_date = end_date #date or None
+    self.duration_optimistic = duration_optimistic #int or None
+    self.duration_pessimistic = duration_pessimistic #int or None
+    self.duration_probable = duration_probable #int or None
+    self.lag = lag #int
+
+    #task dependencies
+    self.dependencies = dependencies
+    self.dependency_type = dependency_type
+
+    #task others
+    self.comments = comments
+
+    
+    
 
 class MineOps :
   def __init__(self, name=None, dict_opt={}, mine_supervisors={}, mine_fleet={}, mine_task={}) :
