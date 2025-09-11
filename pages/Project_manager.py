@@ -60,7 +60,7 @@ if selected_module == list_module[0] :
 
         task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
         task_dict["Start date"] = t[2].date_input(f"Start date", "today")
-        task_dict["Start date known"] = t[2].toggle(f"End date is known", value=False)
+        task_dict["Start date known"] = t[2].toggle(f"Start date is known", value=False)
         if task_dict["Start date known"] :
           task_dict["Start date"] = None
         
