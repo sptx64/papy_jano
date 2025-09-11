@@ -60,6 +60,7 @@ class Task :
 
     #task others
     self.comments = comments
+    self.compute_dict = {}
 
     
     
