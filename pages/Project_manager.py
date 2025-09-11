@@ -87,8 +87,7 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
 
-with st.expander(":material/warning: Warnings") :
-  st.write(save_dict)
+with st.expander(":material/warning: Warnings", expanded=True) :
   for k in save_dict :
     msum=0
     for j in save_dict[k]["Machines"] :
