@@ -3,6 +3,7 @@ import numpy as np
 import os
 import streamlit as st
 from func.log import log
+from func.all_class import Task
 
 log()
 
@@ -58,7 +59,6 @@ if selected_module == list_module[0] :
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
         task_dict["Start date"] = t[2].date_input(f"Start date", "today")
         task_dict["Start date known"] = t[2].toggle(f"Start date is known", value=False)
         if task_dict["Start date known"] :
@@ -68,10 +68,16 @@ if selected_module == list_module[0] :
         task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
         if task_dict["End date known"] :
           task_dict["End date"] = None
+        
         task_dict["Delay_optimistic"] = t[2].number_input("Optimistic delay to complete (days)",1,9999,1)
         task_dict["Delay_probable"] = t[2].number_input("Probable delay to complete (days)",1,9999,1)
         task_dict["Delay_pessimistic"] = t[2].number_input("Pessimistic delay to complete (days)",1,9999,1)
+        task_dict["lag"] = t[2].number_input("Lag (days)",0,9999,0)
+
+        task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
+        task_dict["Dependency type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
         task_dict["Comments"] = t[3].text_area(f"Comments", None)
+
         st.form_submit_button("Submit")
     
     save_dict[i] = task_dict
@@ -87,14 +93,19 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
 
-with st.expander(":material/warning: Warnings", expanded=True) :
-  st.write(save_dict)
-  for k in save_dict :
-    msum=0
-    for j in save_dict[k]["Machines"] :
-      msum+=save_dict[k]["Machines"][j] if j is not None else 0
-    if msum == 0 :
-      st.warning(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0")
+  with st.expander(":material/warning: Warnings", expanded=True) :
+    st.write(save_dict)
+    for k in save_dict :
+      msum=0
+      for j in save_dict[k]["Machines"] :
+        msum+=save_dict[k]["Machines"][j] if j is not None else 0
+      if msum == 0 :
+        st.warning(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0")
+
+  # if st.button("Save", type="primary"):
+  #   for k in save_dict :
+  #     class_task = Task()
+    
 
 
     
