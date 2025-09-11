@@ -60,6 +60,10 @@ if selected_module == list_module[0] :
 
         task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
         task_dict["Start date"] = t[2].date_input(f"Start date", "today")
+        task_dict["Start date known"] = t[2].toggle(f"End date is known", value=False)
+        if task_dict["Start date known"] :
+          task_dict["Start date"] = None
+        
         task_dict["End date"] = t[2].date_input(f"End date", "today")
         task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
         if task_dict["End date known"] :
@@ -84,6 +88,7 @@ if selected_module == list_module[0] :
 
 
 with st.expander(":material/warning: Warnings") :
+  st.write(k)
   for k in save_dict :
     msum=0
     for j in save_dict[k]["Machines"] :
