@@ -92,7 +92,6 @@ with st.expander(":material/warning: Warnings") :
   for k in save_dict :
     msum=0
     for j in save_dict[k]["Machines"] :
-      st.write(j)
       msum+=save_dict[k]["Machines"][j] if j is not None else 0
     if msum == 0 :
       st.warning(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0")
