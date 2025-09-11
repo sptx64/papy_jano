@@ -50,7 +50,7 @@ if selected_module == list_module[0] :
     with c[i%ncol].popover(f"{id}{" - " + str(task_dict['Task name']) if task_dict['Task name'] is not None else ''}", width="stretch") :
       
       with st.form(id) :
-        t = st.tabs(["General", "Machines", "Other"])
+        t = st.tabs(["General", "Machines","Delays", "Other"])
         task_dict["Task category"] = t[0].selectbox(f"category:", list_tasks, )
         task_dict["Supervisor"]    = t[0].selectbox(f"supervisor", list_supervisors)
         task_dict["Progress"]      = t[0].number_input("Progress", 0, 100, 0)
@@ -58,13 +58,16 @@ if selected_module == list_module[0] :
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = t[2].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
+        task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
         task_dict["Start date"] = t[2].date_input(f"Start date", "today")
         task_dict["End date"] = t[2].date_input(f"End date", "today")
         task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
         if task_dict["End date known"] :
           task_dict["End date"] = None
-        task_dict["Comments"] = t[2].text_area(f"Comments", None)
+        task_dict["Delay_optimistic"] = t[2].number_input("Optimistic delay to complete (days)",1,9999,1)
+        task_dict["Delay_probable"] = t[2].number_input("Probable delay to complete (days)",1,9999,1)
+        task_dict["Delay_pessimistic"] = t[2].number_input("Pessimistic delay to complete (days)",1,9999,1)
+        task_dict["Comments"] = t[3].text_area(f"Comments", None)
         st.form_submit_button("Submit")
     
     save_dict[i] = task_dict
