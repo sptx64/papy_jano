@@ -58,7 +58,7 @@ if selected_module == list_module[0] :
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        task_dict["Dependencies"]  = t[2].multiselect(f"Enter the Task ID dependencies", [], [])
+        task_dict["Dependencies"]  = t[2].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
         task_dict["Start date"] = t[2].date_input(f"Start date", "today")
         task_dict["End date"] = t[2].date_input(f"End date", "today")
         task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
