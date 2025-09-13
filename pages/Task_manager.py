@@ -72,9 +72,9 @@ if selected_module == list_module[0] :
         if task_dict["End date known"] :
           task_dict["End date"] = None
         
-        task_dict["Delay_optimistic"] = col1.number_input("Optimistic delay to complete (days)",1,9999,1)
-        task_dict["Delay_probable"] = col2.number_input("Probable delay to complete (days)",1,9999,1)
-        task_dict["Delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
+        task_dict["delay_optimistic"] = col1.number_input("Optimistic delay to complete (days)",1,9999,1)
+        task_dict["delay_probable"] = col2.number_input("Probable delay to complete (days)",1,9999,1)
+        task_dict["delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
         task_dict["lag"] = col2.number_input("Lag (days)",0,9999,0)
 
         task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
@@ -94,10 +94,10 @@ if selected_module == list_module[0] :
     :blue-badge[{task_dict['Supervisor']}]
     :green-badge[{task_dict['Start date']}] :orange-badge[{task_dict['End date']}] 
 
-    {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
-    :violet-badge[{task_dict['Delay_optimistic']}] 
-    :violet-badge[{task_dict['Delay_probable']}] 
-    :violet-badge[{task_dict['Delay_pessimistic']}]
+    {machine_text} :orange-badge[{' '.join(task_dict['dependencies'])}]
+    :violet-badge[{task_dict['delay_optimistic']}] 
+    :violet-badge[{task_dict['delay_probable']}] 
+    :violet-badge[{task_dict['delay_pessimistic']}]
     
     """
     
