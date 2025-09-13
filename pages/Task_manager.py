@@ -56,7 +56,7 @@ if selected_module == list_module[0] :
         t = st.tabs(["General", "Machines","Delays", "Other"])
         task_dict["Task category"] = t[0].selectbox(f"category:", list_tasks, )
         task_dict["Supervisor"]    = t[0].selectbox(f"supervisor", list_supervisors)
-        task_dict["Progress"]      = t[0].number_input("Progress", 0, 100, 0)
+        task_dict["Progress"]      = t[0].slider("Progress", 0, 100, 0, 1)
         task_dict["Machines"]      = {}
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
