@@ -94,9 +94,9 @@ if selected_module == list_module[0] :
     {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
     :green-badge[{task_dict['Start date']}]
     :orange[{task_dict['End date']}]
-    :purple[Opt]: :purple-badge[{task_dict['Delay_optimistic']}]
-    :purple[Pro]: :purple-badge[{task_dict['Delay_probable']}]
-    :purple[Pes]: :purple-badge[{task_dict['Delay_pessimistic']}]
+    :violet[Opt]: :violet-badge[{task_dict['Delay_optimistic']}]
+    :violet[Pro]: :violet-badge[{task_dict['Delay_probable']}]
+    :violet[Pes]: :violet-badge[{task_dict['Delay_pessimistic']}]
     """
     
     c[i%ncol].write(text_param)
