@@ -90,9 +90,10 @@ if selected_module == list_module[0] :
     
     
     text_param = f"""
-    :blue-badge[{task_dict['Supervisor']}] {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
-    
+    :blue-badge[{task_dict['Supervisor']}]
     :green-badge[{task_dict['Start date']}] :orange-badge[{task_dict['End date']}] :violet[OpPrPe:]
+
+    {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
     :violet-badge[{task_dict['Delay_optimistic']}] 
     :violet-badge[{task_dict['Delay_probable']}] 
     :violet-badge[{task_dict['Delay_pessimistic']}] 
