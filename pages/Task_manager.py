@@ -10,7 +10,7 @@ log()
 
 "# :material/assignment_add: Project manager"
 
-"Here you can setup your tasks and schedule your activities"
+"Here you can setup your task and schedule your activities"
 
 # select a minops
 list_of_minops  = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
@@ -77,9 +77,9 @@ if selected_module == list_module[0] :
         task_dict["Delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
         task_dict["lag"] = col2.number_input("Lag (days)",0,9999,0)
 
-        task_dict["Dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
-        task_dict["Dependency type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
-        task_dict["Comments"] = t[3].text_area(f"Comments", None)
+        task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
+        task_dict["dependency_type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
+        task_dict["comments"] = t[3].text_area(f"Comments", None)
 
         st.form_submit_button("Submit", type="primary", width="stretch")
     
@@ -111,12 +111,24 @@ if selected_module == list_module[0] :
     st.write(save_dict)
     for k in save_dict :
       if save_dict[k]["Task name"] is None :
-        st.toast("A task name is None")
+        st.toast("A task name is None", icon=":material/warning:")
       msum=0
       for j in save_dict[k]["Machines"] :
         msum+=save_dict[k]["Machines"][j] if j is not None else 0
       if msum == 0 :
         st.toast(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0", icon=":material/warning:")
+
+
+    dict_all_task = {}
+    for k in save_dict :
+      task = Task(id=k, name = save_dict[k]["Task name"], category = save_dict[k]["Task category"], supervisor = save_dict[k]["Supervisor"],
+                  required_machines = save_dict[k]["Machines"], progress = save_dict[k]["Progress"], start_date = save_dict[k]["Start date"] ,
+                  end_date = save_dict[k]["End date"], duration_optimistic = save_dict[k]['Delay_optimistic'],
+                  duration_pessimistic = save_dict[k]['Delay_pessimistic'], duration_probable = save_dict[k]['Delay_probable'],
+                  lag = save_dict[k]['lag'], dependencies = save_dict[k]['Dependencies'], dependency_type = save_dict[k]['dependency_type'],
+                  comments = save_dict[k]["comments"],)
+
+      
         
 
   # if st.button("Save", type="primary"):
