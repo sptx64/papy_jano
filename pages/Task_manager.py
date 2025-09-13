@@ -107,14 +107,17 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
 
-  with st.expander(":material/warning: Warnings", expanded=True) :
+  if st.button("Save", type="primary") :
     st.write(save_dict)
     for k in save_dict :
+      if save_dict[k]["Task name"] is None :
+        st.toast("A task name is None")
       msum=0
       for j in save_dict[k]["Machines"] :
         msum+=save_dict[k]["Machines"][j] if j is not None else 0
       if msum == 0 :
-        st.warning(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0")
+        st.toast(f":material/warning: Task{k}, {save_dict[k]['Task name']} Number of required machines is equal to 0", icon=":material/warning:")
+        
 
   # if st.button("Save", type="primary"):
   #   for k in save_dict :
