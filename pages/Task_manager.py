@@ -127,6 +127,7 @@ if selected_module == list_module[0] :
                   duration_pessimistic = save_dict[k]['Delay_pessimistic'], duration_probable = save_dict[k]['Delay_probable'],
                   lag = save_dict[k]['lag'], dependencies = save_dict[k]['Dependencies'], dependency_type = save_dict[k]['dependency_type'],
                   comments = save_dict[k]["comments"],)
+      dict_all_task[k] = task
 
       
         
