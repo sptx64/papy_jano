@@ -120,14 +120,14 @@ if selected_module == list_module[0] :
 
 
     dict_all_task = {}
-    for k in save_dict :
-      task = Task(id=k, name = save_dict[k]["Task name"], category = save_dict[k]["Task category"], supervisor = save_dict[k]["Supervisor"],
-                  required_machines = save_dict[k]["Machines"], progress = save_dict[k]["Progress"], start_date = save_dict[k]["Start date"] ,
-                  end_date = save_dict[k]["End date"], duration_optimistic = save_dict[k]['delay_optimistic'],
-                  duration_pessimistic = save_dict[k]['delay_pessimistic'], duration_probable = save_dict[k]['delay_probable'],
-                  lag = save_dict[k]['lag'], dependencies = save_dict[k]['dependencies'], dependency_type = save_dict[k]['dependency_type'],
-                  comments = save_dict[k]["comments"],)
-      dict_all_task[k] = task
+    # for k in save_dict :
+    #   task = Task(id=k, name = save_dict[k]["Task name"], category = save_dict[k]["Task category"], supervisor = save_dict[k]["Supervisor"],
+    #               required_machines = save_dict[k]["Machines"], progress = save_dict[k]["Progress"], start_date = save_dict[k]["Start date"] ,
+    #               end_date = save_dict[k]["End date"], duration_optimistic = save_dict[k]['delay_optimistic'],
+    #               duration_pessimistic = save_dict[k]['delay_pessimistic'], duration_probable = save_dict[k]['delay_probable'],
+    #               lag = save_dict[k]['lag'], dependencies = save_dict[k]['dependencies'], dependency_type = save_dict[k]['dependency_type'],
+    #               comments = save_dict[k]["comments"],)
+    #   dict_all_task[k] = task
 
       
         
