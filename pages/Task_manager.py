@@ -91,12 +91,12 @@ if selected_module == list_module[0] :
     
     text_param = f"""
     :blue-badge[{task_dict['Supervisor']}] 
-    {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
-    :green-badge[{task_dict['Start date']}]
-    :orange[{task_dict['End date']}]
-    :violet[Opt]: :violet-badge[{task_dict['Delay_optimistic']}]
-    :violet[Pro]: :violet-badge[{task_dict['Delay_probable']}]
-    :violet[Pes]: :violet-badge[{task_dict['Delay_pessimistic']}]
+    {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] 
+    :green-badge[{task_dict['Start date']}] 
+    :orange[{task_dict['End date']}] 
+    :violet-badge[{task_dict['Delay_optimistic']}] 
+    :violet-badge[{task_dict['Delay_probable']}] 
+    :violet-badge[{task_dict['Delay_pessimistic']}] 
     """
     
     c[i%ncol].write(text_param)
