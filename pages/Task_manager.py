@@ -61,7 +61,7 @@ if selected_module == list_module[0] :
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        col1,col2 = t[2].columns(2]
+        col1,col2 = t[2].columns(2)
         task_dict["Start date"] = col1.date_input(f"Start date", "today")
         task_dict["Start date known"] = col1.toggle(f"Start date is known", value=False)
         if task_dict["Start date known"] :
