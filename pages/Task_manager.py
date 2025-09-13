@@ -61,13 +61,14 @@ if selected_module == list_module[0] :
         for mt in list_machines :
           task_dict["Machines"][mt] = t[1].number_input(f"Required {mt}", 0, 1000, 0)
 
-        task_dict["Start date"] = t[2].date_input(f"Start date", "today")
-        task_dict["Start date known"] = t[2].toggle(f"Start date is known", value=False)
+        col1,col2 = t[2].columns(2]
+        task_dict["Start date"] = col1.date_input(f"Start date", "today")
+        task_dict["Start date known"] = col1.toggle(f"Start date is known", value=False)
         if task_dict["Start date known"] :
           task_dict["Start date"] = None
         
-        task_dict["End date"] = t[2].date_input(f"End date", "today")
-        task_dict["End date known"] = t[2].toggle(f"End date is known", value=False)
+        task_dict["End date"] = col2.date_input(f"End date", "today")
+        task_dict["End date known"] = col2.toggle(f"End date is known", value=False)
         if task_dict["End date known"] :
           task_dict["End date"] = None
         
@@ -91,12 +92,13 @@ if selected_module == list_module[0] :
     
     text_param = f"""
     :blue-badge[{task_dict['Supervisor']}]
-    :green-badge[{task_dict['Start date']}] :orange-badge[{task_dict['End date']}] :violet[OpPrPe:]
+    :green-badge[{task_dict['Start date']}] :orange-badge[{task_dict['End date']}] 
 
     {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}]
     :violet-badge[{task_dict['Delay_optimistic']}] 
     :violet-badge[{task_dict['Delay_probable']}] 
-    :violet-badge[{task_dict['Delay_pessimistic']}] 
+    :violet-badge[{task_dict['Delay_pessimistic']}]
+    
     """
     
     c[i%ncol].write(text_param)
