@@ -4,6 +4,7 @@ import os
 import streamlit as st
 from func.log import log
 from func.all_class import Task
+import pickle
 
 log()
 
