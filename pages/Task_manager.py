@@ -39,7 +39,7 @@ list_machines = minops.dict_opt["Machines"]
 
 #Create a new task set
 if selected_module == list_module[0] :
-  ncol=4
+  ncol=3
   c = st.columns(ncol)
   task_num = c[0].number_input("How many tasks are you scheduling?", 1, 50, 4)
   save_dict = {}
@@ -51,7 +51,7 @@ if selected_module == list_module[0] :
     
     with c[i%ncol].popover(f"Task **{i}** {" - " + str(task_dict['Task name']) if task_dict['Task name'] is not None else ''}", width="stretch") :
       
-      with st.form(id) :
+      with st.form(id, border=False) :
         t = st.tabs(["General", "Machines","Delays", "Other"])
         task_dict["Task category"] = t[0].selectbox(f"category:", list_tasks, )
         task_dict["Supervisor"]    = t[0].selectbox(f"supervisor", list_supervisors)
@@ -79,7 +79,7 @@ if selected_module == list_module[0] :
         task_dict["Dependency type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
         task_dict["Comments"] = t[3].text_area(f"Comments", None)
 
-        st.form_submit_button("Submit")
+        st.form_submit_button("Submit", type="primary", width="stretch")
     
     save_dict[i] = task_dict
 
