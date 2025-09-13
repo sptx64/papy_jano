@@ -90,7 +90,7 @@ if selected_module == list_module[0] :
     
     text_param = f":blue-badge[{task_dict['Supervisor']}]  {machine_text} :orange-badge[{' '.join(task_dict['Dependencies'])}] :green-badge[{task_dict['Start date']}] :orange[{task_dict['End date']}]"
     c[i%ncol].write(text_param)
-    st.progress(task_dict['Progress']/100)
+    c[i%ncol].progress(task_dict['Progress']/100)
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
 
