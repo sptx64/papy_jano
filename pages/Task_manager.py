@@ -140,6 +140,8 @@ if selected_module == list_module[0] :
     minops.mine_task = task
     minops.save_pkl()
 
+elif selected_module == list_module[1] :
+  "_Coming soon..._"
 
 
       
