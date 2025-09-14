@@ -35,9 +35,9 @@ class MachineEntity :
 
 
 class MineTask :
-  def __init__(self, id, name, category, supervisor, required_machines, progress, start_date, end_date, duration_optimistic, duration_pessimistic, duration_probable, lag, dependencies, dependency_type, comments,) :
+  def __init__(self, ID, name, category, supervisor, required_machines, progress, start_date, end_date, duration_optimistic, duration_pessimistic, duration_probable, lag, dependencies, dependency_type, comments,) :
     #task ids
-    self.id = id #int
+    self.ID = ID #int
     self.name = name #str
     self.category = category #str
     self.supervisor = supervisor #str
