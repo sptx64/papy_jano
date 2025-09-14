@@ -121,7 +121,7 @@ if selected_module == list_module[0] :
 
     dict_all_task = {}
     for k in save_dict :
-      task = Task(id                   = k,
+      task = MineTask(ID               = k,
                   name                 = save_dict[k]['Task name'],
                   category             = save_dict[k]['Task category'],
                   supervisor           = save_dict[k]['Supervisor'],
