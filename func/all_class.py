@@ -34,7 +34,7 @@ class MachineEntity :
     self.availability = arr[5]
 
 
-class Task :
+class MineTask :
   def __init__(self, id, name, category, supervisor, required_machines, progress, start_date, end_date, duration_optimistic, duration_pessimistic, duration_probable, lag, dependencies, dependency_type, comments,) :
     #task ids
     self.id = id #int
