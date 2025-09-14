@@ -108,7 +108,6 @@ if selected_module == list_module[0] :
 
 
   if st.button("Save", type="primary") :
-    st.write(save_dict)
     for k in save_dict :
       if save_dict[k]["Task name"] is None :
         st.toast("A task name is None", icon=":material/warning:")
@@ -138,6 +137,10 @@ if selected_module == list_module[0] :
                   comments             = save_dict[k]["comments"],
                  )
       dict_all_task[k] = task
+    minops.mine_task = task
+    minops.save_pkl()
+
+
 
       
         
