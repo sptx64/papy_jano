@@ -3,7 +3,7 @@ import numpy as np
 import os
 import streamlit as st
 from func.log import log
-from func.all_class import Task
+from func.all_class import MineTask
 import pickle
 
 log()
@@ -77,7 +77,7 @@ if selected_module == list_module[0] :
         task_dict["delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
         task_dict["lag"] = col2.number_input("Lag (days)",0,9999,0)
 
-        task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True)
+        task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True, help="integers linking to the parent task IDs (0,1,2,3,...)")
         task_dict["dependency_type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
         task_dict["comments"] = t[3].text_area(f"Comments", None)
 
