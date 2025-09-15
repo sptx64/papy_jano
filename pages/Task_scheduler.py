@@ -39,38 +39,66 @@ if mine_task is None :
   st.stop()
 
 
-
-"## Dashboard"
-c = st.columns([1,2])
-c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
-
-today = date.today()
-st.write(today)
-c[0].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
-
-
-
-# task by category
-res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
-df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
-df_grp = df[["category","count"]].groupby("category").sum().reset_index()
-# rajouter la transformation dataframe to dict 
-# rajouter pie echarts
-# rajouter la suite
-
-res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
-options = {
-  "title" : {"text" : 'Tasks', "subtext" : 'Tasks by category', "left" : 'center'},
-  "tooltip" : { "trigger" : 'item'},
-  "legend"  : {"orient" : 'vertical', "left" : 'left'},
-  "series"  : [
-        { "name" : 'Access From', "type"   : 'pie', "radius" : '50%',
-          "data" : res,
-          "emphasis" : {
-            "itemStyle" : { "shadowBlur" : 10, "shadowOffsetX" : 0, "shadowColor" : 'rgba(0, 0, 0, 0.5)' }
+t = st.tabs(["Dashboard","Progress"])
+with t[0] :
+  "## Dashboard"
+  c = st.columns([1,2])
+  c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
+  
+  today = date.today()
+  st.write(today)
+  c[0].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
+  
+  
+  
+  # task by category
+  res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
+  df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
+  df_grp = df[["category","count"]].groupby("category").sum().reset_index()
+  # rajouter la transformation dataframe to dict 
+  # rajouter pie echarts
+  # rajouter la suite
+  
+  res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
+  options = {
+    "title" : {"text" : 'Tasks', "subtext" : 'Tasks by category', "left" : 'center'},
+    "tooltip" : { "trigger" : 'item'},
+    "legend"  : {"orient" : 'vertical', "left" : 'left'},
+    "series"  : [
+          { "name" : 'Access From', "type"   : 'pie', "radius" : '50%',
+            "data" : res,
+            "emphasis" : {
+              "itemStyle" : { "shadowBlur" : 10, "shadowOffsetX" : 0, "shadowColor" : 'rgba(0, 0, 0, 0.5)' }
+            }
           }
-        }
-      ]
+        ]
+  }
+  
+  with c[1] :
+    st_echarts(options=options, height="600px",)
+
+with t[1] :
+  c = st.columns([1,2])
+  res = [ ["Task name", "Task category", "Progress"] ]
+  for k in mine_task :
+    mine_task[k].progress = c[0].slider(f"{k} - Progress", 0, 100, mine_task[k].progress)
+    res.append([mine_task[k].name, mine_task[k].category, mine_task[k].progress])
+    
+options = {
+  "dataset" : { "source" : res },
+  "grid"    : { "containLabel" : True },
+  "xAxis"   : { "name" : "Progress" },
+  "yAxis"   : { "type" : "Task name" },
+  "visualMap" : {
+    "orient"    : "horizontal",
+    "left"      : "center",
+    "min"       : 0,
+    "max"       : 100,
+    "text"      : ["High Progress", "Low Progress"],
+    "dimension" : 0,
+    "inRange"   : { "color" : ["#65B581", "#FFCE34", "#FD665F"] }
+  },
+  "series" : [{ "type" : "bar", "encode" : { "x" : "Progress", "y" : "Task name" } }]
 }
 
 with c[1] :
