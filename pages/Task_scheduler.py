@@ -107,7 +107,7 @@ options = {
     "max"       : 100.,
     "text"      : ["High Progress", "Low Progress"],
     "dimension" : 2,
-    "inRange"   : { "color" : ["#FD665F", "#FFCE34", "#65B581" }
+    "inRange"   : { "color" : ["#FD665F", "#FFCE34", "#65B581"] }
   },
   "series" : [{ "type" : "bar", "encode" : { "x" : "Progress", "y" : "Task name" } }]
 }
