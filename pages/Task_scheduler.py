@@ -91,7 +91,7 @@ with t[1] :
   c = st.columns([1,2])
   res = [ ["Task name", "Task category", "Progress"] ]
   for k in mine_task :
-    mine_task[k].progress = float( c[0].slider(f"{k} - Progress", 0, 100, mine_task[k].progress) )
+    mine_task[k].progress = float( c[0].slider(f"{k}-{mine_task[k].name} progress", 0, 100, mine_task[k].progress) )
     res.append([mine_task[k].name, mine_task[k].category, mine_task[k].progress])
     
 options = {
