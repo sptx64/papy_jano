@@ -137,7 +137,7 @@ if selected_module == list_module[0] :
                   comments             = save_dict[k]["comments"],
                  )
       dict_all_task[k] = task
-    minops.mine_task = dict_all_task[k]
+    minops.mine_task = dict_all_task
     minops.save_pkl()
 
 elif selected_module == list_module[1] :
