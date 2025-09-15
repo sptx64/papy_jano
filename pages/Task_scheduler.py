@@ -85,6 +85,7 @@ with t[1] :
     res.append([mine_task[k].name, mine_task[k].category, mine_task[k].progress])
     
 options = {
+  "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
   "dataset" : { "source" : res },
   "grid"    : { "containLabel" : True },
   "xAxis"   : { "name" : "Progress" },
@@ -92,8 +93,8 @@ options = {
   "visualMap" : {
     "orient"    : "horizontal",
     "left"      : "center",
-    "min"       : 0,
-    "max"       : 100,
+    "min"       : 0.,
+    "max"       : 100.,
     "text"      : ["High Progress", "Low Progress"],
     "dimension" : 0,
     "inRange"   : { "color" : ["#65B581", "#FFCE34", "#FD665F"] }
