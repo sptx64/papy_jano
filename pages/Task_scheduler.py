@@ -107,20 +107,11 @@ options = {
     "max"       : 100.,
     "text"      : ["High Progress", "Low Progress"],
     "dimension" : 2,
-    "inRange"   : { "color" : ["#65B581", "#FFCE34", "#FD665F"] }
+    "inRange"   : { "color" : ["#FD665F", "#FFCE34", "#65B581" }
   },
   "series" : [{ "type" : "bar", "encode" : { "x" : "Progress", "y" : "Task name" } }]
 }
 
-# options = {
-#   "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
-#   "xAxis": {
-#     "type": "category",
-#     "data": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-#   },
-#   "yAxis": {"type": "value"},
-#   "series": [{"data": [120, 200, 150, 80, 70, 110, 130], "type": "bar"}],
-# }
 
 
 
