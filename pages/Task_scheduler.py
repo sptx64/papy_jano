@@ -82,7 +82,7 @@ with t[1] :
   res = [ ["Task name", "Task category", "Progress"] ]
   for k in mine_task :
     mine_task[k].progress = float( c[0].slider(f"{k} - Progress", 0, 100, mine_task[k].progress) )
-    res.append([mine_task[k].name, mine_task[k].category, mine_task[k].progress*100])
+    res.append([mine_task[k].name, mine_task[k].category, mine_task[k].progress])
     
 options = {
   "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
@@ -96,7 +96,7 @@ options = {
     "min"       : 0.,
     "max"       : 100.,
     "text"      : ["High Progress", "Low Progress"],
-    "dimension" : 0,
+    "dimension" : 2,
     "inRange"   : { "color" : ["#65B581", "#FFCE34", "#FD665F"] }
   },
   "series" : [{ "type" : "bar", "encode" : { "x" : "Progress", "y" : "Task name" } }]
