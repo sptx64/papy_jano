@@ -55,10 +55,7 @@ with t[0] :
   res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
   df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
   df_grp = df[["category","count"]].groupby("category").sum().reset_index()
-  # rajouter la transformation dataframe to dict 
-  # rajouter pie echarts
-  # rajouter la suite
-  
+
   res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
   options = {
     "title" : {"text" : 'Tasks', "subtext" : 'Tasks by category', "left" : 'center'},
@@ -116,4 +113,5 @@ options = {
 
 
 with c[1] :
-  st_echarts(options=options, height="400px",)
+  px = 80 * len(res)
+  st_echarts(options=options, height=f"{px}px",)
