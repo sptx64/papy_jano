@@ -58,7 +58,7 @@ df_grp = df[["category","count"]].groupby("category").sum().reset_index()
 # rajouter pie echarts
 # rajouter la suite
 
-res = [ {"value" : v, "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
+res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
 options = {
   "title" : {"text" : 'Referer of a Website', "subtext" : 'Fake Data', "left" : 'center'},
   "tooltip" : { "trigger" : 'item'},
