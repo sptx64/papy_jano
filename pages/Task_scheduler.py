@@ -39,6 +39,12 @@ if mine_task is None :
   st.stop()
 
 
+coefficient_non_critical = st.sidebar.number_input("Coefficient non-critique", value=float(tm.coefficient_non_critical),
+                                                   min_value=0.1, max_value=2.0, step=0.1,
+                                                   help="Coefficient pour calculer le buffer des tâches non-critiques")
+
+
+
 t = st.tabs(["Dashboard","Progress"])
 with t[0] :
   "## Dashboard"
