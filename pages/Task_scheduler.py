@@ -39,6 +39,8 @@ if mine_task is None :
   st.info("Create and manage your tasks in the Task manager. Don't forget to click save.")
   st.stop()
 
+
+mine_task,
 "## Dashboard"
 c = st.columns(4)
 c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
