@@ -88,7 +88,7 @@ options = {
   "dataset" : { "source" : res },
   "grid"    : { "containLabel" : True },
   "xAxis"   : { "name" : "Progress" },
-  "yAxis"   : { "type" : "Task name" },
+  "yAxis"   : { "type" : "category" },
   "visualMap" : {
     "orient"    : "horizontal",
     "left"      : "center",
@@ -100,6 +100,19 @@ options = {
   },
   "series" : [{ "type" : "bar", "encode" : { "x" : "Progress", "y" : "Task name" } }]
 }
+
+# options = {
+#   "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
+#   "xAxis": {
+#     "type": "category",
+#     "data": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+#   },
+#   "yAxis": {"type": "value"},
+#   "series": [{"data": [120, 200, 150, 80, 70, 110, 130], "type": "bar"}],
+# }
+
+
+
 
 with c[1] :
   st_echarts(options=options, height="600px",)
