@@ -39,9 +39,16 @@ if mine_task is None :
   st.stop()
 
 
-coefficient_non_critical = st.sidebar.number_input("Coefficient non-critique", value=float(tm.coefficient_non_critical),
+coefficient_non_critical = st.sidebar.number_input("Coefficient non-critique", value=0.5,
                                                    min_value=0.1, max_value=2.0, step=0.1,
                                                    help="Coefficient pour calculer le buffer des tâches non-critiques")
+
+coefficient_critical = st.sidebar.number_input("Coefficient critique", value=1.3, min_value=0.1, 
+                                               max_value=2.0, step=0.1, help="Coefficient pour calculer le buffer des tâches critiques")
+
+multiplier_multi_dependencies = st.sidebar.number_input("Multiplicateur multi-dépendances", value=1.2, min_value=1.0, 
+                                                        max_value=3.0, step=0.1,
+                                                        help="Multiplicateur supplémentaire pour les tâches avec plusieurs dépendances")
 
 
 
