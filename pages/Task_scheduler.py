@@ -39,7 +39,7 @@ if mine_task is None :
   st.stop()
 
 
-mine_task
+
 "## Dashboard"
 c = st.columns(4)
 c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
@@ -53,7 +53,7 @@ c[1].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].st
 # task by category
 res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
 df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
-df_grp = df[["category","count"]].groupby("category").sum()
+df_grp = df[["category","count"]].groupby("category").sum().reset_index()
 # rajouter la transformation dataframe to dict 
 # rajouter pie echarts
 # rajouter la suite
