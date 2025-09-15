@@ -59,7 +59,7 @@ df_grp = df[["category","count"]].groupby("category").sum().reset_index()
 # rajouter la suite
 
 res = [ {"value" : v, "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
-option = {
+options = {
   "title" : {"text" : 'Referer of a Website', "subtext" : 'Fake Data', "left" : 'center'},
   "tooltip" : { "trigger" : 'item'},
   "legend"  : {"orient" : 'vertical', "left" : 'left'},
