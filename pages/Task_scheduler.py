@@ -116,4 +116,4 @@ options = {
 
 
 with c[1] :
-  st_echarts(options=options, height="600px",)
+  st_echarts(options=options, height="400px",)
