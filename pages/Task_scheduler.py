@@ -26,7 +26,6 @@ if selected_minops is None or selected_minops == "" :
 fpath = os.path.join( st.session_state.project, selected_minops )
 
 # read minops
-@st.cache_data
 def read_minops(fpath) :
   with open(fpath, "rb") as f :
     mo = pickle.load(f)
