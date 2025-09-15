@@ -39,14 +39,14 @@ if mine_task is None :
   st.stop()
 
 
-mine_task,
+mine_task
 "## Dashboard"
 c = st.columns(4)
 c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
 
 today = date.today()
 st.write(today)
-c[1].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x]["Start date"] is not None ]), border=True )
+c[1].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
 
 
 
