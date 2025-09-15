@@ -20,10 +20,6 @@ log()
 list_of_minops  = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
 selected_minops = st.selectbox("Select a MineOps", list_of_minops, format_func = lambda x: x.replace(".pkl",""))
 
-list_module = [":green-badge[:material/add_circle:] Create a new TaskSet", ":orange-badge[:material/edit_square:] Modify an existing TaskSet"]
-selected_module = st.pills("Select what you want to do :", list_module, selection_mode="single",
-                           label_visibility="hidden", default=list_module[0])
-
 if selected_minops is None or selected_minops == "" :
   st.info("No MineOps selected, you have to create a MineOps Class first")
   st.stop()
