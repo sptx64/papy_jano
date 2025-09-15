@@ -1,13 +1,12 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
+from streamlit_echarts import st_echarts
 
 import os
 from func.log import log
 from func.all_class import MineTask
 import pickle
-
-
 
 from datetime import date
 
