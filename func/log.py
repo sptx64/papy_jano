@@ -34,7 +34,7 @@ def log() :
         if project in projects :
           st.warning("This project name already exists")
         elif project is None :
-          st.info("Enter a new project name")
+          st.caption("Enter a new project name")
         else :
           disabled=False
 
