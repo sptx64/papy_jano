@@ -41,12 +41,12 @@ if mine_task is None :
 
 
 "## Dashboard"
-c = st.columns(4)
+c = st.columns([1,2])
 c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
 
 today = date.today()
 st.write(today)
-c[1].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
+c[0].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
 
 
 
@@ -73,4 +73,5 @@ options = {
       ]
 }
 
-st_echarts(options=options, height="600px",)
+with c[1] :
+  st_echarts(options=options, height="600px",)
