@@ -14,6 +14,7 @@ pages_dict = {
              ],
   "MINE PLAN" : [
     st.Page("pages/Task_manager.py", title="Task manager", icon=":material/assignment_add:"),
+    st.Page("pages/Task_scheduler.py", title="Task scheduler", icon=":material/assignment_add:"),
                 ],
   "APP DE BOLOSS" : [
     st.Page("pages/app.py", title="vieille appli dégueux", icon=":material/delete:"),
