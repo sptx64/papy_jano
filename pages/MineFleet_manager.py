@@ -17,7 +17,7 @@ Here you can specify machine number, availability and capacity.
 list_of_minops  = [ x for x in os.listdir(st.session_state.project) if x.startswith("MineOps - ") and x.endswith(".pkl") ]
 selected_minops = st.selectbox("Select a MineOps", list_of_minops, format_func = lambda x: x.replace(".pkl",""))
 
-list_module = [":green-badge[:material/add_circle:] Create a new MineFleet", ":orange-badge[:material/edit_square:] Modify an existing MineFleet"]
+list_module = [":green[:material/add_circle:] Create a new MineFleet", ":orange[:material/edit_square:] Modify an existing MineFleet"]
 selected_module = st.pills("Select what you want to do :", list_module, selection_mode="single",
                            label_visibility="hidden", default=list_module[0])
 
