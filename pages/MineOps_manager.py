@@ -20,7 +20,7 @@ Here you can manage your options for the app modules such as task, supervisors a
 
 #create or modify lists
 
-list_module = [":green-badge[:material/add_circle:] Create a new MineOps", ":orange-badge[:material/edit_square:] Modify an existing MineOps"]
+list_module = [":green[:material/add_circle:] Create a new MineOps", ":orange[:material/edit_square:] Modify an existing MineOps"]
 selected_module = st.pills("Select what you want to do :", list_module, selection_mode="single",
                            label_visibility="hidden", default=list_module[0])
 
