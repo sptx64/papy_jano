@@ -49,3 +49,10 @@ def load_opt_pkl(start_with, location) :
         
     else :
       st.session_state.dict_opt = {}
+
+
+def scheduled_end(start_date, duration_days):
+  if start_date and self.duration_days:
+    return start_date + timedelta(days=duration_days - 1)
+  else :
+    return self.end_date
