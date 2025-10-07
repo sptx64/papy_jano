@@ -37,13 +37,13 @@ class MachineEntity :
 class MineTask :
   def __init__(self, ID, name, category, supervisor, required_machines, progress, start_date, end_date, duration_optimistic, duration_pessimistic, duration_probable, lag, dependencies, dependency_type, comments,) :
     #task ids
-    self.ID = ID #int
+    self.ID = ID #int called id in previous code
     self.name = name #str
     self.category = category #str
-    self.supervisor = supervisor #str
+    self.supervisor = supervisor #str called responsible in previous code
 
     #task machine required
-    self.required_machines = required_machines # dict ; from task UI, number of machine required by category
+    self.required_machines = required_machines # dict ; from task UI, number of machine required by category called equipment in previous code
     
     #task progress, dates and delays
     self.progress = progress #int
@@ -55,12 +55,29 @@ class MineTask :
     self.lag = lag #int
 
     #task dependencies
-    self.dependencies = dependencies
-    self.dependency_type = dependency_type
+    self.dependencies = dependencies # str list
+    self.dependency_type = dependency_type # str
 
     #task others
     self.comments = comments
-    self.compute_dict = {}
+    self.compute_dict = {
+      "projected_end_date" :None,
+      "projection_speed"   :None,
+      "is_critical"        :None,
+      "duration_stochastic":None,
+      "duration_days"      :None,
+      "standard_deviation" :None,
+      "buffer":None,
+      "p10":None,
+      "p20":None,
+      "p30":None,
+      "p40":None,
+      "p50":None,
+      "p60":None,
+      "p70":None,
+      "p80":None,
+      "p90":None,
+    }
 
     
     
