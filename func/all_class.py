@@ -79,6 +79,140 @@ class MineTask :
       "p90":None,
     }
 
+
+ #  def scheduled_end(self) -> Optional[date]:
+ #    if self.start_date and self.compute_dict["duration_days"]:
+ #      return self.start_date + timedelta(days=self.compute_dict["duration_days"] - 1)
+ #    return self.end_date
+     
+      
+ #  def get_expected_duration(self) -> Optional[float]:
+ #    if self.compute_dict["duration_stochastic"] is not None:
+ #      return self.compute_dict["duration_stochastic"]
+        
+ #    if self.duration_optimistic is not None and self.duration_pessimistic is not None:
+ #      probable = self.duration_probable or ((self.duration_optimistic + self.duration_pessimistic) / 2)
+ #      if self.duration_probable is None:
+ #        self.duration_probable = probable
+ #      self.compute_dict["duration_stochastic"] = (self.duration_optimistic + 4 * probable + self.duration_pessimistic) / 6
+ #      return self.compute_dict["duration_stochastic"]
+        
+ #    # Priority 3: Fallback to duration_days if set
+ #    elif self.duration_days is not None:
+ #            return float(self.duration_days)
+        
+ #    # No valid data: None
+ #    return None
+
+ 
+ #    #Calcul Task Duration with start date and end date
+ 
+ #    def get_actual_duration(self) -> Optional[int]:
+ #        if self.start_date and self.end_date:
+ #            return (self.end_date - self.start_date).days + 1
+ #        return None
+
+
+
+ #     #- Calcul End date projection and Projection speed
+     
+ #    def get_remaining_duration(self) -> Optional[float]:
+ #        expected = self.get_expected_duration()
+ #        if not expected or not self.start_date:
+ #            # Not applicable, fallback to simple remaining estimate
+ #            return expected * (100 - self.progress) / 100 if expected and self.progress < 100 else 0.0
+        
+ #        # Calculate Work Done Days
+ #        work_done_days = expected * (self.progress / 100.0)
+        
+ #        # Calculate Elapsed Days (using int for simplicity)
+ #        days_elapsed = (date.today() - self.start_date).days
+        
+ #        if days_elapsed <= 0:
+ #            # Not started, full expected remaining
+ #            return expected * (100 - self.progress) / 100 if self.progress < 100 else 0.0
+        
+ #        # Calculate Projection Speed
+ #        if work_done_days > 0:
+ #            projection_speed = work_done_days / days_elapsed
+ #        else:
+ #            # No progress, assume neutral speed
+ #            projection_speed = 1.0
+        
+ #        # Calculate Projected Total Duration
+ #        if projection_speed > 0:
+ #            projected_total_duration = expected / projection_speed
+ #        else:
+ #            projected_total_duration = expected
+        
+ #        # Update projected_end_date and projection_speed
+ #        self.projected_end_date = self.start_date + timedelta(days=int(round(projected_total_duration)))
+ #        self.projection_speed = round(projection_speed, 2)
+        
+ #        # Calculate Remaining Duration
+ #        remaining_duration = max(0.0, projected_total_duration - days_elapsed)
+        
+ #        # If completed, remaining is 0
+ #        if self.progress >= 100:
+ #            return 0.0
+        
+ #        return round(remaining_duration, 2)
+
+ 
+ #    def get_stochastic_end_date(self) -> Optional[date]:
+ #        if self.start_date and self.duration_stochastic:
+ #            return self.start_date + timedelta(days=int(round(self.duration_stochastic)))
+ #        elif self.start_date and self.duration_days:
+ #            return self.start_date + timedelta(days=self.duration_days - 1)
+ #        return self.end_date
+
+ 
+ # #? 
+ 
+ #    def get_standard_deviation(self) -> Optional[float]:
+ #        return self.standard_deviation
+
+ 
+
+ 
+ #    def to_dict(self):
+ #        d = asdict(self)
+ #        # Convert date objects to ISO format strings for JSON compatibility
+ #        d["start_date"] = self.start_date.isoformat() if self.start_date else None
+ #        d["end_date"] = self.end_date.isoformat() if self.end_date else None
+ #        d["projected_end_date"] = self.projected_end_date.isoformat() if self.projected_end_date else None
+ #        return d
+
+
+ 
+ #    #DEPENDENCY
+ 
+ #    def get_dependency_ids(self) -> List[int]:
+ #        if not self.dependencies:
+ #            return []
+ #        # Normalize separators and parse
+ #        deps_str = self.dependencies.replace(";", ",")
+ #        return [int(x.strip()) for x in deps_str.split(",") if x.strip().isdigit()]
+
+
+      
+ #    def is_complete_for_calculation(self) -> bool:
+ #        """
+ #        Check if task has sufficient information for scheduling calculations.
+        
+ #        Returns:
+ #            bool: True if task can be used in calculations
+ #        """
+ #        has_dates = self.start_date and self.end_date
+ #        has_start_duration = self.start_date and self.duration_days
+ #        has_end_duration = self.end_date and self.duration_days
+ #        return has_dates or has_start_duration or has_end_duration
+
+
+
+
+
+
     
     
 
