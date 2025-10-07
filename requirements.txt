@@ -6,3 +6,4 @@ geopandas
 scipy
 plotly
 matplotlib
+streamlit-flow-component
