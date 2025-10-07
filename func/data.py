@@ -58,25 +58,7 @@ def load_opt_pkl(start_with, location) :
 
 
 
-"""
-Advanced Task Management System for Mine Planning
-=================================================
 
-This application provides a comprehensive task management system specifically designed for mine planning projects.
-It uses PERT (Program Evaluation and Review Technique) methodology and critical path analysis to optimize
-project schedules and manage risks through buffer calculations.
-
-Key Features:
-- PERT-based stochastic duration calculations
-- Critical path identification
-- Risk-based buffer calculations
-- Task dependency management
-- Progress tracking and projection
-- Interactive Streamlit interface
-
-Author: Mine Planning Team
-Version: 1.0
-"""
 from scipy.stats import beta
 import json
 from dataclasses import asdict, dataclass
@@ -95,32 +77,15 @@ import pandas as pd  # Si pas déjà là
 import matplotlib.pyplot as plt
 from io import BytesIO
 
-
-# ============================================================================================
-# CONFIGURATION CONSTANTS
-# ============================================================================================
-
 # File paths for data persistence
 SAVE_PATH = Path("data")  # Directory for saving project data
 SAVE_FILE = SAVE_PATH / "mine_plan.json"  # Main project file
 
-# ============================================================================================
-# DATA MODEL - TASK DEFINITION
-# ============================================================================================
 
-
-    ### 1-1 - DATA TABLEAU
+### 1-1 - DATA TABLEAU
 # ============================================================================================
 @dataclass
-class Task:
-    """
-    👋 **Core Task Data Class**
-    - Uses `@dataclass` for auto `__init__`, `__repr__`, etc.
-    - Supports **PERT analysis**, **critical path**, and **progress tracking**.
-    - Added: **Projection Speed** and **P10-P90 Percentiles** for extra risk insights.
-    - Fields grouped into **4 categories** (see below).
-    """
-    
+class Task:   
     # 🎯 **GENERAL INFORMATION** (Basics & Identity)
     id: int  # 🆔 Unique identifier (calculated or entry)
     name: str  # 📝 Task description (entry)
@@ -170,16 +135,6 @@ class Task:
    #Starting date : Calculate the scheduled end date based on start date and duration.
  
     def scheduled_end(self) -> Optional[date]:
-        """
-        Calculate the scheduled end date based on start date and duration.
-        
-        Priority order:
-        1. If both start_date and duration_days exist, calculate end date
-        2. Otherwise, return the manually set end_date
-        
-        Returns:
-            Optional[date]: Calculated or stored end date
-        """
         if self.start_date and self.duration_days:
             return self.start_date + timedelta(days=self.duration_days - 1)
         return self.end_date
@@ -188,21 +143,6 @@ class Task:
     #Durée stochastique calculation
  
     def get_expected_duration(self) -> Optional[float]:
-        """
-        Get the expected duration for the task, fusing calculation logic to cover all cases.
-        
-        Priority order (covers all scenarios from both original methods):
-        1. If stochastic (PERT calculated) is set: Return it directly.
-        2. If not set but optimistic/pessimistic are available: Calculate stochastic on the fly (using calculate_stochastic_duration logic), set the field, and return it.
-        3. If calculation not possible but duration_days is set: Return duration_days as float.
-        4. Otherwise: Return None.
-        
-        This fused version ensures the output is identical to running both methods separately, but in one step.
-        Formulas identical to originals: PERT = (O + 4M + P)/6 where M = probable or (O+P)/2.
-        
-        Returns:
-            Optional[float]: Expected duration in days.
-        """
         if self.duration_stochastic is not None:
             # Priority 1: Use existing stochastic
             return self.duration_stochastic
@@ -229,12 +169,6 @@ class Task:
     #Calcul Task Duration with start date and end date
  
     def get_actual_duration(self) -> Optional[int]:
-        """
-        Calculate actual duration if task is completed.
-        
-        Returns:
-            Optional[int]: Actual duration in days if both dates exist
-        """
         if self.start_date and self.end_date:
             return (self.end_date - self.start_date).days + 1
         return None
@@ -244,23 +178,6 @@ class Task:
      #- Calcul End date projection and Projection speed
      
     def get_remaining_duration(self) -> Optional[float]:
-        """
-        Calculate remaining duration based on current progress, using formulas for Projection Speed and Projected End Date.
-        
-        Formulas (based on your model, translated to English):
-        - Work Done Days = duration_stochastic * (progress / 100)
-        - Elapsed Days = (date.today() - start_date).days if start_date else 0
-        - Projection Speed = Work Done Days / Elapsed Days (if applicable)
-        - Projected Total Duration = duration_stochastic / Projection Speed
-        - Projected End Date = start_date + Projected Total Duration (updates projected_end_date)
-        - Remaining Duration = max(0, Projected Total Duration - Elapsed Days)
-        
-        This uses Projection Speed for dynamic estimates.
-        Falls back to expected * (100 - progress)/100 if calculations not applicable.
-        
-        Returns:
-            Optional[float]: Remaining duration in days.
-        """
         expected = self.get_expected_duration()
         if not expected or not self.start_date:
             # Not applicable, fallback to simple remaining estimate
@@ -302,17 +219,8 @@ class Task:
         
         return round(remaining_duration, 2)
 
-
-     
-    #Calculate End-date.
  
     def get_stochastic_end_date(self) -> Optional[date]:
-        """
-        Calculate end date based on stochastic duration.
-        
-        Returns:
-            Optional[date]: Calculated end date using stochastic duration
-        """
         if self.start_date and self.duration_stochastic:
             return self.start_date + timedelta(days=int(round(self.duration_stochastic)))
         elif self.start_date and self.duration_days:
@@ -323,24 +231,12 @@ class Task:
  #? 
  
     def get_standard_deviation(self) -> Optional[float]:
-        """
-        Get the standard deviation for the task.
-        
-        Returns:
-            Optional[float]: Standard deviation value
-        """
         return self.standard_deviation
 
  
 
  
     def to_dict(self):
-        """
-        Convert Task object to dictionary for JSON serialization.
-        
-        Returns:
-            dict: Task data as dictionary with proper date formatting
-        """
         d = asdict(self)
         # Convert date objects to ISO format strings for JSON compatibility
         d["start_date"] = self.start_date.isoformat() if self.start_date else None
@@ -353,14 +249,6 @@ class Task:
     #DEPENDENCY
  
     def get_dependency_ids(self) -> List[int]:
-        """
-        Parse dependency string and return list of task IDs.
-        
-        Supports both comma and semicolon separators.
-        
-        Returns:
-            List[int]: List of predecessor task IDs
-        """
         if not self.dependencies:
             return []
         # Normalize separators and parse
@@ -368,9 +256,7 @@ class Task:
         return [int(x.strip()) for x in deps_str.split(",") if x.strip().isdigit()]
 
 
-     
-    #Check data
- 
+      
     def is_complete_for_calculation(self) -> bool:
         """
         Check if task has sufficient information for scheduling calculations.
@@ -383,9 +269,9 @@ class Task:
         has_end_duration = self.end_date and self.duration_days
         return has_dates or has_start_duration or has_end_duration
 
-# ============================================================================================
-# TASK MANAGER - CORE BUSINESS LOGIC
-# ============================================================================================
+
+
+
 
 class TaskManager:
     """
@@ -535,9 +421,7 @@ class TaskManager:
             ),
         }
 
-    # ========================================================================================
-    # BUFFER CALCULATION METHODS
-    # ========================================================================================
+
 
 
     def calculate_buffer(self, task: Task, predecessor_std: Optional[float] = None) -> Optional[float]:
@@ -895,21 +779,6 @@ class TaskManager:
     # ========================================================================================
 
     def auto_calculate_all_tasks(self, max_iterations: int = 10):
-        """
-        Comprehensive calculation engine that automatically computes all task metrics.
-        
-        This is the main calculation method that orchestrates all computations:
-        1. PERT duration calculations
-        2. Date and dependency resolution
-        3. Critical path analysis
-        4. Buffer calculations
-        5. Progress projections
-        
-        Uses iterative approach to resolve complex dependency chains.
-        
-        Args:
-            max_iterations (int): Maximum iterations to prevent infinite loops
-        """
         
         # ... PHASE 1: PERT CALCULATIONS (mise à jour)
         for task in self.tasks.values():
@@ -1030,16 +899,6 @@ class TaskManager:
     # ========================================================================================
 
     def _topological_sort(self) -> List[int]:
-        """
-        Perform topological sort of tasks based on dependencies.
-        
-        This ensures tasks are processed in the correct order, with predecessor
-        tasks always processed before their dependents. Uses depth-first search
-        with cycle detection.
-        
-        Returns:
-            List[int]: Task IDs in topological order
-        """
         result = []
         visited = set()        # Permanently visited nodes
         temp_visited = set()   # Temporarily visited nodes (for cycle detection)
@@ -1072,9 +931,8 @@ class TaskManager:
 
         return result
 
-    # ========================================================================================
-    # VALIDATION AND ERROR CHECKING
-    # ========================================================================================
+
+  
 
     def validate_task_data(self) -> List[str]:
         """
@@ -1138,21 +996,10 @@ class TaskManager:
 
         return False
 
-# ============================================================================================
-# DATA INTERCHANGE UTILITIES
-# ============================================================================================
 
-def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):  # CORRECTED VERSION
-    """
-    Update TaskManager from Streamlit data editor DataFrame, matching the new English keys and full dataclass.
-    
-    Handles data type conversions, PRESERVES calculated fields AND user input if not modified, and adds new fields like category and percentiles.
-    
-    Args:
-        tm (TaskManager): TaskManager instance to update
-        edited_df (pd.DataFrame): DataFrame from Streamlit data editor with English keys
-    """
-    
+
+
+def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):  # CORRECTED VERSION    
     # === IDENTIFY TASK CHANGES ===
     # Determine which tasks to keep, update, or delete based on 'id'
     new_ids = set()
@@ -1280,11 +1127,7 @@ def update_tasks_from_editor(tm: TaskManager, edited_df: pd.DataFrame):  # CORRE
 st.set_page_config(page_title="⚒️ Gestionnaire de Tâches", layout="wide")
 
 def main():
-    """
-    Main application entry point.
-    
-    Sets up the Streamlit interface with navigation and session state management.
-    """
+
     # === NAVIGATION SIDEBAR ===
     st.sidebar.title("🧭 Navigation")
     page = st.sidebar.selectbox(
@@ -1318,88 +1161,11 @@ def main():
             st.error(f"❌ Erreur lors du chargement de la simulation : {e}")
 
 def show_task_management_page(tm: TaskManager):
-    """
-    Main task management interface.
-    
-    This function creates the comprehensive task management UI including:
-    - Interactive data editor
-    - Calculation controls
-    - Configuration options
-    - Summary statistics
-    - Help documentation
-    
-    Args:
-        tm (TaskManager): TaskManager instance
-    """
-
-# === CONFIGURATION INITIALE (Sidebar, Headers, etc.) ===
-    # ... votre code existant ici ...
 
     # === CALCULS DES COEFFS ===
     coeff_non   = round(tm.coefficient_non_critical, 2)
     coeff_crit  = round(tm.coefficient_critical, 2)
     coeff_multi = round(tm.multiplier_multi_dependencies, 2)
-
-    # === ACCORDÉON DES FORMULES (au-dessus du tableau) ===
-    with st.expander("📐 **Formules & Calculs des Colonnes**", expanded=False):
-
-        st.markdown(f"""
-        Cet accordéon décrit **chaque colonne du tableau**, avec son type (manuel ou calculé),  
-        sa formule et son rôle dans la planification.  
-
-        *(Valeurs actuelles : Non-Crit = **{coeff_non}**, Crit = **{coeff_crit}**, Multi = **{coeff_multi}**)*  
-
-        ---
-
-        ## 🔎 1. Informations Générales
-        | Colonne       | Type       | Formule / Règle | Explication |
-        |---------------|-----------|-----------------|-------------|
-        | 🆔 ID         | Calculé   | `next_id()`     | Identifiant unique auto si non fourni |
-        | 📝 Name       | Manuel    | —               | Nom de la tâche |
-        | 🏷️ Category  | Manuel    | Défaut `"Task"` | Catégorie de tâche |
-        | 👤 Responsible| Manuel    | —               | Responsable de la tâche |
-        | 🛠️ Equipment | Manuel    | —               | Ressources nécessaires |
-        | 💬 Comments  | Manuel    | —               | Notes libres |
-        | 🔗 Dependencies | Manuel | `"1,2"` → `[1,2]` | Parse automatique des prédécesseurs |
-
-        ---
-
-        ## 📅 2. Planification
-        | Colonne       | Type       | Formule / Règle | Explication |
-        |---------------|-----------|-----------------|-------------|
-        | 🗓️ Start Date| Manuel/Calc | `latest_pred_end + 1j + lag` | Date de début (dépendances ou today) |
-        | 🎯 End Date   | Calculé   | `start_date + duration_days - 1` | Date de fin prévue |
-        | ⏳ Lag        | Manuel    | Défaut = 0 | Décalage manuel en jours |
-        | 📊 Progress   | Manuel    | 0–100% | Avancement de la tâche |
-        | 🔮 Projected End | Calculé | `start + (stochastic / speed)` | Fin projetée selon vitesse |
-        | 🚀 Projection Speed | Calculé | `(stochastic × progress/100) / elapsed_days` | Vitesse réelle d’exécution |
-        | ⚡ Critical   | Calculé   | `find_critical_path()` | Bool : tâche sur chemin critique |
-
-        ---
-
-        ## ⏱️ 3. Durées
-        | Colonne         | Type     | Formule | Explication |
-        |-----------------|----------|---------|-------------|
-        | 😊 Optimistic   | Manuel   | — | Durée minimale attendue |
-        | 😰 Pessimistic  | Manuel   | — | Durée maximale attendue |
-        | 🤔 Probable     | Manuel/DB| `(opt + pess)/2` ou DB | Durée la plus probable |
-        | 📈 Stochastic   | Calculé  | `(opt + 4*prob + pess)/6` | Durée PERT |
-        | 📅 Duration(days)| Calculé | `round(stochastic)` | Durée finale arrondie |
-
-        ---
-
-        ## ⚠️ 4. Risques & Incertitudes
-        | Colonne       | Type     | Formule | Explication |
-        |---------------|----------|---------|-------------|
-        | 📊 Std Dev    | Calculé  | `σ = (pess - opt) * sqrt(var_Y)` | Incertitude (Bêta-PERT ou approx `(pess-opt)/6`) |
-        | 🛡️ Buffer     | Calculé  | Non-crit: `σ×{coeff_non}`<br>Critique: `√(σ_pred²+σ²)×{coeff_crit}`<br>Multi: `×{coeff_multi}` | Réserve de sécurité |
-        | 🎲 P10–P90    | Calculé  | `beta.ppf(q, α, β)` → `opt + (pess-opt)×y_q` | Quantiles de durée |
-
-        ---
-
-        ✅ Les colonnes marquées *Manuel* doivent être saisies.  
-        ⚙️ Les calculs sont appliqués automatiquement via `auto_calculate_all_tasks`.
-        """)
     
      
     # === PAGE HEADER ===
@@ -1626,9 +1392,6 @@ def show_task_management_page(tm: TaskManager):
             st.session_state.task_manager = tm
             st.rerun()
 
-    # === SUMMARY STATISTICS ===
-    st.markdown("---")
-    st.subheader("📋 Résumé Rapide")
 
     if tm.tasks:
         col1, col2, col3, col4 = st.columns(4)
@@ -1649,45 +1412,4 @@ def show_task_management_page(tm: TaskManager):
             critical_tasks = sum(1 for t in tm.tasks.values() if t.is_critical)
             st.metric("Tâches critiques", critical_tasks)
 
-    # === HELP DOCUMENTATION ===
-    with st.expander("ℹ️ Aide et Instructions"):
-        st.markdown("""
-        ### 📝 Comment utiliser ce gestionnaire de tâches :
-
-        **Champs obligatoires :**
-        - **Nom de la tâche** : Obligatoire pour chaque tâche
-        - **Durée optimiste** et **Durée pessimiste** : Requis pour le calcul automatique PERT
-
-        **Calculs automatiques :**
-        - **Durée stochastique** : Calculée selon la formule PERT (O + 4M + P) / 6
-        - **Écart type** : Calculé pour mesurer l'incertitude (P - O) / 6
-        - **Buffer** : Calculé selon les règles de gestion des risques
-        - **Dates** : Calculées selon les dépendances et durées
-        - **État critique** : Déterminé par l'algorithme du chemin critique
-        - **Date de fin projection** : Calculée si progression > 0
-
-        **Format des dépendances :**
-        - Séparez les IDs par des virgules : `1,2,3`
-        - Ou par des points-virgules : `1;2;3`
-
-        **Types de dépendances :**
-        - **FS** (Finish-Start) : La tâche commence après la fin du prédécesseur
-        - **SS** (Start-Start) : La tâche commence avec le prédécesseur
-        - **FF** (Finish-Finish) : La tâche finit avec le prédécesseur
-        - **SF** (Start-Finish) : La tâche finit quand le prédécesseur commence
-
-        **Actions disponibles :**
-        - **Calculer les champs manquants** : Lance tous les calculs automatiques
-        - **Appliquer les modifications** : Sauvegarde vos changements sans recalculer
-        - Ajoutez/supprimez des lignes directement dans le tableau
-
-        **⚡ Fonctionnalités avancées :**
-        - La date de fin projetée se calcule automatiquement si la progression > 0
-        - Le calcul prend en compte la vitesse d'exécution réelle
-        - Les buffers sont calculés différemment pour les tâches critiques et non-critiques
-        - Les tâches avec multiples dépendances reçoivent un buffer supplémentaire
-        """)
-
-
-
-
+   
