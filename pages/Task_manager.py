@@ -111,8 +111,8 @@ if selected_module == list_module[0] :
 
   if st.button("Manage dependencies") :
     task_coords = {}
-    val = 1
-    for i,k in enumerate(save_dict) :
+    val = 1; i=0
+    for k in enumerate(save_dict) :
       if i == 0 :
         task_coords[k] = [0+val, 0+val]
       elif i == 1 :
@@ -121,6 +121,7 @@ if selected_module == list_module[0] :
         task_coords[k] = [0+val, 2+val]
       if i%2 == 0 :
         val += 2
+      i+=1
 
     task_coords,
     
