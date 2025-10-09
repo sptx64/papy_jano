@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 from streamlit_echarts import st_echarts
+from func.simulation import _triangular_safe, _beta_pert_safe, _sample_activity
 
 import os
 from func.log import log
@@ -127,10 +128,8 @@ with c[1] :
   st_echarts(options=options, height=f"{px}px",)
 
 mine_fleet = minops.mine_fleet
-mine_fleet
-mine_task
-mine_fleet["Truck"][0].availability
-{ k:len([x for x in mine_fleet[k] if mine_fleet[k][int(x)].availability == True]) for k in mine_fleet },
+
+mine_task[0]
 
 if st.button("Go") :
   mine_fleet = minops.mine_fleet
@@ -144,12 +143,14 @@ if st.button("Go") :
   
   quit=360; day=1;
   while (len(remaining) > 0) and day<quit :
-    available_fleet = { k:value for k in mine_fleet }
+    available_fleet = { k:len([x for x in mine_fleet[k] if mine_fleet[k][int(x)].availability == True]) for k in mine_fleet }
     random.shuffle(unlocked_tasks)
     for ut in unlocked_tasks :
-      rm = mine_task.required_machines
-      for machine_type in rm :
-        ""
+      rm = mine_task[ut].required_machines
+      delta = [ available_fleet[k] - rm[k] for k in rm ]
+      if all(x >= 0 for x in delta) :
+        slct_machines = { k:random.sample([ mt for mt in mine_fleet[k] ], rm[k]) k for k in rm }
+        active.append({ut:{"mine_task":mine_task[ut], "locked_machines":slct_machines}, "progress":mine_task[ut].progress, "duration":"" })
         
       
       
