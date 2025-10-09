@@ -112,13 +112,13 @@ if selected_module == list_module[0] :
   if st.button("Manage dependencies") :
     # Prepare data for ECharts tree chart
     def build_tree_data(save_dict):
-        # Create a list of nodes
+        # Create a list of nodes with unique task IDs
         nodes = []
         for task_id, task_dict in save_dict.items():
             task_name = task_dict["Task name"] if task_dict["Task name"] else f"Task {task_id}"
             node = {
-                "name": task_name,
-                "value": task_id,  # Store task ID for reference
+                "name": str(task_id),  # Use task ID as unique node identifier
+                "value": task_name,    # Store task name for display
                 "children": []
             }
             nodes.append(node)
@@ -131,15 +131,15 @@ if selected_module == list_module[0] :
                     dep_id_int = int(dep_id)
                     if dep_id_int in save_dict:
                         # Find the parent node (dependency) and add the current task as its child
-                        parent_node = next(node for node in nodes if node["value"] == str(dep_id_int))
-                        child_node = next(node for node in nodes if node["value"] == str(task_id))
-                        parent_node["children"].append(child_node.copy())
+                        parent_node = next(node for node in nodes if node["name"] == str(dep_id_int))
+                        child_node = next(node for node in nodes if node["name"] == str(task_id))
+                        parent_node["children"].append(child_node.copy())  # Copy to avoid reference issues
                 except (ValueError, StopIteration):
                     st.warning(f"Invalid dependency ID {dep_id} for Task {task_id}")
     
-        # Filter out nodes that are children to avoid duplication in the root level
+        # Filter root nodes (tasks not listed as dependencies)
         root_nodes = [node for node in nodes if not any(
-            node["value"] in save_dict.get(i, {}).get("dependencies", []) 
+            node["name"] in save_dict.get(i, {}).get("dependencies", []) 
             for i in save_dict
         )]
         return root_nodes
@@ -147,7 +147,11 @@ if selected_module == list_module[0] :
     # Generate ECharts tree chart options
     def get_tree_options(tree_data):
         return {
-            "tooltip": {"trigger": "item", "triggerOn": "mousemove"},
+            "tooltip": {
+                "trigger": "item",
+                "triggerOn": "mousemove",
+                "formatter": "{b}: {c}"  # Show task ID and task name in tooltip
+            },
             "series": [
                 {
                     "type": "tree",
@@ -162,7 +166,8 @@ if selected_module == list_module[0] :
                         "position": "left",
                         "verticalAlign": "middle",
                         "align": "right",
-                        "fontSize": 12
+                        "fontSize": 12,
+                        "formatter": "{@value}"  # Display task name (value) as label
                     },
                     "leaves": {
                         "label": {
