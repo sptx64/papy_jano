@@ -125,13 +125,14 @@ if selected_module == list_module[0] :
       if len(save_dict[k]["dependencies"]) > 0 :
         for d in save_dict[k]["dependencies"] :
           links.append({"x":[task_coords[f"Task {k}"][0], task_coords[f"Task {d}"][0]],  "y": [task_coords[f"Task {k}"][1], task_coords[f"Task {d}"][1]]})
-    links,
+      else :
+        task_coords[f"Task {k}"][1]=5
 
     fig = go.Figure()
     for k in task_coords :
       fig.add_trace(go.Scatter(x=[task_coords[k][0]], y=[task_coords[k][1]], mode="markers+text", text=[k], textposition="top center", marker_size=20, name=k, showlegend=True))
     for l in links :
-      fig.add_trace(go.Scatter(x=l["x"], y=l["y"], mode="markers+lines", marker= dict(size=5,symbol= "arrow-bar-up", angleref="previous"), line_width=1, line_dash="dash", line_color="black"))
+      fig.add_trace(go.Scatter(x=l["x"], y=l["y"], mode="markers+lines", marker= dict(size=5,symbol= "arrow-bar-up", angleref="next"), line_width=1, line_dash="dash", line_color="black"))
 
     fig.update_layout(template="simple_white")
     st.plotly_chart(fig)
