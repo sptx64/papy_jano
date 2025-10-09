@@ -126,6 +126,8 @@ if selected_module == list_module[0] :
           edges.append(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
       nodes.append(sfn)
 
+    nodes
+
     
     if 'curr_state' not in st.session_state:
         st.session_state.curr_state = StreamlitFlowState(nodes, edges)
