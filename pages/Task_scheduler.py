@@ -129,7 +129,7 @@ with c[1] :
 
 mine_fleet = minops.mine_fleet
 
-mine_task["0"]
+mine_task
 
 if st.button("Go") :
   mine_fleet = minops.mine_fleet
