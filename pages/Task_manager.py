@@ -111,7 +111,8 @@ if selected_module == list_module[0] :
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
 
-  if st.button("Manage dependencies") :
+  c = st.columns(6)
+  if c[0].button("Show dependencies") :
     task_coords = {}
     val = 1; i=0
     for k in save_dict :
@@ -122,11 +123,14 @@ if selected_module == list_module[0] :
     
     links=[]
     for k in save_dict :
+      if len(save_dict[k]["dependencies"]) == 0 :
+        task_coords[f"Task {k}"][1]=5
+        
+    for k in save_dict :
       if len(save_dict[k]["dependencies"]) > 0 :
         for d in save_dict[k]["dependencies"] :
           links.append({"x":[task_coords[f"Task {d}"][0], task_coords[f"Task {k}"][0]],  "y": [task_coords[f"Task {d}"][1], task_coords[f"Task {k}"][1]]})
-      else :
-        task_coords[f"Task {k}"][1]=5
+
 
     fig = go.Figure()
     for k in task_coords :
@@ -148,7 +152,7 @@ if selected_module == list_module[0] :
 
 
 
-  if st.button("Save", type="primary") :
+  if c[1].button("Save", type="primary") :
     for k in save_dict :
       if save_dict[k]["Task name"] is None :
         st.toast("A task name is None", icon=":material/warning:")
