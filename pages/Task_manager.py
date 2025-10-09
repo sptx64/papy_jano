@@ -111,7 +111,7 @@ if selected_module == list_module[0] :
 
   if st.button("Manage dependencies") :
     task_coords = {}
-    val = 0
+    val = 1
     for i,k in enumerate(save_dict) :
       if i == 0 :
         task_coords[k] = [0+val, 0+val]
@@ -122,7 +122,7 @@ if selected_module == list_module[0] :
       if i%2 == 0 :
         val += 2
 
-    
+    task_coords,
     
     links=[]
     for k in save_dict :
@@ -130,6 +130,8 @@ if selected_module == list_module[0] :
         for d in save_dict[k]["dependencies"] :
           links.extend({"x":[task_coords[k][0], task_coords[d][0]],  "y": [task_coords[k][1], task_coords[d][1]]})
 
+
+    links
     # Préparation des données pour scatter
     data = []
     colors = ['#ff4d4f', '#40c4ff', '#ffd700', '#96ceb4']  # Couleurs différentes
