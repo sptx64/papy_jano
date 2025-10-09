@@ -114,16 +114,18 @@ if selected_module == list_module[0] :
 
   if st.toggle("Manage dependencies") :
     save_dict
+    
+    nodes = []
+    for i,k in enumerate(save_dict) :  
+      nodes.append(StreamlitFlowNode(k, (i, 0), {'content': f'Task{k}' + save_dict[k].name if save_dict[k].name is not None else ""}, 'default', 'right', 'left'))
+
     if 'curr_flow_state' not in st.session_state:
       st.session_state.curr_flow_state = StreamlitFlowState(nodes, [])
 
 
-    nodes = []
-    for i,k in enumerate(save_dict) :  
-      nodes.append(StreamlitFlowNode(k, (i, 0), {'content': f'Task{k}' + save_dict[k].name if save_dict[k].name is not None else ""}, 'default', 'right', 'left'))
       
     st.session_state.curr_state = streamlit_flow(
-      'example_flow', st.session_state.curr_state, layout=TreeLayout(direction='right'), 
+      'dependencies_flow', st.session_state.curr_state, layout=TreeLayout(direction='right'), 
       fit_view=True, height=500, enable_node_menu=True, enable_edge_menu=True, enable_pane_menu=True,
       get_edge_on_click=True, get_node_on_click=True, show_minimap=True, hide_watermark=True, 
       allow_new_edges=True, min_zoom=0.1
