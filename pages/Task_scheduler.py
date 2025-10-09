@@ -132,6 +132,7 @@ mine_fleet = minops.mine_fleet
 mine_task
 
 if st.button("Go") :
+  ""
   # mine_fleet = minops.mine_fleet
   
   # indep_tasks = [k for k in mine_task if len(mine_task[k].dependencies) == 0 ]
@@ -154,7 +155,7 @@ if st.button("Go") :
         
       
       
-    day += 1
+    # day += 1
     
     
   
