@@ -113,56 +113,82 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
-    # Prepare nodes and edges for the tree plot
-    nodes = []
-    edges = []
+    # Prepare data for ECharts tree chart
+    def build_tree_data(save_dict):
+        # Create a list of nodes
+        nodes = []
+        for task_id, task_dict in save_dict.items():
+            task_name = task_dict["Task name"] if task_dict["Task name"] else f"Task {task_id}"
+            node = {
+                "name": task_name,
+                "value": task_id,  # Store task ID for reference
+                "children": []
+            }
+            nodes.append(node)
     
-    # Create nodes for each task
-    for task_id, task_dict in save_dict.items():
-        task_name = task_dict["Task name"] if task_dict["Task name"] else f"Task {task_id}"
-        nodes.append(
-            StreamlitFlowNode(
-                id=str(task_id),
-                pos=(0, 0),  # Position will be handled by TreeLayout
-                label=task_name,
-                shape="circle",
-                color="#ADD8E6",  # Light blue color for nodes
-                size=20
-            )
-        )
+        # Assign children based on dependencies
+        for task_id, task_dict in save_dict.items():
+            dependencies = task_dict.get("dependencies", [])
+            for dep_id in dependencies:
+                try:
+                    dep_id_int = int(dep_id)
+                    if dep_id_int in save_dict:
+                        # Find the parent node (dependency) and add the current task as its child
+                        parent_node = next(node for node in nodes if node["value"] == str(dep_id_int))
+                        child_node = next(node for node in nodes if node["value"] == str(task_id))
+                        parent_node["children"].append(child_node.copy())
+                except (ValueError, StopIteration):
+                    st.warning(f"Invalid dependency ID {dep_id} for Task {task_id}")
     
-    # Create edges based on dependencies
-    for task_id, task_dict in save_dict.items():
-        dependencies = task_dict.get("dependencies", [])
-        for dep_id in dependencies:
-            try:
-                # Ensure the dependency ID is valid and exists in save_dict
-                if int(dep_id) in save_dict:
-                    edges.append(
-                        StreamlitFlowEdge(
-                            source=dep_id,  # Parent task
-                            target=str(task_id),  # Current task
-                            label=task_dict.get("dependency_type", "FS"),
-                            color="#FF6347",  # Tomato color for edges
-                            width=2
-                        )
-                    )
-            except (ValueError, KeyError):
-                st.warning(f"Invalid dependency ID {dep_id} for Task {task_id}")
+        # Filter out nodes that are children to avoid duplication in the root level
+        root_nodes = [node for node in nodes if not any(
+            node["value"] in save_dict.get(i, {}).get("dependencies", []) 
+            for i in save_dict
+        )]
+        return root_nodes
     
-    # Define the flow state
-    flow_state = StreamlitFlowState(nodes=nodes, edges=edges)
+    # Generate ECharts tree chart options
+    def get_tree_options(tree_data):
+        return {
+            "tooltip": {"trigger": "item", "triggerOn": "mousemove"},
+            "series": [
+                {
+                    "type": "tree",
+                    "data": tree_data,
+                    "top": "5%",
+                    "left": "10%",
+                    "bottom": "5%",
+                    "right": "10%",
+                    "symbol": "circle",
+                    "symbolSize": 10,
+                    "label": {
+                        "position": "left",
+                        "verticalAlign": "middle",
+                        "align": "right",
+                        "fontSize": 12
+                    },
+                    "leaves": {
+                        "label": {
+                            "position": "right",
+                            "verticalAlign": "middle",
+                            "align": "left"
+                        }
+                    },
+                    "expandAndCollapse": True,
+                    "animationDuration": 550,
+                    "animationDurationUpdate": 750
+                }
+            ]
+        }
     
-    # Render the tree plot
+    # Render the tree chart
     st.write("### Task Dependency Tree")
-    streamlit_flow(
-        nodes=nodes,
-        edges=edges,
-        state=flow_state,
-        layout=TreeLayout(direction="down"),  # Tree layout with downward direction
-        fit_view=True,
-        height=500
-    )
+    tree_data = build_tree_data(save_dict)
+    if tree_data:
+        options = get_tree_options(tree_data)
+        st_echarts(options=options, height="500px")
+    else:
+        st.info("No valid dependencies to display in the tree.")
       
   
 
