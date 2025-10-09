@@ -122,7 +122,7 @@ if selected_module == list_module[0] :
     
     links=[]
     for k in save_dict :
-      if len(save_dict[k]["dependencies"]) == 0 :
+      if len(save_dict[k]["dependencies"]) > 0 :
         for d in save_dict[k]["dependencies"] :
           links.extend({"x":[task_coords[f"Task {k}"][0], task_coords[f"Task {d}"][0]],  "y": [task_coords[f"Task {k}"][1], task_coords[f"Task {d}"][1]]})
     links,
