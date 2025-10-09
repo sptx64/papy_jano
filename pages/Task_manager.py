@@ -115,7 +115,7 @@ if selected_module == list_module[0] :
   if st.button("Manage dependencies") :
     nodes=[]; edges=[];
     for i,k in enumerate(save_dict) :
-      task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
+      task_name = str(k) + "-" +(save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
         
       if len(save_dict[k]["dependencies"]) == 0 :
         sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {task_name}'}, 'input', 'right',),
