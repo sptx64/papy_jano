@@ -145,30 +145,47 @@ if selected_module == list_module[0] :
             }
         })
             
-    # Séries pour flèches (une série line par lien)
+    # Séries pour flèches (optimisées pour s'assurer qu'elles s'affichent)
     arrow_series = []
     for link in links:
         arrow_series.append({
             "type": "line",
+            "coordinateSystem": "cartesian2d",  # Utiliser le système cartésien
             "data": [
                 [link["x"][0], link["y"][0]],
                 [link["x"][1], link["y"][1]]
             ],
             "symbol": ["none", "arrow"],  # Flèche à l'arrivée
             "symbolSize": 10,
-            "lineStyle": {"color": "#555", "width": 2}
+            "lineStyle": {
+                "color": "#555",
+                "width": 2,
+                "type": "solid"  # Ligne pleine
+            },
+            "z": 1  # S'assurer que les lignes sont en dessous des points
         })
     
     # Config ECharts
-    max_x = max([coord[0] for coord in task_coords.values()]) + 1
-    max_y = max([coord[1] for coord in task_coords.values()]) + 1
+    max_x = max([coord[0] for coord in task_coords.values()], default=0) + 1
+    max_y = max([coord[1] for coord in task_coords.values()], default=0) + 1
     options = {
-        "xAxis": {"type": "value", "min": -1, "max": max_x},
-        "yAxis": {"type": "value", "min": -1, "max": max_y},
+        "xAxis": {
+            "type": "value",
+            "min": -1,
+            "max": max_x,
+            "axisLabel": {"show": True}  # Afficher les labels des axes
+        },
+        "yAxis": {
+            "type": "value",
+            "min": -1,
+            "max": max_y,
+            "axisLabel": {"show": True}
+        },
         "series": [
-            {"type": "scatter", "data": data},
-            *arrow_series  # Dépack des flèches
-        ]
+            {"type": "scatter", "data": data, "z": 2},  # Points au-dessus des lignes
+            *arrow_series
+        ],
+        "tooltip": {}  # Ajout pour debug (optionnel)
     }
     
     # Interface Streamlit
