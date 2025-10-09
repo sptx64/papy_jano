@@ -65,7 +65,7 @@ with t[0] :
   c[0].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
   
   
-  
+  plot = c[1].pills("Plot type", ["category","supervisor"], value="supervisor")
   # task by category
   res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
   df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
@@ -77,7 +77,7 @@ with t[0] :
     "tooltip" : { "trigger" : 'item'},
     "legend"  : {"orient" : 'vertical', "left" : 'left'},
     "series"  : [
-          { "name" : 'Access From', "type"   : 'pie', "radius" : '50%',
+          { "name" : 'Access From', "type"   : 'pie', "radius" : '70%',
             "data" : res,
             "emphasis" : {
               "itemStyle" : { "shadowBlur" : 10, "shadowOffsetX" : 0, "shadowColor" : 'rgba(0, 0, 0, 0.5)' }
