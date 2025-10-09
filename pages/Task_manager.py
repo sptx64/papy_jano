@@ -136,21 +136,22 @@ if selected_module == list_module[0] :
       st.session_state.curr_state = StreamlitFlowState(nodes, edges)
       st.session_state.nodes = nodes
       st.session_state.edges = edges
-    
-    st.session_state.curr_state = streamlit_flow('example_flow', 
-                                    st.session_state.curr_state, 
-                                    layout=TreeLayout(direction='right'), 
-                                    fit_view=True, 
-                                    height=500, 
-                                    enable_node_menu=True,
-                                    enable_edge_menu=True,
-                                    enable_pane_menu=True,
-                                    get_edge_on_click=True,
-                                    get_node_on_click=True, 
-                                    show_minimap=True, 
-                                    hide_watermark=True, 
-                                    allow_new_edges=True,
-                                    min_zoom=0.1)
+
+    def fragment_flow(st.session_state.curr_state,  ) :
+      st.session_state.curr_state = streamlit_flow('example_flow', 
+                                      st.session_state.curr_state, 
+                                      layout=TreeLayout(direction='right'), 
+                                      fit_view=True, 
+                                      height=500, 
+                                      enable_node_menu=True,
+                                      enable_edge_menu=True,
+                                      enable_pane_menu=True,
+                                      get_edge_on_click=False,
+                                      get_node_on_click=False, 
+                                      show_minimap=True, 
+                                      hide_watermark=True, 
+                                      allow_new_edges=False,
+                                      min_zoom=0.1)
 
 
 
