@@ -7,10 +7,7 @@ from func.all_class import MineTask
 import pickle
 
 
-from streamlit_flow import streamlit_flow
-from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
-from streamlit_flow.state import StreamlitFlowState
-from streamlit_flow.layouts import TreeLayout, RadialLayout
+from streamlit_echarts import st_echarts
 
 log()
 
