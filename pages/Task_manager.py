@@ -83,7 +83,7 @@ if selected_module == list_module[0] :
         task_dict["delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
         task_dict["lag"] = col2.number_input("Lag (days)",0,9999,0)
 
-        task_dict["dependencies"]  = [] # t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True, help="integers linking to the parent task IDs (0,1,2,3,...)")
+        task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True, help="integers linking to the parent task IDs (0,1,2,3,...)")
         task_dict["dependency_type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
         task_dict["comments"] = t[3].text_area(f"Comments", None)
 
@@ -114,13 +114,31 @@ if selected_module == list_module[0] :
 
   if st.toggle("Manage dependencies") :
     save_dict
-
+    nodes = []
+    for i,k in enumerate(save_dict) :
+      task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
+      task_name
+      if len(save_dict[k]["dependencies"]) == 0 :
+        sfn = StreamlitFlowNode(k, (i, 0), {'content': f'Task {k}'}, 'input', 'right',),
+      else :
+        sfn = StreamlitFlowNode(k, (i, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
+        for d in save_dict[k]["dependencies"] :
+          d,
+      nodes.append(sfn)
+      
     nodes = [StreamlitFlowNode("1", (0, 0), {'content': 'Task 1'}, 'input', 'right',),
             StreamlitFlowNode("2", (1, 0), {'content': 'Task 2'}, 'default', 'right', 'left'),
             StreamlitFlowNode("3", (2, 0), {'content': 'Task 3'}, 'default', 'right', 'left'),
             ]
+
     
-    edges = []
+    edges = [StreamlitFlowEdge('1-2', '1', '2', animated=True),
+        StreamlitFlowEdge('1-3', '1', '3', animated=True),
+        StreamlitFlowEdge('2-4', '2', '4', animated=True),
+        StreamlitFlowEdge('2-5', '2', '5', animated=True),
+        StreamlitFlowEdge('3-6', '3', '6', animated=True),
+        StreamlitFlowEdge('3-7', '3', '7', animated=True),
+        ]
     
     if 'curr_state' not in st.session_state:
         st.session_state.curr_state = StreamlitFlowState(nodes, edges)
