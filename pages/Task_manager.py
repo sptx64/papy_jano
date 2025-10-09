@@ -120,9 +120,7 @@ if selected_module == list_module[0] :
             StreamlitFlowNode("3", (2, 0), {'content': 'Node 3'}, 'default', 'right', 'left'),
             ]
     
-    edges = [StreamlitFlowEdge("1-2", "1", "2", animated=True, marker_start={}, marker_end={'type': 'arrow'}),
-            StreamlitFlowEdge("1-3", "1", "3", animated=True),
-            ]
+    edges = []
     
     if 'curr_state' not in st.session_state:
         st.session_state.curr_state = StreamlitFlowState(nodes, edges)
