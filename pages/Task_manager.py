@@ -113,28 +113,27 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
-
-      nodes=[]; edges=[];
-      for i,k in enumerate(save_dict) :
-        task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
+    nodes=[]; edges=[];
+    for i,k in enumerate(save_dict) :
+      task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
         
-        if len(save_dict[k]["dependencies"]) == 0 :
-          sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'input', 'right',),
-        else :
-          sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
-          for d in save_dict[k]["dependencies"] :
-            edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
-        nodes.extend(sfn)
+      if len(save_dict[k]["dependencies"]) == 0 :
+        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'input', 'right',),
+      else :
+        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
+        for d in save_dict[k]["dependencies"] :
+          edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
+      nodes.extend(sfn)
   
       
   
-      st.session_state.curr_state = StreamlitFlowState(nodes, edges)
+    st.session_state.curr_state = StreamlitFlowState(nodes, edges)
 
   
         
-      @st.fragment
-      def fragment_flow() :
-        streamlit_flow('example_flow', 
+    @st.fragment
+    def fragment_flow() :
+      streamlit_flow('example_flow', 
                                         st.session_state.curr_state, 
                                         layout=TreeLayout(direction='right'), 
                                         fit_view=True, 
