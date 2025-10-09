@@ -126,82 +126,13 @@ if selected_module == list_module[0] :
           links.extend({"x":[task_coords[f"Task {k}"][0], task_coords[f"Task {d}"][0]],  "y": [task_coords[f"Task {k}"][1], task_coords[f"Task {d}"][1]]})
 
 
-    links
-    # Préparation des données pour scatter
-    data = []
-    colors = ['#ff4d4f', '#40c4ff', '#ffd700', '#96ceb4']  # Couleurs différentes
-    for idx, task in enumerate(task_coords):
-        coord = task_coords[task]
-        data.append({
-            "name": task,
-            "value": coord,
-            "symbolSize": 30,  # Taille grande
-            "itemStyle": {"color": colors[idx % len(colors)]},
-            "label": {
-                "show": True,
-                "position": "top",  # Annotation au-dessus
-                "formatter": "{b}",
-                "fontSize": 12,
-            }
-        })
-            
-    # Séries pour flèches (optimisées pour s'assurer qu'elles s'affichent)
-    arrow_series = []
-    for link in links:
-        arrow_series.append({
-            "type": "line",
-            "coordinateSystem": "cartesian2d",  # Utiliser le système cartésien
-            "data": [
-                [link["x"][0], link["y"][0]],
-                [link["x"][1], link["y"][1]]
-            ],
-            "symbol": ["none", "arrow"],  # Flèche à l'arrivée
-            "symbolSize": 10,
-            "lineStyle": {
-                "color": "#555",
-                "width": 2,
-                "type": "solid"  # Ligne pleine
-            },
-            "z": 1  # S'assurer que les lignes sont en dessous des points
-        })
-    
-    # Config ECharts
-    max_x = max([coord[0] for coord in task_coords.values()], default=0) + 1
-    max_y = max([coord[1] for coord in task_coords.values()], default=0) + 1
-    options = {
-        "xAxis": {
-            "type": "value",
-            "min": -1,
-            "max": max_x,
-            "axisLabel": {"show": True}  # Afficher les labels des axes
-        },
-        "yAxis": {
-            "type": "value",
-            "min": -1,
-            "max": max_y,
-            "axisLabel": {"show": True}
-        },
-        "series": [
-            {"type": "scatter", "data": data, "z": 2},  # Points au-dessus des lignes
-            *arrow_series
-        ],
-        "tooltip": {}  # Ajout pour debug (optionnel)
-    }
-    
-    # Interface Streamlit
-    st.title("Scatter Plot des Tâches avec Dépendances (ECharts)")
-    st_echarts(options=options, height="500px")
-        
-    # option = {
-    #     "series": {
-    #       "type"    : 'sankey',
-    #       "layout"  : None,
-    #       "emphasis": {"focus": 'adjacency'},
-    #       "data"    : [ {"name" : f"Task {k}"} for k in save_dict ],
-    #       "links": links
-    #     }
-    #   }
-    # st_echarts(options=option, height="400px",)
+    fig = go.Figure()
+    for k in task_coords :
+      fig.add_trace(go.Scatter(x=[task_coords[k][0]], y=[task_coords[k][1]], mode="markers", marker_size=20, name=k, show_legend=True))
+    for l in links :
+      fig.add_trace(go.Scatter(x=l["x"], y=l["y"], mode="lines"))
+    st.plotly_chart(fig)
+      
   
 
 
