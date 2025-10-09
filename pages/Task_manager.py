@@ -122,7 +122,7 @@ if selected_module == list_module[0] :
       else :
         sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {task_name}'}, 'default', 'right', 'left'),
         for d in save_dict[k]["dependencies"] :
-          edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
+          edges.extend(StreamlitFlowEdge(f'{int(d)+1}-{int(k)+1}', int(d)+1, int(k)+1, animated=True))
       nodes.extend(sfn)
   
       
