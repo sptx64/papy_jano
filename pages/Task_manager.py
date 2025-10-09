@@ -7,12 +7,10 @@ from func.all_class import MineTask
 import pickle
 
 
+from streamlit_flow import streamlit_flow
 from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
-
 from streamlit_flow.state import StreamlitFlowState
-
-from streamlit_flow.layouts import TreeLayout
-
+from streamlit_flow.layouts import TreeLayout, RadialLayout
 
 log()
 
@@ -85,7 +83,7 @@ if selected_module == list_module[0] :
         task_dict["delay_pessimistic"] = col1.number_input("Pessimistic delay to complete (days)",1,9999,1)
         task_dict["lag"] = col2.number_input("Lag (days)",0,9999,0)
 
-        task_dict["dependencies"]  = t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True, help="integers linking to the parent task IDs (0,1,2,3,...)")
+        task_dict["dependencies"]  = [] # t[3].multiselect(f"Enter the Task ID dependencies", [], [], accept_new_options=True, help="integers linking to the parent task IDs (0,1,2,3,...)")
         task_dict["dependency_type"]  = t[3].selectbox(f"Dependency type", ["FS", "SS", "FF", "SF"])
         task_dict["comments"] = t[3].text_area(f"Comments", None)
 
@@ -113,6 +111,17 @@ if selected_module == list_module[0] :
     c[i%ncol].progress(task_dict['Progress']/100)
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
+
+  if st.toggle("Manage dependencies") :
+    task_dict
+    if 'state' not in st.session_state:
+      st.session_state.state = StreamlitFlowState(nodes, edge)
+    streamlit_flow('key', st.session_state.state)
+    nodes = [StreamlitFlowNode("1", (0, 0), {'content': 'Node 1'}, 'input', 'right'),
+        StreamlitFlowNode("2", (1, 0), {'content': 'Node 2'}, 'default', 'right', 'left'),
+        StreamlitFlowNode("3", (2, 0), {'content': 'Node 3'}, 'default', 'right', 'left'),
+        ]
+
 
 
   if st.button("Save", type="primary") :
