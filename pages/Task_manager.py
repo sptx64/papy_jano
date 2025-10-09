@@ -117,7 +117,7 @@ if selected_module == list_module[0] :
       task_coords[k] = [random.uniform(0,5), random.uniform(0,5)]
       
 
-    task_coords,
+    task_coords
     
     links=[]
     for k in save_dict :
