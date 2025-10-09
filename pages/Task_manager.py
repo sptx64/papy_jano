@@ -128,9 +128,17 @@ if selected_module == list_module[0] :
 
     nodes
 
+    if "curr_state" not in st.session_state :
+      st.session_state.curr_state = StreamlitFlowState(nodes, edges)
+      st.session_state.nodes = nodes
+      st.session_state.edges = edges
+
+    if st.session_state.nodes != nodes or st.session_state.edges != edges :
+      st.session_state.curr_state = StreamlitFlowState(nodes, edges)
+      st.session_state.nodes = nodes
+      st.session_state.edges = edges
     
-    st.session_state.curr_state = StreamlitFlowState(nodes, edges)
-    streamlit_flow('example_flow', 
+    st.session_state.curr_state = streamlit_flow('example_flow', 
                                     st.session_state.curr_state, 
                                     layout=TreeLayout(direction='right'), 
                                     fit_view=True, 
