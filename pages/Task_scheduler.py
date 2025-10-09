@@ -46,12 +46,14 @@ multiplier_multi_dependencies = st.sidebar.number_input("Multi-dependencies mult
 
 type_distrib = st.sidebar.selectbox("Distrib. method", ["Triangular","Beta-PERT"])
 
-sim_fleet_avail=st.toggle("Simulate fleet availability")
+sim_fleet_avail=st.sidebar.toggle("Simulate fleet availability")
 if sim_fleet_avail :
   sim_break = st.toggle("Simulate machine breakdown")
-  break_down_delay = st.slider("Break down delay",0,50,(0,10),1) if sim_break else None
+  break_down_delay = st.slider("Break down delay",0,50,(0,10),1, help="a random number in this range will be picked to simulate the machine hazardous breakdown" ) if sim_break else None
 else :
   sim_break=False;break_down_delay=None
+  
+start_full_fleet=st.sidebar.toggle("Start a new task only when full fleet is available", value=True, disabled=True)
 
 
 
@@ -124,10 +126,31 @@ with c[1] :
   px = 80 * len(res)
   st_echarts(options=options, height=f"{px}px",)
 
+mine_fleet = minops.mine_fleet
+mine_fleet
+mine_task
 
 if st.button("Go") :
-  #get Task route
-  indep_tasks = [k for k in mine_task if mine_task[k].dependencies is None]
-  dep_tasks = [k for k in mine_task if mine_task[k].dependencies is not None]
+  mine_fleet = minops.mine_fleet
+  
+  indep_tasks = [k for k in mine_task if len(mine_task[k].dependencies) == 0 ]
+  dep_tasks   = [k for k in mine_task if len(mine_task[k].dependencies) > 0  ]
 
-  dep_tree = { k:mine_task[k].dependencies for k in dep_tasks }
+  done = []; active = [];
+  unlocked_tasks = indep_tasks.copy(); locked_tasks = dep_tasks.copy();
+  remaining = indep_tasks + dep_tasks
+  
+  quit=360; day=1;
+  while (len(remaining) > 0) and day<quit :
+    available_fleet = { k:value for k in mine_fleet }
+    random.shuffle(unlocked_tasks)
+    for ut in unlocked_tasks :
+      rm = mine_task.required_machines
+      for machine_type in rm :
+        
+      
+      
+    day += 1
+    
+    
+  
