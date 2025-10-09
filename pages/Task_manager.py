@@ -4,6 +4,7 @@ import os
 import streamlit as st
 from func.log import log
 from func.all_class import MineTask
+import random
 import pickle
 
 
@@ -113,16 +114,8 @@ if selected_module == list_module[0] :
     task_coords = {}
     val = 1; i=0
     for k in enumerate(save_dict) :
-      if i == 0 :
-        task_coords[k] = [0+val, 0+val]
-      elif i == 1 :
-        task_coords[k] = [1+val, 1+val]
-      elif i == 2 :  
-        task_coords[k] = [0+val, 2+val]
-      if i%2 == 0 :
-        val += 2
-        i=0
-      i+=1
+      task_coords[k] = [random.uniform(0,5), random.uniform(0,5)]
+      
 
     task_coords,
     
