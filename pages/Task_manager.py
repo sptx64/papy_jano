@@ -114,7 +114,7 @@ if selected_module == list_module[0] :
 
   if st.toggle("Manage dependencies") :
     save_dict
-    nodes = []
+    nodes=[]; edges=[];
     for i,k in enumerate(save_dict) :
       task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
       task_name
@@ -123,22 +123,9 @@ if selected_module == list_module[0] :
       else :
         sfn = StreamlitFlowNode(k, (i, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
         for d in save_dict[k]["dependencies"] :
-          d,
+          edges.append(StreamlitFlowEdge(f'{d}-{k}', d, k, animated=True))
       nodes.append(sfn)
-      
-    nodes = [StreamlitFlowNode("1", (0, 0), {'content': 'Task 1'}, 'input', 'right',),
-            StreamlitFlowNode("2", (1, 0), {'content': 'Task 2'}, 'default', 'right', 'left'),
-            StreamlitFlowNode("3", (2, 0), {'content': 'Task 3'}, 'default', 'right', 'left'),
-            ]
 
-    
-    edges = [StreamlitFlowEdge('1-2', '1', '2', animated=True),
-        StreamlitFlowEdge('1-3', '1', '3', animated=True),
-        StreamlitFlowEdge('2-4', '2', '4', animated=True),
-        StreamlitFlowEdge('2-5', '2', '5', animated=True),
-        StreamlitFlowEdge('3-6', '3', '6', animated=True),
-        StreamlitFlowEdge('3-7', '3', '7', animated=True),
-        ]
     
     if 'curr_state' not in st.session_state:
         st.session_state.curr_state = StreamlitFlowState(nodes, edges)
