@@ -119,8 +119,13 @@ if selected_module == list_module[0] :
     for i,k in enumerate(save_dict) :  
       nodes.append(StreamlitFlowNode(k, (i, 0), {'content': f'Task{k}' + save_dict[k]['Task name'] if save_dict[k]['Task name'] is not None else ""}, 'default', 'right', 'left'))
 
+    edges = [StreamlitFlowEdge("1-2", "1", "2", animated=True, marker_start={}, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge("1-3", "1", "3", animated=True),
+        ]
+
+    
     if 'curr_flow_state' not in st.session_state:
-      st.session_state.curr_flow_state = StreamlitFlowState(nodes, [])
+      st.session_state.curr_flow_state = StreamlitFlowState(nodes, edges)
 
 
       
