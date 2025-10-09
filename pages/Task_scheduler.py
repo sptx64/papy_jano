@@ -40,10 +40,11 @@ if mine_task is None :
 
 
 coefficient_non_critical = st.sidebar.number_input("Non-critical coefficient", value=0.5, min_value=0.1, max_value=2.0, step=0.1, help="Used to compute the buffer between non-critical tasks")
-
 coefficient_critical = st.sidebar.number_input("Critical coefficient", value=1.3, min_value=0.1, max_value=2.0, step=0.1, help="Used to compute the buffer between critical tasks")
-
 multiplier_multi_dependencies = st.sidebar.number_input("Multi-dependencies multiplier", value=1.2, min_value=1.0, max_value=3.0, step=0.1,help="Additional multiplier for multi-dependency tasks")
+
+
+type_distrib = st.sidebar.selectbox("Distrib. method", ["Triangular","Beta-PERT"])
 
 sim_fleet_avail=st.toggle("Simulate fleet availability")
 if sim_fleet_avail :
