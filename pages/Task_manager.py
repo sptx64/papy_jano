@@ -110,24 +110,19 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
+    links=[]
+    for k in save_dict :
+      if len(save_dict[k]["dependencies"]) == 0 :
+        for d in save_dict[k]["dependencies"] :
+          links.extend({"source": f"Task {d}",  "target": f"Task {k}", "value": 1})
+        
     option = {
         "series": {
           "type"    : 'sankey',
           "layout"  : None,
           "emphasis": {"focus": 'adjacency'},
-          "data"    : [
-            {"name": 'a'},  {"name": 'b'},
-            {"name": 'a1'}, {"name": 'a2'},
-            {"name": 'b1'}, {"name": 'c'}
-          ],
-          "links": [
-            {"source": 'a',  "target": 'a1', "value": 5},
-            {"source": 'a',  "target": 'a2', "value": 3},
-            {"source": 'b',  "target": 'b1', "value": 8},
-            {"source": 'a',  "target": 'b1', "value": 3},
-            {"source": 'b1', "target": 'a1', "value": 1},
-            {"source": 'b1', "target": 'c', "value": 2}
-          ]
+          "data"    : [ {"name" : f"Task {k}"} for k in save_dict ],
+          "links": links
         }
       }
     st_echarts(options=option, height="400px",)
