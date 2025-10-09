@@ -140,10 +140,11 @@ if selected_module == list_module[0] :
             "label": {
                 "show": True,
                 "position": "top",  # Annotation au-dessus
-                "formatter": task
+                "formatter": "{a}",
+                "fontSize": 12,
             }
         })
-    
+            
     # Séries pour flèches (une série line par lien)
     arrow_series = []
     for link in links:
