@@ -65,7 +65,7 @@ with t[0] :
   c[0].metric("Running tasks", value=len([ x for x in mine_task if mine_task[x].start_date is not None ]), border=True )
   
   
-  plot = c[1].pills("Plot type", ["category","supervisor"], value="supervisor")
+  plot = c[1].pills("Plot type", ["category","supervisor"], default="category", selection_mode="single")
   # task by category
   res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
   df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
