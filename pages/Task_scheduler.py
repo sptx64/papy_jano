@@ -57,7 +57,7 @@ else :
 t = st.tabs(["Dashboard","Progress"])
 with t[0] :
   "## Dashboard"
-  c = st.columns([1,2])
+  c = st.columns([1,2], vertical_alignment="bottom")
   c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
   
   today = date.today()
