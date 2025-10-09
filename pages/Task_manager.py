@@ -9,6 +9,7 @@ import pickle
 
 
 from streamlit_echarts import st_echarts
+import plotly.graph_objects as go
 
 log()
 
