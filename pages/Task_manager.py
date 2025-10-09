@@ -131,7 +131,7 @@ if selected_module == list_module[0] :
     for k in task_coords :
       fig.add_trace(go.Scatter(x=[task_coords[k][0]], y=[task_coords[k][1]], mode="markers+text", text=[k], textposition="top center", marker_size=20, name=k, showlegend=True))
     for l in links :
-      fig.add_trace(go.Scatter(x=l["x"], y=l["y"], mode="lines", line_width=5, line_color="black"))
+      fig.add_trace(go.Scatter(x=l["x"], y=l["y"], mode="lines", line_width=1, line_dash="dash", line_color="black"))
 
     fig.update_layout(template="simple_white")
     st.plotly_chart(fig)
