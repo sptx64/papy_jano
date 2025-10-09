@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 from streamlit_echarts import st_echarts
-from func.simulation import _triangular_safe, _beta_pert_safe, _sample_activity
+# from func.simulation import _triangular_safe, _beta_pert_safe, _sample_activity
 
 import os
 from func.log import log
