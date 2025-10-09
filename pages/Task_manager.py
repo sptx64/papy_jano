@@ -115,9 +115,9 @@ if selected_module == list_module[0] :
   if st.toggle("Manage dependencies") :
     save_dict
 
-    nodes = [StreamlitFlowNode("1", (0, 0), {'content': 'Node 1'}, 'input', 'right',),
-            StreamlitFlowNode("2", (1, 0), {'content': 'Node 2'}, 'default', 'right', 'left'),
-            StreamlitFlowNode("3", (2, 0), {'content': 'Node 3'}, 'default', 'right', 'left'),
+    nodes = [StreamlitFlowNode("1", (0, 0), {'content': 'Task 1'}, 'input', 'right',),
+            StreamlitFlowNode("2", (1, 0), {'content': 'Task 2'}, 'default', 'right', 'left'),
+            StreamlitFlowNode("3", (2, 0), {'content': 'Task 3'}, 'default', 'right', 'left'),
             ]
     
     edges = []
