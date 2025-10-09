@@ -147,6 +147,7 @@ if st.button("Go") :
     for ut in unlocked_tasks :
       rm = mine_task.required_machines
       for machine_type in rm :
+        ""
         
       
       
