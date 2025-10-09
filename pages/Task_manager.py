@@ -110,22 +110,83 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
+    task_coords = {}
+    val = 0
+    for i,k in enumerate(save_dict) :
+      if i == 0 :
+        task_coords[k] = [0+val, 0+val]
+      elif i == 1 :
+        task_coords[k] = [1+val, 1+val]
+      elif i == 2 :  
+        task_coords[k] = [0+val, 2+val]
+      if i%2 == 0 :
+        val += 2
+
+    
+    
     links=[]
     for k in save_dict :
       if len(save_dict[k]["dependencies"]) == 0 :
         for d in save_dict[k]["dependencies"] :
-          links.extend({"source": f"Task {d}",  "target": f"Task {k}", "value": 1})
+          links.extend({"x":[task_coords[k][0], task_coords[d][0]],  "y": [task_coords[k][1], task_coords[d][1]]})
+
+    # Préparation des données pour scatter
+    data = []
+    colors = ['#ff4d4f', '#40c4ff', '#ffd700', '#96ceb4']  # Couleurs différentes
+    for idx, task in enumerate(task_coords):
+        coord = task_coords[task]
+        data.append({
+            "name": task,
+            "value": coord,
+            "symbolSize": 30,  # Taille grande
+            "itemStyle": {"color": colors[idx % len(colors)]},
+            "label": {
+                "show": True,
+                "position": "top",  # Annotation au-dessus
+                "formatter": task
+            }
+        })
+    
+    # Séries pour flèches (une série line par lien)
+    arrow_series = []
+    for link in links:
+        arrow_series.append({
+            "type": "line",
+            "data": [
+                [link["x"][0], link["y"][0]],
+                [link["x"][1], link["y"][1]]
+            ],
+            "symbol": ["none", "arrow"],  # Flèche à l'arrivée
+            "symbolSize": 10,
+            "lineStyle": {"color": "#555", "width": 2}
+        })
+    
+    # Config ECharts
+    max_x = max([coord[0] for coord in task_coords.values()]) + 1
+    max_y = max([coord[1] for coord in task_coords.values()]) + 1
+    options = {
+        "xAxis": {"type": "value", "min": -1, "max": max_x},
+        "yAxis": {"type": "value", "min": -1, "max": max_y},
+        "series": [
+            {"type": "scatter", "data": data},
+            *arrow_series  # Dépack des flèches
+        ]
+    }
+    
+    # Interface Streamlit
+    st.title("Scatter Plot des Tâches avec Dépendances (ECharts)")
+    st_echarts(options=options, height="500px")
         
-    option = {
-        "series": {
-          "type"    : 'sankey',
-          "layout"  : None,
-          "emphasis": {"focus": 'adjacency'},
-          "data"    : [ {"name" : f"Task {k}"} for k in save_dict ],
-          "links": links
-        }
-      }
-    st_echarts(options=option, height="400px",)
+    # option = {
+    #     "series": {
+    #       "type"    : 'sankey',
+    #       "layout"  : None,
+    #       "emphasis": {"focus": 'adjacency'},
+    #       "data"    : [ {"name" : f"Task {k}"} for k in save_dict ],
+    #       "links": links
+    #     }
+    #   }
+    # st_echarts(options=option, height="400px",)
   
 
 
