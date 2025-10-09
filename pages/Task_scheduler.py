@@ -57,7 +57,7 @@ else :
 t = st.tabs(["Dashboard","Progress"])
 with t[0] :
   "## Dashboard"
-  c = st.columns([1,2], vertical_alignment="bottom")
+  c = st.columns([1,2], vertical_alignment="center")
   c[0].metric("Total tasks", value=len([ x for x in mine_task ]), border=True )
   
   today = date.today()
@@ -66,28 +66,32 @@ with t[0] :
   
   
   plot = c[1].pills("Plot type", ["category","supervisor"], default="category", selection_mode="single")
-  # task by category
-  res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
-  df = pd.DataFrame(res, columns=["count", "ID", "name","category"])
-  df_grp = df[["category","count"]].groupby("category").sum().reset_index()
+  if plot is not None :
+    if plot == "category" :
+      res = [ [1, k, mine_task[k].name, mine_task[k].category] for k in mine_task ]
+    elif plot == "supervisor" :
+      res = [ [1, k, mine_task[k].name, mine_task[k].supervisor] for k in mine_task ]
 
-  res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp["category"].values, df_grp["count"].values) ]
-  options = {
-    "title" : {"text" : 'Tasks', "subtext" : 'Tasks by category', "left" : 'center'},
-    "tooltip" : { "trigger" : 'item'},
-    "legend"  : {"orient" : 'vertical', "left" : 'left'},
-    "series"  : [
-          { "name" : 'Access From', "type"   : 'pie', "radius" : '70%',
-            "data" : res,
-            "emphasis" : {
-              "itemStyle" : { "shadowBlur" : 10, "shadowOffsetX" : 0, "shadowColor" : 'rgba(0, 0, 0, 0.5)' }
-            }
-          }
-        ]
-  }
+    df = pd.DataFrame(res, columns=["count", "ID", "name",plot])
+    df_grp = df[[plot,"count"]].groupby(plot).sum().reset_index()
   
-  with c[1] :
-    st_echarts(options=options, height="600px",)
+    res = [ {"value" : float(v), "name":n } for n,v in zip(df_grp[plot].values, df_grp["count"].values) ]
+    options = {
+      "title" : {"text" : 'Tasks', "subtext" : f'Tasks by {plot}', "left" : 'center'},
+      "tooltip" : { "trigger" : 'item'},
+      "legend"  : {"orient" : 'vertical', "left" : 'left'},
+      "series"  : [
+            { "name" : 'Access From', "type"   : 'pie', "radius" : '70%',
+              "data" : res,
+              "emphasis" : {
+                "itemStyle" : { "shadowBlur" : 10, "shadowOffsetX" : 0, "shadowColor" : 'rgba(0, 0, 0, 0.5)' }
+              }
+            }
+          ]
+    }
+    
+    with c[1] :
+      st_echarts(options=options, height="600px",)
 
 with t[1] :
   c = st.columns([1,2])
