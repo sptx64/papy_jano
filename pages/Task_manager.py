@@ -140,7 +140,7 @@ if selected_module == list_module[0] :
             "label": {
                 "show": True,
                 "position": "top",  # Annotation au-dessus
-                "formatter": "{a}",
+                "formatter": "{b}",
                 "fontSize": 12,
             }
         })
