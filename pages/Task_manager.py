@@ -110,88 +110,27 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
-    # Prepare data for ECharts tree chart
-    def build_tree_data(save_dict):
-        # Create a list of nodes with unique task IDs
-        nodes = []
-        for task_id, task_dict in save_dict.items():
-            task_name = task_dict["Task name"] if task_dict["Task name"] else f"Task {task_id}"
-            node = {
-                "name": str(task_id),  # Use task ID as unique node identifier
-                "value": task_name,    # Store task name for display
-                "children": []
-            }
-            nodes.append(node)
-    
-        # Assign children based on dependencies
-        for task_id, task_dict in save_dict.items():
-            dependencies = task_dict.get("dependencies", [])
-            for dep_id in dependencies:
-                try:
-                    dep_id_int = int(dep_id)
-                    if dep_id_int in save_dict:
-                        # Find the parent node (dependency) and add the current task as its child
-                        parent_node = next(node for node in nodes if node["name"] == str(dep_id_int))
-                        child_node = next(node for node in nodes if node["name"] == str(task_id))
-                        parent_node["children"].append(child_node.copy())  # Copy to avoid reference issues
-                except (ValueError, StopIteration):
-                    st.warning(f"Invalid dependency ID {dep_id} for Task {task_id}")
-    
-        # Filter root nodes (tasks not listed as dependencies)
-        root_nodes = [node for node in nodes if not any(
-            node["name"] in save_dict.get(i, {}).get("dependencies", []) 
-            for i in save_dict
-        )]
-        return root_nodes
-    
-    # Generate ECharts tree chart options
-    def get_tree_options(tree_data):
-        return {
-            "tooltip": {
-                "trigger": "item",
-                "triggerOn": "mousemove",
-                "formatter": "{b}: {c}"  # Show task ID and task name in tooltip
-            },
-            "series": [
-                {
-                    "type": "tree",
-                    "data": tree_data,
-                    "top": "5%",
-                    "left": "10%",
-                    "bottom": "5%",
-                    "right": "10%",
-                    "symbol": "circle",
-                    "symbolSize": 10,
-                    "label": {
-                        "position": "left",
-                        "verticalAlign": "middle",
-                        "align": "right",
-                        "fontSize": 12,
-                        "formatter": "{@value}"  # Display task name (value) as label
-                    },
-                    "leaves": {
-                        "label": {
-                            "position": "right",
-                            "verticalAlign": "middle",
-                            "align": "left"
-                        }
-                    },
-                    "expandAndCollapse": True,
-                    "animationDuration": 550,
-                    "animationDurationUpdate": 750
-                }
-            ]
+    option = {
+        "series": {
+          "type"    : 'sankey',
+          "layout"  : None,
+          "emphasis": {"focus": 'adjacency'},
+          "data"    : [
+            {"name": 'a'},  {"name": 'b'},
+            {"name": 'a1'}, {"name": 'a2'},
+            {"name": 'b1'}, {"name": 'c'}
+          ],
+          "links": [
+            {"source": 'a', target: 'a1', "value": 5},
+            {"source": 'a', "target": 'a2', "value": 3},
+            {"source": 'b', "target": 'b1', "value": 8},
+            {"source": 'a', "target": 'b1', "value": 3},
+            {"source": 'b1', "target": 'a1', "value": 1},
+            {"source": 'b1', "target": 'c', "value": 2}
+          ]
         }
-    
-    # Render the tree chart
-    st.write("### Task Dependency Tree")
-    tree_data = build_tree_data(save_dict)
-    if tree_data:
-        options = get_tree_options(tree_data)
-        st_echarts(options=options, height="500px")
-    else:
-        st.info("No valid dependencies to display in the tree.")
-      
+      }
+    st_echarts(options=option, height="400px",)
   
 
 
