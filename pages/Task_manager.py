@@ -113,7 +113,7 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.toggle("Manage dependencies") :
-    task_dict
+    save_dict
     if 'state' not in st.session_state:
       st.session_state.state = StreamlitFlowState(nodes, edge)
     streamlit_flow('key', st.session_state.state)
