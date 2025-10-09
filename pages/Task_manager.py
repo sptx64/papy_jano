@@ -115,17 +115,25 @@ if selected_module == list_module[0] :
   if c[0].button("Show dependencies") :
     task_coords = {}
     val = 1; i=0
-    for k in save_dict :
-      task_coords[f"Task {k}"] = [random.uniform(0,4), random.uniform(0,4)]
+
       
 
-    
-    
+    indep = [ k for k in save_dict if len(save_dict[k]["dependencies"]) == 0 ]
+    dep= [ k for k in save_dict if k not in indep ]
     links=[]
-    for k in save_dict :
-      if len(save_dict[k]["dependencies"]) == 0 :
-        task_coords[f"Task {k}"][1]=5
-        
+    for i,k in enumerate(indep) :
+        task_coords[f"Task {k}"]=[4.5*i/len(indep) + 0.5, 5]
+
+    all_choice_x = [ 4.5*i/len(dep) + 0.5 for i in range(len(dep)) ]
+    all_choice_y = [ 3.5*i/len(dep) + 0.5 for i in range(len(dep)) ]
+    picked = []
+    for i,k in enumerate(dep) :
+      choic = [random.choice(all_choice_x), random.choice(all_choice_y)]
+      while str(choic) in picked :
+        choic = [random.choice(all_choice_x), random.choice(all_choice_y)]
+      picked.append(str(choic))
+      task_coords[f"Task {k}"] = [choic[0], choic[1]]
+
     for k in save_dict :
       if len(save_dict[k]["dependencies"]) > 0 :
         for d in save_dict[k]["dependencies"] :
