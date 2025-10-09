@@ -138,7 +138,7 @@ if selected_module == list_module[0] :
       st.session_state.edges = edges
       
     @st.fragment
-    def fragment_flow(st.session_state.curr_state,  ) :
+    def fragment_flow() :
       streamlit_flow('example_flow', 
                                       st.session_state.curr_state, 
                                       layout=TreeLayout(direction='right'), 
@@ -154,7 +154,7 @@ if selected_module == list_module[0] :
                                       allow_new_edges=False,
                                       min_zoom=0.1)
 
-    fragment_flow(st.session_state.curr_state,  )
+    fragment_flow()
 
 
 
