@@ -118,11 +118,11 @@ if selected_module == list_module[0] :
       task_name = str(k) + "-" +(save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
         
       if len(save_dict[k]["dependencies"]) == 0 :
-        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {task_name}'}, 'input', 'right',),
+        sfn = StreamlitFlowNode(k, (0, 0), {'content': f'Task {task_name}'}, 'input', 'right',),
       else :
-        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {task_name}'}, 'default', 'right', 'left'),
+        sfn = StreamlitFlowNode(k, (0, 0), {'content': f'Task {task_name}'}, 'default', 'right', 'left'),
         for d in save_dict[k]["dependencies"] :
-          edges.extend(StreamlitFlowEdge(f'{int(d)+1}-{int(k)+1}', str(int(d)+1), str(int(k)+1), animated=True))
+          edges.extend(StreamlitFlowEdge(f'{d}-{k}', str(d), str(k), animated=True))
       nodes.extend(sfn)
   
       
