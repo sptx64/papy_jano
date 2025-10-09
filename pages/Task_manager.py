@@ -121,6 +121,7 @@ if selected_module == list_module[0] :
         task_coords[k] = [0+val, 2+val]
       if i%2 == 0 :
         val += 2
+        i=0
       i+=1
 
     task_coords,
