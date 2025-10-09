@@ -113,43 +113,59 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.button("Manage dependencies") :
-    nodes=[]; edges=[];
-    for i,k in enumerate(save_dict) :
-      task_name = str(k) + "-" +(save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
-        
-      if len(save_dict[k]["dependencies"]) == 0 :
-        sfn = StreamlitFlowNode(k, (0, 0), {'content': f'Task {task_name}'}, 'input', 'right',),
-      else :
-        sfn = StreamlitFlowNode(k, (0, 0), {'content': f'Task {task_name}'}, 'default', 'right', 'left'),
-        for d in save_dict[k]["dependencies"] :
-          f'{d}-{k}',
-          # edges.extend(StreamlitFlowEdge(f'{d}-{k}', str(d), str(k), animated=True))
-      nodes.extend(sfn)
-  
+    # Prepare nodes and edges for the tree plot
+    nodes = []
+    edges = []
+    
+    # Create nodes for each task
+    for task_id, task_dict in save_dict.items():
+        task_name = task_dict["Task name"] if task_dict["Task name"] else f"Task {task_id}"
+        nodes.append(
+            StreamlitFlowNode(
+                id=str(task_id),
+                pos=(0, 0),  # Position will be handled by TreeLayout
+                label=task_name,
+                shape="circle",
+                color="#ADD8E6",  # Light blue color for nodes
+                size=20
+            )
+        )
+    
+    # Create edges based on dependencies
+    for task_id, task_dict in save_dict.items():
+        dependencies = task_dict.get("dependencies", [])
+        for dep_id in dependencies:
+            try:
+                # Ensure the dependency ID is valid and exists in save_dict
+                if int(dep_id) in save_dict:
+                    edges.append(
+                        StreamlitFlowEdge(
+                            source=dep_id,  # Parent task
+                            target=str(task_id),  # Current task
+                            label=task_dict.get("dependency_type", "FS"),
+                            color="#FF6347",  # Tomato color for edges
+                            width=2
+                        )
+                    )
+            except (ValueError, KeyError):
+                st.warning(f"Invalid dependency ID {dep_id} for Task {task_id}")
+    
+    # Define the flow state
+    flow_state = StreamlitFlowState(nodes=nodes, edges=edges)
+    
+    # Render the tree plot
+    st.write("### Task Dependency Tree")
+    streamlit_flow(
+        nodes=nodes,
+        edges=edges,
+        state=flow_state,
+        layout=TreeLayout(direction="down"),  # Tree layout with downward direction
+        fit_view=True,
+        height=500
+    )
       
   
-    st.session_state.curr_state = StreamlitFlowState(nodes, edges)
 
-  
-        
-    @st.fragment
-    def fragment_flow() :
-      streamlit_flow('example_flow', 
-                                        st.session_state.curr_state, 
-                                        layout=TreeLayout(direction='right'), 
-                                        fit_view=True, 
-                                        height=500, 
-                                        enable_node_menu=True,
-                                        enable_edge_menu=True,
-                                        enable_pane_menu=True,
-                                        get_edge_on_click=False,
-                                        get_node_on_click=False, 
-                                        show_minimap=True, 
-                                        hide_watermark=True, 
-                                        allow_new_edges=False,
-                                        min_zoom=0.1)
-
-    fragment_flow()
 
 
 
