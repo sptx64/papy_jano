@@ -114,7 +114,7 @@ if selected_module == list_module[0] :
     task_coords = {}
     val = 1; i=0
     for k in save_dict :
-      task_coords[k] = [random.uniform(0,5), random.uniform(0,5)]
+      task_coords[f"Task {k}"] = [random.uniform(0,5), random.uniform(0,5)]
       
 
     task_coords
@@ -123,7 +123,7 @@ if selected_module == list_module[0] :
     for k in save_dict :
       if len(save_dict[k]["dependencies"]) == 0 :
         for d in save_dict[k]["dependencies"] :
-          links.extend({"x":[task_coords[k][0], task_coords[d][0]],  "y": [task_coords[k][1], task_coords[d][1]]})
+          links.extend({"x":[task_coords[f"Task {k}"][0], task_coords[f"Task {d}"][0]],  "y": [task_coords[f"Task {k}"][1], task_coords[f"Task {d}"][1]]})
 
 
     links
