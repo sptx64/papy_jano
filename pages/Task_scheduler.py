@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 from streamlit_echarts import st_echarts
-# from func.simulation import _triangular_safe, _beta_pert_safe, _sample_activity
+from func.simulation import _triangular_safe, _beta_pert_safe, _sample_activity
 
 import os
 from func.log import log
@@ -132,25 +132,25 @@ mine_fleet = minops.mine_fleet
 mine_task
 
 if st.button("Go") :
-  mine_fleet = minops.mine_fleet
+  # mine_fleet = minops.mine_fleet
   
-  indep_tasks = [k for k in mine_task if len(mine_task[k].dependencies) == 0 ]
-  dep_tasks   = [k for k in mine_task if len(mine_task[k].dependencies) > 0  ]
+  # indep_tasks = [k for k in mine_task if len(mine_task[k].dependencies) == 0 ]
+  # dep_tasks   = [k for k in mine_task if len(mine_task[k].dependencies) > 0  ]
 
-  done = []; active = [];
-  unlocked_tasks = indep_tasks.copy(); locked_tasks = dep_tasks.copy();
-  remaining = indep_tasks + dep_tasks
+  # done = []; active = [];
+  # unlocked_tasks = indep_tasks.copy(); locked_tasks = dep_tasks.copy();
+  # remaining = indep_tasks + dep_tasks
   
-  quit=360; day=1;
-  while (len(remaining) > 0) and day<quit :
-    available_fleet = { k:len([x for x in mine_fleet[k] if mine_fleet[k][int(x)].availability == True]) for k in mine_fleet }
-    random.shuffle(unlocked_tasks)
-    for ut in unlocked_tasks :
-      rm = mine_task[ut].required_machines
-      delta = [ available_fleet[k] - rm[k] for k in rm ]
-      if all(x >= 0 for x in delta) :
-        slct_machines = { k:random.sample([ mt for mt in mine_fleet[k] ], rm[k]) k for k in rm }
-        active.append({ut:{"mine_task":mine_task[ut], "locked_machines":slct_machines}, "progress":mine_task[ut].progress, "duration":"" })
+  # quit=360; day=1;
+  # while (len(remaining) > 0) and day<quit :
+  #   available_fleet = { k:len([x for x in mine_fleet[k] if mine_fleet[k][int(x)].availability == True]) for k in mine_fleet }
+  #   random.shuffle(unlocked_tasks)
+  #   for ut in unlocked_tasks :
+  #     rm = mine_task[ut].required_machines
+  #     delta = [ available_fleet[k] - rm[k] for k in rm ]
+  #     if all(x >= 0 for x in delta) :
+  #       slct_machines = { k:random.sample([ mt for mt in mine_fleet[k] ], rm[k]) k for k in rm }
+  #       active.append({ut:{"mine_task":mine_task[ut], "locked_machines":slct_machines}, "progress":mine_task[ut].progress, "duration":"" })
         
       
       
