@@ -113,7 +113,7 @@ if selected_module == list_module[0] :
   if st.button("Manage dependencies") :
     task_coords = {}
     val = 1; i=0
-    for k in enumerate(save_dict) :
+    for k in save_dict :
       task_coords[k] = [random.uniform(0,5), random.uniform(0,5)]
       
 
