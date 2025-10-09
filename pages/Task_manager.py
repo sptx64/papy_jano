@@ -113,7 +113,6 @@ if selected_module == list_module[0] :
       c = st.columns(ncol, border=True)
 
   if st.toggle("Manage dependencies") :
-    save_dict
     nodes=[]; edges=[];
     for i,k in enumerate(save_dict) :
       task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
@@ -126,7 +125,7 @@ if selected_module == list_module[0] :
           edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
       nodes.extend(sfn)
 
-    nodes
+    
 
     if "curr_state" not in st.session_state :
       st.session_state.curr_state = StreamlitFlowState(nodes, edges)
@@ -158,30 +157,7 @@ if selected_module == list_module[0] :
 
 
 
-    
-    # nodes = []
-    # for i,k in enumerate(save_dict) :
-    #   if i == 0 :
-    #     sfn = StreamlitFlowNode(k, (i, 0), {'content': f'Task{k}' + save_dict[k]['Task name'] if save_dict[k]['Task name'] is not None else ""}, 'input', 'right')
-    #   else :
-    #     nodes.append(StreamlitFlowNode(k, (i, 0), {'content': f'Task{k}' + save_dict[k]['Task name'] if save_dict[k]['Task name'] is not None else ""}, 'default', 'right', 'left'))
-
-    # edges = [StreamlitFlowEdge("1-2", "1", "2", animated=True, marker_start={}, marker_end={'type': 'arrow'}),
-    #     StreamlitFlowEdge("1-3", "1", "3", animated=True),
-    #     ]
-
-    
-    # if 'curr_flow_state' not in st.session_state:
-    #   st.session_state.curr_flow_state = StreamlitFlowState(nodes, edges)
-
-
-      
-    # st.session_state.curr_state = streamlit_flow(
-    #   'dependencies_flow', st.session_state.curr_flow_state, layout=TreeLayout(direction='right'), 
-    #   fit_view=True, height=500, enable_node_menu=True, enable_edge_menu=True, enable_pane_menu=True,
-    #   get_edge_on_click=True, get_node_on_click=True, show_minimap=True, hide_watermark=True, 
-    #   allow_new_edges=True, min_zoom=0.1
-    # )                   
+               
 
 
 
