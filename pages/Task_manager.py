@@ -112,47 +112,48 @@ if selected_module == list_module[0] :
     if i%ncol == ncol-1 :
       c = st.columns(ncol, border=True)
 
-  if st.toggle("Manage dependencies") :
-    nodes=[]; edges=[];
-    for i,k in enumerate(save_dict) :
-      task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
-      
-      if len(save_dict[k]["dependencies"]) == 0 :
-        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'input', 'right',),
-      else :
-        sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
-        for d in save_dict[k]["dependencies"] :
-          edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
-      nodes.extend(sfn)
-
-    
-
-    if "curr_state" not in st.session_state :
-      st.session_state.curr_state = StreamlitFlowState(nodes, edges)
-      st.session_state.nodes = nodes
-      st.session_state.edges = edges
-
-    if st.session_state.nodes != nodes or st.session_state.edges != edges :
-      st.session_state.curr_state = StreamlitFlowState(nodes, edges)
-      st.session_state.nodes = nodes
-      st.session_state.edges = edges
-      
+  if st.button("Manage dependencies") :
     @st.fragment
     def fragment_flow() :
-      streamlit_flow('example_flow', 
-                                      st.session_state.curr_state, 
-                                      layout=TreeLayout(direction='right'), 
-                                      fit_view=True, 
-                                      height=500, 
-                                      enable_node_menu=True,
-                                      enable_edge_menu=True,
-                                      enable_pane_menu=True,
-                                      get_edge_on_click=False,
-                                      get_node_on_click=False, 
-                                      show_minimap=True, 
-                                      hide_watermark=True, 
-                                      allow_new_edges=False,
-                                      min_zoom=0.1)
+      nodes=[]; edges=[];
+      for i,k in enumerate(save_dict) :
+        task_name = str(k) + (save_dict[k]["Task name"] if save_dict[k]["Task name"] is not None else "")
+        
+        if len(save_dict[k]["dependencies"]) == 0 :
+          sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'input', 'right',),
+        else :
+          sfn = StreamlitFlowNode(str(int(k)+1), (0, 0), {'content': f'Task {k}'}, 'default', 'right', 'left'),
+          for d in save_dict[k]["dependencies"] :
+            edges.extend(StreamlitFlowEdge(f'{d+1}-{k+1}', d+1, k+1, animated=True))
+        nodes.extend(sfn)
+  
+      
+  
+      # if "curr_state" not in st.session_state :
+      #   st.session_state.curr_state = StreamlitFlowState(nodes, edges)
+      #   st.session_state.nodes = nodes
+      #   st.session_state.edges = edges
+  
+      # if st.session_state.nodes != nodes or st.session_state.edges != edges :
+      #   st.session_state.curr_state = StreamlitFlowState(nodes, edges)
+      #   st.session_state.nodes = nodes
+      #   st.session_state.edges = edges
+        
+  
+        streamlit_flow('example_flow', 
+                                        StreamlitFlowState(nodes, edges), 
+                                        layout=TreeLayout(direction='right'), 
+                                        fit_view=True, 
+                                        height=500, 
+                                        enable_node_menu=True,
+                                        enable_edge_menu=True,
+                                        enable_pane_menu=True,
+                                        get_edge_on_click=False,
+                                        get_node_on_click=False, 
+                                        show_minimap=True, 
+                                        hide_watermark=True, 
+                                        allow_new_edges=False,
+                                        min_zoom=0.1)
 
     fragment_flow()
 
