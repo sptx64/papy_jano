@@ -129,8 +129,8 @@ with c[1] :
 mine_fleet = minops.mine_fleet
 mine_fleet
 mine_task
-
-{ k:len([x for x in mine_fleet[k] if mine_fleet[k][x].machine_availability]) for k in mine_fleet },
+mine_fleet["Truck"]["0"].machine_availability
+{ k:len([x for x in mine_fleet[k] if mine_fleet[k][x].machine_availability == True]) for k in mine_fleet },
 
 if st.button("Go") :
   mine_fleet = minops.mine_fleet
